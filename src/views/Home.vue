@@ -6,27 +6,34 @@
         <p>支持标准化集成，共建智能应用生态，支持动态注册，智能集成的 MCP Registry</p>
       </div>
     </section>
-    
+
     <section class="servers-section">
       <div class="section-header">
         <h2>热门 MCP Servers</h2>
-        <span>{{ totalCount }} 个服务器</span>
+        <span>{{ totalCount || 0 }} 个服务器</span>
       </div>
-      
+
       <el-row :gutter="20" v-loading="loading">
-        <el-col 
-          v-for="server in servers" 
-          :key="server.id" 
-          :xs="24" 
-          :sm="12" 
-          :md="8" 
-          :lg="6" 
+        <el-col
+          v-for="server in servers"
+          :key="server.id"
+          :xs="24"
+          :sm="12"
+          :md="8"
+          :lg="6"
           :xl="6"
         >
           <server-card :server="server" />
         </el-col>
+
+        <!-- Show message when no servers are loaded -->
+        <el-col v-if="!loading && servers.length === 0" :span="24">
+          <div style="text-align: center; padding: 2rem; color: #666;">
+            <p>暂无可用的 MCP 服务器</p>
+          </div>
+        </el-col>
       </el-row>
-      
+
       <div class="pagination-container" v-if="totalCount > 0">
         <el-pagination
           v-model:current-page="currentPage"
@@ -48,14 +55,19 @@ import ServerCard from '../components/ServerCard.vue'
 const store = useServersStore()
 const loading = computed(() => store.loading)
 const servers = computed(() => store.servers)
-const totalCount = computed(() => store.totalCount)
+const totalCount = computed(() => store.totalCount || store.servers.length)
 
 const currentPage = ref(1)
 const pageSize = ref(20)
 
 const fetchServers = async (page = 1) => {
   const offset = (page - 1) * pageSize.value
-  await store.fetchServers(pageSize.value, offset)
+  try {
+    await store.fetchServers(pageSize.value, offset)
+    console.log('Total count:', store.totalCount)
+  } catch (error) {
+    console.error('Error fetching servers:', error)
+  }
 }
 
 const handlePageChange = (page) => {
@@ -85,12 +97,12 @@ onMounted(async () => {
   text-align: center;
   border-radius: 8px;
   margin-bottom: 2rem;
-  
+
   h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
   }
-  
+
   p {
     font-size: 1.2rem;
     max-width: 800px;
@@ -104,12 +116,12 @@ onMounted(async () => {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
-    
+
     h2 {
       font-size: 1.8rem;
       font-weight: 600;
     }
-    
+
     span {
       color: #666;
       font-size: 1rem;
