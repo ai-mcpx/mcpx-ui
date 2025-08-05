@@ -2,7 +2,7 @@
   <div v-if="loading" class="loading-container">
     <el-skeleton :rows="10" animated />
   </div>
-  
+
   <div v-else-if="error" class="error-container">
     <el-result
       icon="error"
@@ -15,7 +15,7 @@
       </template>
     </el-result>
   </div>
-  
+
   <div v-else-if="server" class="server-detail-container">
     <div class="server-header">
       <div class="server-title-section">
@@ -24,7 +24,7 @@
             {{ getServerInitial(server.name) }}
           </el-avatar>
         </div>
-        
+
         <div class="server-title-info">
           <h1>{{ formatServerName(server.name) }}</h1>
           <div class="server-meta">
@@ -32,11 +32,11 @@
             <span v-if="server.version_detail.is_latest" class="latest-tag">最新版本</span>
             <span class="release-date">发布于 {{ formatDate(server.version_detail.release_date) }}</span>
           </div>
-          
+
           <div class="repository-link" v-if="server.repository">
-            <el-button 
-              type="primary" 
-              size="small" 
+            <el-button
+              type="primary"
+              size="small"
               :icon="Link"
               @click="openRepository(server.repository.url)"
             >
@@ -45,7 +45,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="server-actions">
         <el-button-group>
           <el-tooltip content="查看其他版本" placement="top">
@@ -63,13 +63,13 @@
         </el-button-group>
       </div>
     </div>
-    
+
     <el-divider />
-    
+
     <div class="server-description">
       <p>{{ server.description }}</p>
     </div>
-    
+
     <div class="server-details">
       <el-tabs>
         <el-tab-pane label="安装信息">
@@ -81,15 +81,15 @@
                   <h4>{{ pkg.name }}</h4>
                   <el-tag size="small">{{ pkg.registry_name }}</el-tag>
                 </div>
-                
+
                 <div class="package-version">
                   <strong>版本:</strong> {{ pkg.version }}
                 </div>
-                
+
                 <div v-if="pkg.runtime_hint" class="package-runtime">
                   <strong>运行时:</strong> {{ pkg.runtime_hint }}
                 </div>
-                
+
                 <div v-if="pkg.environment_variables && pkg.environment_variables.length > 0" class="package-env-vars">
                   <h5>环境变量:</h5>
                   <el-table :data="pkg.environment_variables" stripe style="width: 100%">
@@ -97,7 +97,7 @@
                     <el-table-column prop="description" label="描述" />
                   </el-table>
                 </div>
-                
+
                 <div v-if="getInstallCommand(pkg)" class="package-install">
                   <h5>安装命令:</h5>
                   <el-input
@@ -118,7 +118,7 @@
             <el-empty v-else description="没有安装包信息" />
           </div>
         </el-tab-pane>
-        
+
         <el-tab-pane label="远程连接">
           <div class="remotes-info">
             <h3>远程连接端点</h3>
@@ -127,11 +127,11 @@
                 <div class="remote-header">
                   <h4>{{ remote.transport_type }}</h4>
                 </div>
-                
+
                 <div class="remote-url">
                   <strong>URL:</strong> {{ remote.url }}
                 </div>
-                
+
                 <div v-if="remote.headers && remote.headers.length > 0" class="remote-headers">
                   <h5>请求头:</h5>
                   <el-table :data="remote.headers" stripe style="width: 100%">
@@ -147,7 +147,7 @@
       </el-tabs>
     </div>
   </div>
-  
+
   <div v-else class="not-found-container">
     <el-result
       icon="info"
@@ -176,8 +176,32 @@ const loading = computed(() => store.loading)
 const error = computed(() => store.error)
 const server = computed(() => store.currentServer)
 
-// 假设有多个版本，实际项目中可能需要从API获取
-const versions = ref(['1.0.0', '0.9.0', '0.8.5'])
+// Get versions from server data or packages
+const versions = computed(() => {
+  if (!server.value) return []
+
+  const versionSet = new Set()
+
+  // Add current server version
+  if (server.value.version_detail?.version) {
+    versionSet.add(server.value.version_detail.version)
+  }
+
+  // Add versions from packages
+  if (server.value.packages) {
+    server.value.packages.forEach(pkg => {
+      if (pkg.version) {
+        versionSet.add(pkg.version)
+      }
+    })
+  }
+
+  return Array.from(versionSet).sort((a, b) => {
+    // Sort versions in descending order (newest first)
+    return b.localeCompare(a, undefined, { numeric: true, sensitivity: 'base' })
+  })
+})
+
 const hasMultipleVersions = computed(() => versions.value.length > 1)
 
 const fetchServerData = async () => {
@@ -210,7 +234,7 @@ const getServerIcon = (server) => {
 
 const getRepositoryName = (repository) => {
   if (!repository || !repository.url) return ''
-  
+
   try {
     const url = new URL(repository.url)
     const pathParts = url.pathname.split('/').filter(Boolean)
@@ -225,7 +249,7 @@ const getRepositoryName = (repository) => {
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
-  
+
   try {
     const date = new Date(dateString)
     return date.toLocaleDateString('zh-CN', {
@@ -246,7 +270,7 @@ const openRepository = (url) => {
 
 const getInstallCommand = (pkg) => {
   if (!pkg) return ''
-  
+
   const commands = {
     'npm': `npm install ${pkg.name}@${pkg.version}`,
     'pypi': `pip install ${pkg.name}==${pkg.version}`,
@@ -254,7 +278,7 @@ const getInstallCommand = (pkg) => {
     'homebrew': `brew install ${pkg.name}@${pkg.version}`,
     'nuget': `dotnet add package ${pkg.name} --version ${pkg.version}`
   }
-  
+
   return commands[pkg.registry_name] || ''
 }
 
@@ -322,12 +346,12 @@ watch(() => route.params.id, (newId) => {
   align-items: center;
   gap: 10px;
   margin-bottom: 0.75rem;
-  
+
   .latest-tag {
     color: #67c23a;
     font-weight: 500;
   }
-  
+
   .release-date {
     color: #909399;
     font-size: 0.9rem;
@@ -355,7 +379,7 @@ watch(() => route.params.id, (newId) => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.75rem;
-  
+
   h4 {
     margin: 0;
     font-size: 1.1rem;
@@ -372,7 +396,7 @@ watch(() => route.params.id, (newId) => {
 .package-install,
 .remote-headers {
   margin-top: 1rem;
-  
+
   h5 {
     margin-bottom: 0.5rem;
     font-size: 1rem;
