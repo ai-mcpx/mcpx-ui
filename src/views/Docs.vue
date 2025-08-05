@@ -87,8 +87,7 @@
         "is_latest": true
       }
     }
-  ],
-  "total_count": 1
+  ]
 }</code></pre>
             </el-card>
 
@@ -104,6 +103,27 @@
                 <el-table-column prop="type" label="类型" width="120" />
                 <el-table-column prop="description" label="描述" />
               </el-table>
+
+              <h4>响应示例</h4>
+              <pre><code>{
+  "servers": [
+    {
+      "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1",
+      "name": "@modelcontextprotocol/servers/src/filesystem",
+      "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
+      "repository": {
+        "url": "https://github.com/modelcontextprotocol/servers",
+        "source": "github",
+        "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
+      },
+      "version_detail": {
+        "version": "1.0.2",
+        "release_date": "2023-06-15T10:30:00Z",
+        "is_latest": true
+      }
+    }
+  ]
+}</code></pre>
             </el-card>
 
             <h3>发布服务器</h3>
