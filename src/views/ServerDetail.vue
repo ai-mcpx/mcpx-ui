@@ -184,19 +184,22 @@ const versions = computed(() => {
 
   // Add current server version
   if (server.value.version_detail?.version) {
-    versionSet.add(server.value.version_detail.version)
+    versionSet.add(server.value.version_detail.version.trim())
   }
 
   // Add versions from packages
   if (server.value.packages) {
     server.value.packages.forEach(pkg => {
       if (pkg.version) {
-        versionSet.add(pkg.version)
+        versionSet.add(pkg.version.trim())
       }
     })
   }
 
-  return Array.from(versionSet).sort((a, b) => {
+  // Convert Set to Array and filter out any empty strings
+  const uniqueVersions = Array.from(versionSet).filter(version => version && version.length > 0)
+
+  return uniqueVersions.sort((a, b) => {
     // Sort versions in descending order (newest first)
     return b.localeCompare(a, undefined, { numeric: true, sensitivity: 'base' })
   })

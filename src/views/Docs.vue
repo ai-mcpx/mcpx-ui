@@ -188,7 +188,7 @@
     {
       "registry_name": "docker",
       "name": "mcp-hello",
-      "version": "latest",
+      "version": "1.0.0",
       "runtime_hint": "docker",
       "runtime_arguments": [
         {
