@@ -210,6 +210,43 @@
               </ul>
             </el-card>
 
+            <h3>删除服务器</h3>
+            <el-card class="api-card">
+              <div class="api-method delete">DELETE</div>
+              <div class="api-path">/v0/servers/{id}</div>
+              <p>从注册表中永久删除指定的 MCP 服务器。此操作不可撤销，将完全移除服务器及其所有相关信息。</p>
+
+              <h4>路径参数</h4>
+              <el-table :data="deleteServerParams" style="width: 100%">
+                <el-table-column prop="name" label="名称" width="120" />
+                <el-table-column prop="type" label="类型" width="120" />
+                <el-table-column prop="description" label="描述" />
+              </el-table>
+
+              <h4>响应示例</h4>
+              <h5>成功响应 (200 OK)</h5>
+              <pre><code>{
+  "message": "Server deleted successfully",
+  "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1"
+}</code></pre>
+
+              <h4>错误响应</h4>
+              <ul>
+                <li><strong>400 Bad Request</strong> - 服务器 ID 格式无效（必须是有效的 UUID）</li>
+                <li><strong>404 Not Found</strong> - 指定的服务器 ID 不存在</li>
+                <li><strong>405 Method Not Allowed</strong> - HTTP 方法不被允许</li>
+                <li><strong>500 Internal Server Error</strong> - 服务器内部错误，删除失败</li>
+              </ul>
+
+              <h4>注意事项</h4>
+              <ul>
+                <li>⚠️ <strong>此操作无法撤销</strong>：一旦删除，服务器信息将永久丢失</li>
+                <li>🔒 <strong>权限要求</strong>：删除操作可能需要适当的授权</li>
+                <li>📋 <strong>依赖检查</strong>：删除前请确认没有其他系统依赖此服务器</li>
+                <li>💾 <strong>数据备份</strong>：建议在删除前备份重要的服务器配置信息</li>
+              </ul>
+            </el-card>
+
             <h3>发布服务器</h3>
             <el-card class="api-card">
               <div class="api-method post">POST</div>
@@ -434,6 +471,14 @@ const updateServerParams = [
   }
 ]
 
+const deleteServerParams = [
+  {
+    name: 'id',
+    type: '字符串',
+    description: '要删除的服务器的唯一 UUID'
+  }
+]
+
 const scrollToSection = (sectionId) => {
   const element = document.getElementById(sectionId)
   if (element) {
@@ -557,6 +602,10 @@ onUnmounted(() => {
 
     &.put {
       background-color: #e6a23c;
+    }
+
+    &.delete {
+      background-color: #f56c6c;
     }
   }
 
