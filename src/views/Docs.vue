@@ -122,6 +122,94 @@
 }</code></pre>
             </el-card>
 
+            <h3>更新服务器</h3>
+            <el-card class="api-card">
+              <div class="api-method put">PUT</div>
+              <div class="api-path">/v0/servers/{id}</div>
+              <p>更新已注册的 MCP 服务器的详细信息。此端点允许更新服务器的元数据，包括版本信息。当更新版本时，新版本必须大于现有版本以保持版本排序。</p>
+
+              <h4>路径参数</h4>
+              <el-table :data="updateServerParams" style="width: 100%">
+                <el-table-column prop="name" label="名称" width="120" />
+                <el-table-column prop="type" label="类型" width="120" />
+                <el-table-column prop="description" label="描述" />
+              </el-table>
+
+              <h4>请求体示例</h4>
+              <pre><code>{
+  "name": "ai-mcpx.mcp-hello-updated",
+  "description": "An updated Hello World MCP server with enhanced features",
+  "repository": {
+    "url": "https://github.com/ai-mcpx/mcp-hello",
+    "source": "github",
+    "id": "ai-mcpx/mcp-hello"
+  },
+  "version_detail": {
+    "version": "1.1.0",
+    "release_date": "2025-08-10T12:00:00Z",
+    "is_latest": true
+  },
+  "packages": [
+    {
+      "registry_name": "pypi",
+      "name": "mcp-hello",
+      "version": "1.1.0",
+      "runtime_hint": "python",
+      "runtime_arguments": [
+        {
+          "type": "named",
+          "name": "--module",
+          "description": "Run as Python module",
+          "format": "string",
+          "is_required": true,
+          "default": "-m",
+          "value_hint": "-m"
+        },
+        {
+          "type": "positional",
+          "name": "module_name",
+          "description": "Module name to run",
+          "format": "string",
+          "is_required": true,
+          "default": "mcp_hello.server",
+          "value_hint": "mcp_hello.server"
+        }
+      ],
+      "environment_variables": [
+        {
+          "name": "MCP_HOST",
+          "description": "Server host address",
+          "format": "string",
+          "is_required": false,
+          "default": "0.0.0.0"
+        },
+        {
+          "name": "MCP_PORT",
+          "description": "Server port number",
+          "format": "number",
+          "is_required": false,
+          "default": "8000"
+        }
+      ]
+    }
+  ]
+}</code></pre>
+
+              <h4>响应示例</h4>
+              <pre><code>{
+  "message": "Server updated successfully",
+  "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1"
+}</code></pre>
+
+              <h4>错误响应</h4>
+              <ul>
+                <li><strong>400 Bad Request</strong> - 请求数据无效或版本号无效（不能更新到较旧的版本）</li>
+                <li><strong>404 Not Found</strong> - 指定的服务器 ID 不存在</li>
+                <li><strong>409 Conflict</strong> - 具有此版本的服务器已存在</li>
+                <li><strong>500 Internal Server Error</strong> - 服务器内部错误</li>
+              </ul>
+            </el-card>
+
             <h3>发布服务器</h3>
             <el-card class="api-card">
               <div class="api-method post">POST</div>
@@ -338,6 +426,14 @@ const getServerParams = [
   }
 ]
 
+const updateServerParams = [
+  {
+    name: 'id',
+    type: '字符串',
+    description: '要更新的服务器的唯一 UUID'
+  }
+]
+
 const scrollToSection = (sectionId) => {
   const element = document.getElementById(sectionId)
   if (element) {
@@ -457,6 +553,10 @@ onUnmounted(() => {
 
     &.post {
       background-color: #409eff;
+    }
+
+    &.put {
+      background-color: #e6a23c;
     }
   }
 
