@@ -90,6 +90,23 @@
                   <strong>运行时:</strong> {{ pkg.runtime_hint }}
                 </div>
 
+                <div v-if="pkg.runtime_arguments && pkg.runtime_arguments.length > 0" class="package-runtime-args">
+                  <h5>运行时参数:</h5>
+                  <el-table :data="pkg.runtime_arguments" stripe style="width: 100%">
+                    <el-table-column prop="name" label="名称" width="150" />
+                    <el-table-column prop="type" label="类型" width="100" />
+                    <el-table-column prop="description" label="描述" />
+                    <el-table-column prop="is_required" label="必需" width="80">
+                      <template #default="{ row }">
+                        <el-tag :type="row.is_required ? 'danger' : 'info'" size="small">
+                          {{ row.is_required ? '是' : '否' }}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="default" label="默认值" width="120" />
+                  </el-table>
+                </div>
+
                 <div v-if="pkg.environment_variables && pkg.environment_variables.length > 0" class="package-env-vars">
                   <h5>环境变量:</h5>
                   <el-table :data="pkg.environment_variables" stripe style="width: 100%">
@@ -396,6 +413,7 @@ watch(() => route.params.id, (newId) => {
 }
 
 .package-env-vars,
+.package-runtime-args,
 .package-install,
 .remote-headers {
   margin-top: 1rem;
