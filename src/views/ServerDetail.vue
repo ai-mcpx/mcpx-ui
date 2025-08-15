@@ -64,7 +64,6 @@
             <div v-if="server.packages && server.packages.length > 0">
               <el-card v-for="pkg in server.packages" :key="pkg.name" class="package-card">
                 <div class="package-header">
-                  <h4>{{ pkg.name }}</h4>
                   <el-tag size="small">{{ pkg.registry_name }}</el-tag>
                 </div>
 
