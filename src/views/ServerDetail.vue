@@ -279,6 +279,7 @@ const getInstallCommand = (pkg) => {
   const commands = {
     'npm': `npm install ${pkg.name}@${pkg.version}`,
     'pypi': `pip install ${pkg.name}==${pkg.version}`,
+    'wheel': pkg.wheel_url ? `curl -O ${pkg.wheel_url} && pip install ${pkg.name}-${pkg.version}-*.whl` : `pip install ${pkg.name}==${pkg.version}`,
     'docker': `docker pull ${pkg.name}:${pkg.version}`,
     'homebrew': `brew install ${pkg.name}@${pkg.version}`,
     'nuget': `dotnet add package ${pkg.name} --version ${pkg.version}`
