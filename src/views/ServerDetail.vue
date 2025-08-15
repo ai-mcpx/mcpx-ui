@@ -47,20 +47,6 @@
       </div>
 
       <div class="server-actions">
-        <el-button-group>
-          <el-tooltip content="查看其他版本" placement="top">
-            <el-dropdown v-if="hasMultipleVersions" trigger="click">
-              <el-button>版本 <el-icon class="el-icon--right"><arrow-down /></el-icon></el-button>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item v-for="version in versions" :key="version">
-                    {{ version }}
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </el-tooltip>
-        </el-button-group>
       </div>
     </div>
 
