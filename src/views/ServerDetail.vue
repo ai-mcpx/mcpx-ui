@@ -97,6 +97,15 @@
                   <el-table :data="pkg.environment_variables" stripe style="width: 100%">
                     <el-table-column prop="name" label="名称" width="180" />
                     <el-table-column prop="description" label="描述" />
+                    <el-table-column prop="format" label="格式" width="100" />
+                    <el-table-column prop="is_required" label="必需" width="80">
+                      <template #default="{ row }">
+                        <el-tag :type="row.is_required ? 'danger' : 'info'" size="small">
+                          {{ row.is_required ? '是' : '否' }}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="default" label="默认值" width="120" />
                   </el-table>
                 </div>
 
