@@ -139,6 +139,7 @@
                   <el-table :data="remote.headers" stripe style="width: 100%">
                     <el-table-column prop="name" label="名称" width="180" />
                     <el-table-column prop="description" label="描述" />
+                    <el-table-column prop="value" label="值" width="200" />
                   </el-table>
                 </div>
               </el-card>
