@@ -297,15 +297,14 @@
         {
           "name": "MCP_HOST",
           "description": "Server host address",
+          "is_required": true,
           "format": "string",
-          "is_required": false,
           "default": "0.0.0.0"
         },
         {
           "name": "MCP_PORT",
           "description": "Server port number",
           "format": "number",
-          "is_required": false,
           "default": "8000"
         }
       ]
@@ -317,28 +316,35 @@
       "runtime_hint": "docker",
       "runtime_arguments": [
         {
-          "type": "named",
-          "name": "--port",
-          "description": "Port mapping for HTTP server",
-          "format": "string",
+          "description": "Remove container after exit",
           "is_required": true,
-          "default": "-p",
-          "value_hint": "-p 8000:8000"
+          "default": "--rm",
+          "type": "named",
+          "name": "--rm",
+          "value_hint": "--rm"
+        },
+        {
+          "description": "Port mapping for the container",
+          "is_required": true,
+          "default": "8000:8000",
+          "type": "named",
+          "name": "-p",
+          "value_hint": "port_mapping"
         }
       ],
       "environment_variables": [
         {
           "name": "MCP_HOST",
           "description": "Server host address",
+          "is_required": true,
           "format": "string",
-          "is_required": false,
           "default": "0.0.0.0"
         },
         {
           "name": "MCP_PORT",
           "description": "Server port number",
+          "is_required": true,
           "format": "number",
-          "is_required": false,
           "default": "8000"
         }
       ]
@@ -350,10 +356,9 @@
       "url": "http://localhost:8000",
       "headers": [
         {
+          "name": "Content-Type",
           "description": "Content type for JSON requests",
-          "format": "string",
-          "default": "application/json",
-          "value": "Content-Type: application/json"
+          "value": "application/json"
         }
       ]
     }
