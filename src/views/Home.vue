@@ -56,14 +56,14 @@ const store = useServersStore()
 const loading = computed(() => store.loading)
 const servers = computed(() => store.servers)
 const totalCount = computed(() => store.totalCount || store.servers.length)
+const nextPage = computed(() => store.nextPage)
 
 const currentPage = ref(1)
 const pageSize = ref(20)
 
-const fetchServers = async (page = 1) => {
-  const offset = (page - 1) * pageSize.value
+const fetchServers = async (cursor = null) => {
   try {
-    await store.fetchServers(pageSize.value, offset)
+    await store.fetchServers(pageSize.value, cursor)
     console.log('Total count:', store.totalCount)
   } catch (error) {
     console.error('Error fetching servers:', error)
@@ -72,7 +72,10 @@ const fetchServers = async (page = 1) => {
 
 const handlePageChange = (page) => {
   currentPage.value = page
-  fetchServers(page)
+  // For cursor-based pagination, we would need to track cursors for each page
+  // For now, keep the existing offset-based approach in the UI
+  const offset = (page - 1) * pageSize.value
+  store.fetchServers(pageSize.value, null) // Reset to first page for simplicity
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 

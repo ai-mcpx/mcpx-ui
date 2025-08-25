@@ -12,6 +12,7 @@
             <el-menu-item index="overview">概述</el-menu-item>
             <el-menu-item index="api">API 参考</el-menu-item>
             <el-menu-item index="server-json">服务器 JSON 格式</el-menu-item>
+            <el-menu-item index="cli">CLI 工具</el-menu-item>
             <el-menu-item index="publishing">发布服务器</el-menu-item>
             <el-menu-item index="faq">常见问题</el-menu-item>
           </el-menu>
@@ -44,17 +45,36 @@
             <ul>
               <li>用于管理 MCP 注册表条目的 RESTful API（列表、获取、创建、更新、删除）</li>
               <li>服务监控的健康检查端点</li>
+              <li>支持多种包注册表类型（npm、PyPI、NuGet、Docker、Wheel、Binary 等）</li>
               <li>支持各种环境配置</li>
               <li>优雅的关闭处理</li>
-              <li>MongoDB 和内存数据库支持</li>
+              <li>PostgreSQL 和内存数据库支持</li>
               <li>全面的 API 文档</li>
-              <li>列出注册表条目的分页支持</li>
+              <li>基于游标的分页支持</li>
+              <li>GitHub OAuth 认证集成</li>
+              <li>DNS 验证命名空间管理</li>
             </ul>
           </section>
 
           <section id="api" class="docs-section">
             <h2>API 参考</h2>
             <p>MCP Registry 提供了一个 RESTful API，用于与注册表进行交互。以下是主要的 API 端点：</p>
+
+            <h3>API 响应格式</h3>
+            <p>API 使用包装器格式返回数据，包含服务器信息和注册表元数据：</p>
+            <ul>
+              <li><code>server</code>: 核心服务器信息（名称、描述、包、远程端点等）</li>
+              <li><code>x-io.modelcontextprotocol.registry</code>: 注册表特定的元数据（ID、发布时间、验证状态等）</li>
+            </ul>
+
+            <h3>分页</h3>
+            <p>API 使用基于游标的分页系统，提供更好的性能和一致性：</p>
+            <ul>
+              <li><code>limit</code>: 每页结果数量（默认 30，最大 100）</li>
+              <li><code>cursor</code>: 分页游标令牌（UUID 格式）</li>
+              <li><code>metadata.next_cursor</code>: 下一页的游标（如果有）</li>
+              <li><code>metadata.count</code>: 当前页面结果数量</li>
+            </ul>
 
             <h3>获取服务器列表</h3>
             <el-card class="api-card">
@@ -73,21 +93,47 @@
               <pre><code>{
   "servers": [
     {
-      "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1",
-      "name": "@modelcontextprotocol/servers/src/filesystem",
-      "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
-      "repository": {
-        "url": "https://github.com/modelcontextprotocol/servers",
-        "source": "github",
-        "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
+      "server": {
+        "name": "io.modelcontextprotocol/filesystem",
+        "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
+        "status": "active",
+        "repository": {
+          "url": "https://github.com/modelcontextprotocol/servers",
+          "source": "github",
+          "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
+        },
+        "version_detail": {
+          "version": "1.0.2"
+        },
+        "packages": [
+          {
+            "registry_name": "npm",
+            "name": "@modelcontextprotocol/server-filesystem",
+            "version": "1.0.2",
+            "package_arguments": [
+              {
+                "type": "positional",
+                "value_hint": "target_dir",
+                "description": "Path to access",
+                "default": "/Users/username/Desktop",
+                "is_required": true
+              }
+            ]
+          }
+        ]
       },
-      "version_detail": {
-        "version": "1.0.2",
-        "release_date": "2023-06-15T10:30:00Z",
+      "x-io.modelcontextprotocol.registry": {
+        "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1",
+        "published_at": "2023-06-15T10:30:00Z",
+        "updated_at": "2023-06-15T10:30:00Z",
         "is_latest": true
       }
     }
-  ]
+  ],
+  "metadata": {
+    "count": 1,
+    "next_cursor": null
+  }
 }</code></pre>
             </el-card>
 
@@ -106,17 +152,55 @@
 
               <h4>响应示例</h4>
               <pre><code>{
-  "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1",
-  "name": "@modelcontextprotocol/servers/src/filesystem",
-  "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
-  "repository": {
-    "url": "https://github.com/modelcontextprotocol/servers",
-    "source": "github",
-    "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
+  "server": {
+    "name": "io.modelcontextprotocol/filesystem",
+    "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
+    "status": "active",
+    "repository": {
+      "url": "https://github.com/modelcontextprotocol/servers",
+      "source": "github",
+      "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
+    },
+    "version_detail": {
+      "version": "1.0.2"
+    },
+    "packages": [
+      {
+        "registry_name": "npm",
+        "name": "@modelcontextprotocol/server-filesystem",
+        "version": "1.0.2",
+        "package_arguments": [
+          {
+            "type": "positional",
+            "value_hint": "target_dir",
+            "description": "Path to access",
+            "default": "/Users/username/Desktop",
+            "is_required": true
+          }
+        ]
+      },
+      {
+        "registry_name": "binary",
+        "name": "filesystem-binary",
+        "version": "1.0.2",
+        "binary_url": "https://github.com/example/mcp-filesystem/releases/download/v1.0.2/filesystem-linux-x64",
+        "runtime_hint": "binary",
+        "runtime_arguments": [
+          {
+            "type": "named",
+            "name": "--path",
+            "description": "Root path for filesystem access",
+            "is_required": true,
+            "value_hint": "directory_path"
+          }
+        ]
+      }
+    ]
   },
-  "version_detail": {
-    "version": "1.0.2",
-    "release_date": "2023-06-15T10:30:00Z",
+  "x-io.modelcontextprotocol.registry": {
+    "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1",
+    "published_at": "2023-06-15T10:30:00Z",
+    "updated_at": "2023-06-15T10:30:00Z",
     "is_latest": true
   }
 }</code></pre>
@@ -137,63 +221,58 @@
 
               <h4>请求体示例</h4>
               <pre><code>{
-  "name": "ai-mcpx.mcp-hello-updated",
-  "description": "An updated Hello World MCP server with enhanced features",
+  "name": "io.modelcontextprotocol/filesystem",
+  "description": "An updated Node.js server implementing Model Context Protocol (MCP) for filesystem operations with enhanced features.",
+  "status": "active",
   "repository": {
-    "url": "https://github.com/ai-mcpx/mcp-hello",
+    "url": "https://github.com/modelcontextprotocol/servers",
     "source": "github",
-    "id": "ai-mcpx/mcp-hello"
+    "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
   },
   "version_detail": {
-    "version": "1.1.0",
-    "release_date": "2025-08-10T12:00:00Z",
-    "is_latest": true
+    "version": "1.1.0"
   },
   "packages": [
     {
-      "registry_name": "pypi",
-      "name": "mcp-hello",
+      "registry_name": "npm",
+      "name": "@modelcontextprotocol/server-filesystem",
       "version": "1.1.0",
-      "runtime_hint": "python",
-      "runtime_arguments": [
-        {
-          "type": "named",
-          "name": "--module",
-          "description": "Run as Python module",
-          "format": "string",
-          "is_required": true,
-          "default": "-m",
-          "value_hint": "-m"
-        },
+      "package_arguments": [
         {
           "type": "positional",
-          "name": "module_name",
-          "description": "Module name to run",
-          "format": "string",
-          "is_required": true,
-          "default": "mcp_hello.server",
-          "value_hint": "mcp_hello.server"
+          "value_hint": "target_dir",
+          "description": "Path to access",
+          "default": "/Users/username/Desktop",
+          "is_required": true
         }
       ],
       "environment_variables": [
         {
-          "name": "MCP_HOST",
-          "description": "Server host address",
-          "format": "string",
-          "is_required": false,
-          "default": "0.0.0.0"
-        },
+          "name": "LOG_LEVEL",
+          "description": "Logging level (debug, info, warn, error)",
+          "default": "info"
+        }
+      ]
+    },
+    {
+      "registry_name": "binary",
+      "name": "filesystem-server",
+      "version": "1.1.0",
+      "binary_url": "https://github.com/example/mcp-filesystem/releases/download/v1.1.0/filesystem-linux-x64",
+      "runtime_hint": "binary",
+      "runtime_arguments": [
         {
-          "name": "MCP_PORT",
-          "description": "Server port number",
-          "format": "number",
-          "is_required": false,
-          "default": "8000"
+          "type": "named",
+          "name": "--path",
+          "description": "Root path for filesystem access",
+          "is_required": true,
+          "value_hint": "directory_path"
         }
       ]
     }
   ]
 }</code></pre>
+            </el-card>
 
               <h4>响应示例</h4>
               <pre><code>{
@@ -208,7 +287,6 @@
                 <li><strong>409 Conflict</strong> - 具有此版本的服务器已存在</li>
                 <li><strong>500 Internal Server Error</strong> - 服务器内部错误</li>
               </ul>
-            </el-card>
 
             <h3>删除服务器</h3>
             <el-card class="api-card">
@@ -255,114 +333,71 @@
 
               <h4>请求体示例</h4>
               <pre><code>{
-  "name": "ai-mcpx.mcp-hello",
-  "description": "A simple Hello World MCP (Model Context Protocol) server built with the FastMCP framework in Python using HTTP transport. Features multi-language greetings, server information, and resource serving.",
-  "repository": {
-    "url": "https://github.com/ai-mcpx/mcp-hello",
-    "source": "github",
-    "id": "ai-mcpx/mcp-hello"
-  },
-  "version_detail": {
-    "version": "1.0.0",
-    "release_date": "2025-07-20T12:00:00Z",
-    "is_latest": true
-  },
-  "packages": [
-    {
-      "registry_name": "pypi",
-      "name": "mcp-hello",
-      "version": "1.0.0",
-      "runtime_hint": "python",
-      "runtime_arguments": [
-        {
-          "type": "named",
-          "name": "--module",
-          "description": "Run as Python module",
-          "format": "string",
-          "is_required": true,
-          "default": "-m",
-          "value_hint": "-m"
-        },
-        {
-          "type": "positional",
-          "name": "module_name",
-          "description": "Module name to run",
-          "format": "string",
-          "is_required": true,
-          "default": "mcp_hello.server",
-          "value_hint": "mcp_hello.server"
-        }
-      ],
-      "environment_variables": [
-        {
-          "name": "MCP_HOST",
-          "description": "Server host address",
-          "is_required": true,
-          "format": "string",
-          "default": "0.0.0.0"
-        },
-        {
-          "name": "MCP_PORT",
-          "description": "Server port number",
-          "format": "number",
-          "default": "8000"
-        }
-      ]
+  "server": {
+    "name": "io.modelcontextprotocol/filesystem",
+    "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
+    "status": "active",
+    "repository": {
+      "url": "https://github.com/modelcontextprotocol/servers",
+      "source": "github"
     },
-    {
-      "registry_name": "docker",
-      "name": "mcp-hello",
-      "version": "1.0.0",
-      "runtime_hint": "docker",
-      "runtime_arguments": [
-        {
-          "description": "Remove container after exit",
-          "is_required": true,
-          "default": "--rm",
-          "type": "named",
-          "name": "--rm",
-          "value_hint": "--rm"
-        },
-        {
-          "description": "Port mapping for the container",
-          "is_required": true,
-          "default": "8000:8000",
-          "type": "named",
-          "name": "-p",
-          "value_hint": "port_mapping"
-        }
-      ],
-      "environment_variables": [
-        {
-          "name": "MCP_HOST",
-          "description": "Server host address",
-          "is_required": true,
-          "format": "string",
-          "default": "0.0.0.0"
-        },
-        {
-          "name": "MCP_PORT",
-          "description": "Server port number",
-          "is_required": true,
-          "format": "number",
-          "default": "8000"
-        }
-      ]
+    "version_detail": {
+      "version": "1.0.0"
+    },
+    "packages": [
+      {
+        "registry_name": "npm",
+        "name": "@modelcontextprotocol/server-filesystem",
+        "version": "1.0.0",
+        "package_arguments": [
+          {
+            "type": "positional",
+            "value_hint": "target_dir",
+            "description": "Path to access",
+            "default": "/Users/username/Desktop",
+            "is_required": true
+          }
+        ],
+        "environment_variables": [
+          {
+            "name": "LOG_LEVEL",
+            "description": "Logging level (debug, info, warn, error)",
+            "default": "info"
+          }
+        ]
+      },
+      {
+        "registry_name": "binary",
+        "name": "filesystem-server",
+        "version": "1.0.0",
+        "binary_url": "https://github.com/example/mcp-filesystem/releases/download/v1.0.0/filesystem-linux-x64",
+        "runtime_hint": "binary",
+        "runtime_arguments": [
+          {
+            "type": "named",
+            "name": "--path",
+            "description": "Root path for filesystem access",
+            "is_required": true,
+            "value_hint": "directory_path"
+          }
+        ],
+        "environment_variables": [
+          {
+            "name": "LOG_LEVEL",
+            "description": "Logging level",
+            "default": "info"
+          }
+        ]
+      }
+    ]
+  },
+  "x-publisher": {
+    "tool": "mcp-publisher",
+    "version": "1.0.0",
+    "build_info": {
+      "timestamp": "2025-08-25T12:00:00Z"
     }
-  ],
-  "remotes": [
-    {
-      "transport_type": "http",
-      "url": "http://localhost:8000",
-      "headers": [
-        {
-          "name": "Content-Type",
-          "description": "Content type for JSON requests",
-          "value": "application/json"
-        }
-      ]
-    }
-  ]
+  }
 }</code></pre>
             </el-card>
           </section>
@@ -391,17 +426,247 @@
 
             <h3>ServerDetail</h3>
             <p>包含服务器的详细信息，包括包和远程连接端点。</p>
+
+            <h3>支持的注册表类型</h3>
+            <p>MCP Registry 支持多种包注册表类型，每种类型都有特定的字段和配置：</p>
+
+            <h4>Python 包 (PyPI)</h4>
+            <ul>
+              <li><code>registry_name</code>: "pypi"</li>
+              <li><code>runtime_hint</code>: "uvx" （推荐）或 "python"</li>
+              <li>通过 pip 安装：<code>pip install package_name==version</code></li>
+              <li>通过 uvx 运行：<code>uvx package_name@version</code></li>
+            </ul>
+
+            <h4>Node.js 包 (NPM)</h4>
+            <ul>
+              <li><code>registry_name</code>: "npm"</li>
+              <li><code>runtime_hint</code>: "npx" （推荐）或 "node"</li>
+              <li>通过 npm 安装：<code>npm install package_name@version</code></li>
+              <li>通过 npx 运行：<code>npx package_name@version</code></li>
+            </ul>
+
+            <h4>Python Wheel 包</h4>
+            <ul>
+              <li><code>registry_name</code>: "wheel"</li>
+              <li><code>runtime_hint</code>: "python"</li>
+              <li><code>wheel_url</code>: 直接下载链接</li>
+              <li>下载并安装：<code>curl -O wheel_url && pip install *.whl</code></li>
+            </ul>
+
+            <h4>二进制包 (Binary)</h4>
+            <ul>
+              <li><code>registry_name</code>: "binary"</li>
+              <li><code>runtime_hint</code>: "binary"</li>
+              <li><code>binary_url</code>: 二进制文件直接下载链接</li>
+              <li>下载并执行：<code>curl -L -o binary_name binary_url && chmod +x binary_name && ./binary_name</code></li>
+              <li>支持跨平台二进制文件分发</li>
+            </ul>
+
+            <h4>Docker 容器</h4>
+            <ul>
+              <li><code>registry_name</code>: "docker"</li>
+              <li><code>runtime_hint</code>: "docker"</li>
+              <li>通过 docker 运行：<code>docker run image_name:version</code></li>
+            </ul>
+
+            <h4>.NET 包 (NuGet)</h4>
+            <ul>
+              <li><code>registry_name</code>: "nuget"</li>
+              <li><code>runtime_hint</code>: "dnx"</li>
+              <li>通过 dotnet 工具安装：<code>dotnet tool install --global package_name --version version</code></li>
+            </ul>
+
+            <h4>其他支持的类型</h4>
+            <ul>
+              <li><strong>Homebrew</strong>: macOS 包管理器（计划中）</li>
+            </ul>
           </section>
 
-          <section id="publishing" class="docs-section">
-            <h2>发布服务器</h2>
-            <p>要将 MCP 服务器发布到注册表，您需要准备一个符合规范的服务器 JSON 文件，并使用 API 提交。</p>
+          <section id="cli" class="docs-section">
+            <h2>CLI 工具 (mcpx-cli)</h2>
+            <p>mcpx-cli 是一个功能强大的命令行工具，用于与 mcpx 注册表 API 进行交互。它提供了管理 MCP 服务器的完整功能，包括查看、发布、更新和删除服务器。</p>
+
+            <h3>安装</h3>
+            <p>从源码构建 mcpx-cli：</p>
+            <pre><code># 克隆项目
+git clone &lt;https://github.com/ai-mcpx/mcpx-cli.git&gt;
+cd mcpx-cli
+
+# 构建二进制文件
+make build
+
+# 或直接使用 Go
+go build -o mcpx-cli .
+
+# 系统安装
+make install</code></pre>
+
+            <h3>基本用法</h3>
+            <pre><code>mcpx-cli [全局标志] &lt;命令&gt; [命令标志]</code></pre>
+
+            <h4>全局标志</h4>
+            <ul>
+              <li><code>--base-url=string</code>: mcpx API 的基础 URL（默认：http://localhost:8080）</li>
+              <li><code>--version</code>: 显示版本信息</li>
+              <li><code>--help</code>: 显示帮助信息</li>
+            </ul>
+
+            <h4>可用命令</h4>
+
+            <h5>1. 健康检查</h5>
+            <p>验证 API 连接状态和服务健康：</p>
+            <pre><code>mcpx-cli health</code></pre>
+            <p>输出示例：</p>
+            <pre><code>=== Health Check ===
+Status Code: 200
+Status: ok
+GitHub Client ID: your-github-client-id</code></pre>
+
+            <h5>2. 列出服务器</h5>
+            <p>浏览可用的 MCP 服务器：</p>
+            <pre><code># 基本列表
+mcpx-cli servers
+
+# 分页控制
+mcpx-cli servers --limit 10 --cursor &lt;pagination-cursor&gt;
+
+# JSON 输出
+mcpx-cli servers --json
+
+# 详细信息（包括包和远程配置）
+mcpx-cli servers --json --detailed</code></pre>
+
+            <h5>3. 获取服务器详情</h5>
+            <p>获取特定服务器的完整信息：</p>
+            <pre><code># 人类可读格式
+mcpx-cli server &lt;server-id&gt;
+
+# JSON 格式
+mcpx-cli server &lt;server-id&gt; --json</code></pre>
+
+            <h5>4. 发布服务器</h5>
+            <p>将新的 MCP 服务器发布到注册表：</p>
+            <pre><code># 从文件发布
+mcpx-cli publish server.json
+
+# GitHub 命名空间服务器（需要认证）
+mcpx-cli publish server.json --token &lt;github-token&gt;
+
+# 交互式模式
+mcpx-cli publish --interactive
+
+# 交互式模式 + GitHub 认证
+mcpx-cli publish --interactive --token &lt;github-token&gt;</code></pre>
+
+            <h5>5. 更新服务器</h5>
+            <p>更新现有服务器的信息：</p>
+            <pre><code># 基本更新
+mcpx-cli update &lt;server-id&gt; server.json
+
+# GitHub 服务器更新（需要认证）
+mcpx-cli update &lt;server-id&gt; server.json --token &lt;github-token&gt;
+
+# JSON 输出
+mcpx-cli update &lt;server-id&gt; server.json --json</code></pre>
+
+            <h5>6. 删除服务器</h5>
+            <p>从注册表中删除服务器：</p>
+            <pre><code># 基本删除
+mcpx-cli delete &lt;server-id&gt;
+
+# 带认证删除
+mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;
+
+# JSON 输出
+mcpx-cli delete &lt;server-id&gt; --json</code></pre>
+
+            <h3>服务器 JSON 文件格式</h3>
+            <p>服务器配置使用标准化的 JSON 格式。CLI 支持 PublishRequest 包装格式和直接的 ServerDetail 格式：</p>
+
+            <h4>PublishRequest 格式（推荐）</h4>
+            <p>这是 CLI 发布时使用的完整格式，包含发布者元数据：</p>
+            <pre><code>{
+  "server": {
+    "name": "io.github.example/test-server-node",
+    "description": "A test MCP server in Node.js",
+    "status": "active",
+    "repository": {
+      "url": "https://github.com/example/test-server-node",
+      "source": "github",
+      "id": "example/test-server-node"
+    },
+    "version_detail": {
+      "version": "1.0.0",
+      "release_date": "2025-08-25T12:00:00Z",
+      "is_latest": true
+    },
+    "packages": [
+      {
+        "registry_name": "npm",
+        "name": "@example/test-server-node",
+        "version": "1.0.0",
+        "runtime_hint": "npx",
+        "runtime_arguments": [
+          {
+            "type": "positional",
+            "name": "config_path",
+            "value_hint": "config_path",
+            "description": "Path to configuration file",
+            "default": "./config.json",
+            "is_required": true
+          }
+        ],
+        "environment_variables": [
+          {
+            "name": "MCP_HOST",
+            "description": "Server host address",
+            "format": "string",
+            "is_required": false,
+            "default": "0.0.0.0"
+          }
+        ]
+      }
+    ],
+    "remotes": [
+      {
+        "transport_type": "http",
+        "url": "http://localhost:8000",
+        "headers": [
+          {
+            "name": "Content-Type",
+            "description": "Content type for JSON requests",
+            "value": "application/json"
+          }
+        ]
+      }
+    ]
+  },
+  "x-publisher": {
+    "tool": "mcpx-cli",
+    "version": "1.0.0",
+    "build_info": {
+      "timestamp": "2025-08-25T12:00:00Z"
+    }
+  }
+}</code></pre>
+
+            <h4>字段说明</h4>
+            <ul>
+              <li><code>server</code>: 服务器的核心信息</li>
+              <li><code>x-publisher</code>: 可选的构建和发布元数据（CLI 自动添加）</li>
+              <li><code>name</code>: 服务器唯一标识符，GitHub 服务器使用 io.github.* 格式</li>
+              <li><code>packages</code>: 服务器的包分发信息，支持多个包类型</li>
+              <li><code>runtime_arguments</code>: 运行时参数配置</li>
+              <li><code>environment_variables</code>: 环境变量设置</li>
+              <li><code>remotes</code>: 远程连接配置（可选）</li>
+            </ul>
 
             <h3>发布步骤</h3>
             <ol>
               <li>准备服务器 JSON 文件</li>
               <li>验证 JSON 格式是否符合规范</li>
-              <li>使用 API 提交服务器信息</li>
+              <li>使用 CLI 工具或 API 提交服务器信息</li>
               <li>验证服务器是否已成功发布</li>
             </ol>
           </section>
@@ -411,22 +676,43 @@
 
             <el-collapse>
               <el-collapse-item title="什么是 MCP？" name="1">
-                <p>Model Context Protocol (MCP) 是一种标准化协议，用于在模型和上下文之间进行通信。它允许模型访问外部工具、数据和服务，从而增强其功能。</p>
+                <p>Model Context Protocol (MCP) 是一种标准化协议，用于在 AI 模型和上下文提供者之间进行通信。它允许模型访问外部工具、数据源和服务，从而增强其功能。MCP 支持本地和远程服务器，通过标准化的接口提供一致的集成体验。</p>
               </el-collapse-item>
 
-              <el-collapse-item title="如何贡献到 MCP Registry 项目？" name="2">
+              <el-collapse-item title="支持哪些包注册表？" name="2">
+                <p>MCP Registry 目前支持以下包注册表：</p>
+                <ul>
+                  <li><strong>npm</strong>: Node.js 包管理器</li>
+                  <li><strong>PyPI</strong>: Python 包索引</li>
+                  <li><strong>NuGet</strong>: .NET 包管理器</li>
+                  <li><strong>Docker</strong>: 容器注册表</li>
+                  <li><strong>Wheel</strong>: Python wheel 文件</li>
+                  <li><strong>Binary</strong>: 直接二进制文件分发</li>
+                </ul>
+              </el-collapse-item>
+
+              <el-collapse-item title="如何贡献到 MCP Registry 项目？" name="3">
                 <p>您可以通过以下方式贡献：</p>
                 <ul>
-                  <li>提交问题和功能请求</li>
+                  <li>在 GitHub Issues 提交问题和功能请求</li>
                   <li>提交代码改进的拉取请求</li>
-                  <li>改进文档</li>
+                  <li>改进文档和示例</li>
                   <li>分享和推广项目</li>
+                  <li>贡献新的 MCP 服务器实现</li>
                 </ul>
-                <p>详细信息请参阅 <a href="https://github.com/LouisCan/mcp-registry-frontend/README.md" target="_blank">贡献指南</a>。</p>
               </el-collapse-item>
 
-              <el-collapse-item title="如何报告问题？" name="3">
-                <p>如果您发现了问题或有改进建议，请在 <a href="https://github.com/LouisCan/mcp-registry-frontend/issues" target="_blank">GitHub Issues</a> 页面提交问题。</p>
+              <el-collapse-item title="如何报告问题？" name="4">
+                <p>如果您发现了问题或有改进建议，请通过以下渠道联系：</p>
+                <ul>
+                  <li>GitHub Issues 页面提交技术问题</li>
+                  <li>GitHub Discussions 参与产品讨论</li>
+                  <li>查看项目文档和 FAQ</li>
+                </ul>
+              </el-collapse-item>
+
+              <el-collapse-item title="注册表是否存储源代码？" name="5">
+                <p>不存储。MCP Registry 是一个<strong>元注册表</strong>，它只存储关于 MCP 服务器的元数据，而不托管实际的源代码或包。实际的代码托管在各自的包注册表中（如 npm、PyPI、Docker Hub 等）。</p>
               </el-collapse-item>
             </el-collapse>
           </section>
@@ -440,7 +726,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const activeSection = ref('overview')
-const sections = ['overview', 'api', 'server-json', 'publishing', 'faq']
+const sections = ['overview', 'api', 'server-json', 'cli', 'publishing', 'faq']
 
 const listServersParams = [
   {
@@ -449,9 +735,9 @@ const listServersParams = [
     description: '每页结果数量（最大 5000）'
   },
   {
-    name: 'offset',
-    type: '整数',
-    description: '用于分页的跳过结果数量'
+    name: 'cursor',
+    type: '字符串',
+    description: '用于分页的游标令牌（可选）'
   }
 ]
 
@@ -573,15 +859,32 @@ onUnmounted(() => {
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border-color);
+    font-size: 1.75rem;
+    font-weight: 600;
   }
 
   h3 {
     margin: 1.5rem 0 1rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  h4 {
+    margin: 1.2rem 0 0.8rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  h5 {
+    margin: 1rem 0 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
   }
 
   p, ul, ol {
     margin-bottom: 1rem;
     line-height: 1.6;
+    font-size: 1rem;
   }
 
   ul, ol {
