@@ -39,7 +39,11 @@ function transformServerResponse(serverResponse) {
     description: server.description,
     status: server.status,
     repository: server.repository,
-    version_detail: server.version_detail,
+    version_detail: {
+      ...server.version_detail,
+      release_date: registry.release_date || server.version_detail?.release_date,
+      is_latest: registry.is_latest !== undefined ? registry.is_latest : server.version_detail?.is_latest
+    },
     packages: server.packages || [],
     remotes: server.remotes || [],
     // Add registry metadata

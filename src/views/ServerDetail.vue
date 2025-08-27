@@ -268,7 +268,7 @@ const formatDate = (dateString) => {
   try {
     const date = new Date(dateString)
     if (isNaN(date.getTime())) return ''
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString('zh-CN', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
