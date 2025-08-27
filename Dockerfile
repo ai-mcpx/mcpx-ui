@@ -34,6 +34,9 @@ COPY package*.json ./
 # Install all dependencies
 RUN npm ci --include=dev
 
+# Copy environment variables
+COPY .env ./
+
 # Copy source code
 COPY . .
 

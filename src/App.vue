@@ -33,6 +33,11 @@
     <footer class="app-footer">
       <div class="footer-content">
         <p>支持标准化集成，共建智能应用生态，支持动态注册，智能集成的 MCP Registry</p>
+        <div class="version-info">
+          <span class="version-item">mcpx: v{{ mcpxVersion }}</span>
+          <span class="version-item">mcpx-ui: v{{ mcpxUiVersion }}</span>
+          <span class="version-item">mcpx-cli: v{{ mcpxCliVersion }}</span>
+        </div>
         <p>&copy; {{ new Date().getFullYear() }} MCP Registry. MIT License.</p>
       </div>
     </footer>
@@ -46,6 +51,11 @@ import { Search } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const searchQuery = ref('')
+
+// Version information from environment variables
+const mcpxVersion = ref(import.meta.env.VITE_MCPX_VERSION || '1.0.0')
+const mcpxUiVersion = ref(import.meta.env.VITE_MCPX_UI_VERSION || '1.0.0')
+const mcpxCliVersion = ref(import.meta.env.VITE_MCPX_CLI_VERSION || '1.0.0')
 
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
@@ -165,5 +175,33 @@ body {
   margin: 0 auto;
   padding: 0 1rem;
   text-align: center;
+}
+
+.version-info {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.version-item {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+  .version-info {
+    gap: 1rem;
+  }
+
+  .version-item {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+  }
 }
 </style>
