@@ -30,7 +30,7 @@
           <div class="server-meta">
             <el-tag size="small">{{ server.version_detail.version }}</el-tag>
             <span v-if="server.version_detail.is_latest" class="latest-tag">最新版本</span>
-            <span class="release-date">发布于 {{ formatDate(server.version_detail.release_date) }}</span>
+            <span v-if="server.version_detail.release_date && formatDate(server.version_detail.release_date)" class="release-date">发布于 {{ formatDate(server.version_detail.release_date) }}</span>
           </div>
 
           <div class="repository-link" v-if="server.repository">
@@ -267,13 +267,15 @@ const formatDate = (dateString) => {
 
   try {
     const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
     return date.toLocaleDateString('zh-CN', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     })
   } catch (e) {
-    return dateString
+    console.error('Date formatting error:', e, 'for date:', dateString)
+    return ''
   }
 }
 
