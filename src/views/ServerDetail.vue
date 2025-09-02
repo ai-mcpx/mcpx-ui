@@ -269,11 +269,6 @@ const handleEditSuccess = async () => {
   await fetchServerData()
 }
 
-const serverId = computed(() => route.params.id)
-const loading = computed(() => store.loading)
-const error = computed(() => store.error)
-const server = computed(() => store.currentServer)
-
 // Get versions from server data or packages
 const versions = computed(() => {
   if (!server.value) return []
