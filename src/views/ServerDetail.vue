@@ -85,9 +85,9 @@
           <div class="installation-info">
             <h3>安装包</h3>
             <div v-if="server.packages && server.packages.length > 0">
-              <el-card v-for="pkg in server.packages" :key="pkg.name" class="package-card">
+              <el-card v-for="(pkg, index) in server.packages" :key="`${pkg.identifier || pkg.registry_type}-${index}`" class="package-card">
                 <div class="package-header">
-                  <el-tag size="small">{{ pkg.registry_name }}</el-tag>
+                  <el-tag size="small">{{ pkg.registry_type || pkg.identifier }}</el-tag>
                 </div>
 
                 <div class="package-version">
@@ -369,17 +369,23 @@ const openRepository = (url) => {
 const getInstallCommand = (pkg) => {
   if (!pkg) return ''
 
+  const registryType = pkg.registry_type || ''
+  const packageName = pkg.identifier || pkg.name || ''
+  const version = pkg.version || ''
+
   const commands = {
-    'npm': `npm install ${pkg.name}@${pkg.version}`,
-    'pypi': `pip install ${pkg.name}==${pkg.version}`,
-    'wheel': pkg.wheel_url ? `curl -O ${pkg.wheel_url} && pip install ${pkg.name}-*.whl` : `pip install ${pkg.name}==${pkg.version}`,
-    'binary': pkg.binary_url ? `curl -O ${pkg.binary_url} && chmod +x ${pkg.name}` : `# Download binary for ${pkg.name} version ${pkg.version}`,
-    'docker': `docker pull ${pkg.name}:${pkg.version}`,
-    'homebrew': `brew install ${pkg.name}@${pkg.version}`,
-    'nuget': `dotnet add package ${pkg.name} --version ${pkg.version}`
+    'npm': `npm install ${packageName}@${version}`,
+    'pypi': `pip install ${packageName}==${version}`,
+    'wheel': pkg.wheel_url ? `curl -O ${pkg.wheel_url} && pip install ${packageName}-*.whl` : `pip install ${packageName}==${version}`,
+    'binary': pkg.binary_url ? `curl -O ${pkg.binary_url} && chmod +x ${packageName}` : `# Download binary for ${packageName} version ${version}`,
+    'docker': `docker pull ${packageName}:${version}`,
+    'homebrew': `brew install ${packageName}@${version}`,
+    'nuget': `dotnet add package ${packageName} --version ${version}`,
+    'oci': `docker pull ${packageName}:${version}`,
+    'mcpb': `# Download from ${pkg.registry_base_url || 'registry'}: ${packageName} version ${version}`
   }
 
-  return commands[pkg.registry_name] || ''
+  return commands[registryType] || `# Install ${packageName} version ${version}`
 }
 
 const copyToClipboard = (text) => {
