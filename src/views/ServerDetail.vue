@@ -376,13 +376,12 @@ const getInstallCommand = (pkg) => {
   const commands = {
     'npm': `npm install ${packageName}@${version}`,
     'pypi': `pip install ${packageName}==${version}`,
-    'wheel': pkg.wheel_url ? `curl -O ${pkg.wheel_url} && pip install ${packageName}-*.whl` : `pip install ${packageName}==${version}`,
-    'binary': pkg.binary_url ? `curl -O ${pkg.binary_url} && chmod +x ${packageName}` : `# Download binary for ${packageName} version ${version}`,
-    'docker': `docker pull ${packageName}:${version}`,
+    'wheel': `curl -LO ${pkg.identifier}`,
+    'binary': `curl -LO ${pkg.identifier}`,
     'homebrew': `brew install ${packageName}@${version}`,
     'nuget': `dotnet add package ${packageName} --version ${version}`,
     'oci': `docker pull ${packageName}:${version}`,
-    'mcpb': `# Download from ${pkg.registry_base_url || 'registry'}: ${packageName} version ${version}`
+    'mcpb': `Download from ${pkg.registry_base_url || 'registry'}: ${packageName} version ${version}`
   }
 
   return commands[registryType] || `# Install ${packageName} version ${version}`
