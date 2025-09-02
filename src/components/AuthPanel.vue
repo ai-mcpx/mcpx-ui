@@ -1,0 +1,329 @@
+<template>
+  <div class="auth-panel">
+    <el-dialog
+      v-model="dialogVisible"
+      title="身份认证"
+      width="500px"
+      :before-close="handleClose"
+    >
+      <div class="auth-content">
+        <el-alert
+          v-if="error"
+          :title="error"
+          type="error"
+          :closable="false"
+          class="auth-error"
+        />
+
+        <el-tabs v-model="authMethod" class="auth-tabs">
+          <!-- GitHub OAuth 认证 -->
+          <el-tab-pane label="GitHub OAuth" name="github">
+            <div class="auth-form">
+              <p class="auth-description">
+                使用 GitHub 个人访问令牌进行认证。需要 repo 权限来管理 io.github.* 命名空间的服务器。
+              </p>
+              <el-input
+                v-model="githubToken"
+                placeholder="请输入 GitHub 个人访问令牌"
+                type="password"
+                show-password
+                clearable
+              />
+              <el-button
+                type="primary"
+                @click="authenticateGitHub"
+                :loading="loading"
+                :disabled="!githubToken.trim()"
+                class="auth-button"
+              >
+                使用 GitHub 令牌认证
+              </el-button>
+            </div>
+          </el-tab-pane>
+
+          <!-- 匿名认证 -->
+          <el-tab-pane label="匿名认证" name="anonymous">
+            <div class="auth-form">
+              <p class="auth-description">
+                获取匿名令牌，只能发布到 io.modelcontextprotocol.anonymous/* 命名空间。
+              </p>
+              <el-button
+                type="primary"
+                @click="authenticateAnonymous"
+                :loading="loading"
+                class="auth-button"
+              >
+                获取匿名令牌
+              </el-button>
+            </div>
+          </el-tab-pane>
+
+          <!-- DNS 认证 -->
+          <el-tab-pane label="DNS 认证" name="dns">
+            <div class="auth-form">
+              <p class="auth-description">
+                使用 DNS TXT 记录的公钥签名进行认证。
+              </p>
+              <el-input
+                v-model="domain"
+                placeholder="域名 (例如: example.com)"
+                clearable
+              />
+              <el-input
+                v-model="timestamp"
+                placeholder="时间戳"
+                clearable
+              />
+              <el-input
+                v-model="signedTimestamp"
+                placeholder="签名的时间戳"
+                type="textarea"
+                :rows="3"
+                clearable
+              />
+              <el-button
+                type="primary"
+                @click="authenticateDNS"
+                :loading="loading"
+                :disabled="!domain.trim() || !timestamp.trim() || !signedTimestamp.trim()"
+                class="auth-button"
+              >
+                DNS 认证
+              </el-button>
+            </div>
+          </el-tab-pane>
+
+          <!-- HTTP 认证 -->
+          <el-tab-pane label="HTTP 认证" name="http">
+            <div class="auth-form">
+              <p class="auth-description">
+                使用 HTTP 托管的公钥签名进行认证。
+              </p>
+              <el-input
+                v-model="domain"
+                placeholder="域名 (例如: example.com)"
+                clearable
+              />
+              <el-input
+                v-model="timestamp"
+                placeholder="时间戳"
+                clearable
+              />
+              <el-input
+                v-model="signedTimestamp"
+                placeholder="签名的时间戳"
+                type="textarea"
+                :rows="3"
+                clearable
+              />
+              <el-button
+                type="primary"
+                @click="authenticateHTTP"
+                :loading="loading"
+                :disabled="!domain.trim() || !timestamp.trim() || !signedTimestamp.trim()"
+                class="auth-button"
+              >
+                HTTP 认证
+              </el-button>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="handleClose">取消</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 认证状态显示 -->
+    <div v-if="isAuthenticated" class="auth-status">
+      <el-tag type="success" size="small">
+        <el-icon><check /></el-icon>
+        已认证 ({{ authMethod }})
+      </el-tag>
+      <el-button
+        type="text"
+        size="small"
+        @click="logout"
+        class="logout-button"
+      >
+        退出登录
+      </el-button>
+    </div>
+
+    <!-- 认证按钮 -->
+    <el-button
+      v-else
+      type="primary"
+      size="small"
+      @click="showAuthDialog"
+    >
+      <el-icon><user /></el-icon>
+      登录认证
+    </el-button>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Check, User } from '@element-plus/icons-vue'
+import { useAuthStore } from '../stores/auth'
+
+const authStore = useAuthStore()
+
+// 响应式状态
+const dialogVisible = ref(false)
+const authMethod = ref('github')
+const githubToken = ref('')
+const domain = ref('')
+const timestamp = ref('')
+const signedTimestamp = ref('')
+
+// 计算属性
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const loading = computed(() => authStore.loading)
+const error = computed(() => authStore.error)
+
+// 显示认证对话框
+const showAuthDialog = () => {
+  dialogVisible.value = true
+  // 清除之前的错误
+  authStore.error = null
+}
+
+// 关闭对话框
+const handleClose = () => {
+  dialogVisible.value = false
+  // 清除表单数据
+  githubToken.value = ''
+  domain.value = ''
+  timestamp.value = ''
+  signedTimestamp.value = ''
+  authStore.error = null
+}
+
+// GitHub 认证
+const authenticateGitHub = async () => {
+  try {
+    const result = await authStore.authenticateWithGitHub(githubToken.value)
+    if (result.success) {
+      ElMessage.success('GitHub 认证成功')
+      handleClose()
+    } else {
+      ElMessage.error(result.error)
+    }
+  } catch (error) {
+    ElMessage.error('GitHub 认证失败')
+  }
+}
+
+// 匿名认证
+const authenticateAnonymous = async () => {
+  try {
+    const result = await authStore.getAnonymousAuth()
+    if (result.success) {
+      ElMessage.success('匿名认证成功')
+      handleClose()
+    } else {
+      ElMessage.error(result.error)
+    }
+  } catch (error) {
+    ElMessage.error('匿名认证失败')
+  }
+}
+
+// DNS 认证
+const authenticateDNS = async () => {
+  try {
+    const result = await authStore.authenticateWithDNS(domain.value, timestamp.value, signedTimestamp.value)
+    if (result.success) {
+      ElMessage.success('DNS 认证成功')
+      handleClose()
+    } else {
+      ElMessage.error(result.error)
+    }
+  } catch (error) {
+    ElMessage.error('DNS 认证失败')
+  }
+}
+
+// HTTP 认证
+const authenticateHTTP = async () => {
+  try {
+    const result = await authStore.authenticateWithHTTP(domain.value, timestamp.value, signedTimestamp.value)
+    if (result.success) {
+      ElMessage.success('HTTP 认证成功')
+      handleClose()
+    } else {
+      ElMessage.error(result.error)
+    }
+  } catch (error) {
+    ElMessage.error('HTTP 认证失败')
+  }
+}
+
+// 退出登录
+const logout = () => {
+  authStore.clearAuth()
+  ElMessage.success('已退出登录')
+}
+
+// 初始化认证状态
+authStore.initAuth()
+</script>
+
+<style scoped>
+.auth-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-content {
+  padding: 16px 0;
+}
+
+.auth-error {
+  margin-bottom: 16px;
+}
+
+.auth-tabs {
+  margin-top: 16px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-description {
+  margin: 0 0 16px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.auth-button {
+  width: 100%;
+}
+
+.auth-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logout-button {
+  padding: 0;
+  height: auto;
+  color: #666;
+}
+
+.logout-button:hover {
+  color: #409eff;
+}
+</style>

@@ -47,6 +47,29 @@
       </div>
 
       <div class="server-actions">
+        <div class="action-buttons" v-if="authStore.isAuthenticated">
+          <el-button
+            type="primary"
+            size="small"
+            @click="showEditDialog"
+            :disabled="server.status === 'deleted'"
+          >
+            <el-icon><edit /></el-icon>
+            编辑
+          </el-button>
+          <el-button
+            type="danger"
+            size="small"
+            @click="showDeleteConfirm"
+            :disabled="server.status === 'deleted'"
+          >
+            <el-icon><delete /></el-icon>
+            删除
+          </el-button>
+        </div>
+        <div v-if="server.status === 'deleted'" class="deleted-notice">
+          <el-tag type="danger" size="small">已删除</el-tag>
+        </div>
       </div>
     </div>
 
@@ -171,17 +194,80 @@
       </template>
     </el-result>
   </div>
+
+  <!-- 服务器编辑器 -->
+  <ServerEditor
+    v-model:visible="showEditor"
+    :server="server"
+    :is-edit="true"
+    @success="handleEditSuccess"
+  />
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useServersStore } from '../stores/servers'
-import { Link, ArrowDown, DocumentCopy } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { useAuthStore } from '../stores/auth'
+import { Link, ArrowDown, DocumentCopy, Edit, Delete } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import ServerEditor from '../components/ServerEditor.vue'
 
 const route = useRoute()
 const store = useServersStore()
+const authStore = useAuthStore()
+
+const serverId = computed(() => route.params.id)
+const loading = computed(() => store.loading)
+const error = computed(() => store.error)
+const server = computed(() => store.currentServer)
+
+// 编辑相关状态
+const showEditor = ref(false)
+
+// 显示编辑对话框
+const showEditDialog = () => {
+  if (!authStore.isAuthenticated) {
+    ElMessage.warning('请先进行身份认证')
+    return
+  }
+  showEditor.value = true
+}
+
+// 显示删除确认
+const showDeleteConfirm = () => {
+  if (!authStore.isAuthenticated) {
+    ElMessage.warning('请先进行身份认证')
+    return
+  }
+
+  ElMessageBox.confirm(
+    '此操作将永久删除该服务器，是否继续？',
+    '警告',
+    {
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).then(async () => {
+    try {
+      await store.deleteServer(serverId.value)
+      ElMessage.success('服务器已删除')
+      // 重新获取服务器数据以显示更新后的状态
+      await fetchServerData()
+    } catch (error) {
+      ElMessage.error(error.message || '删除失败')
+    }
+  }).catch(() => {
+    ElMessage.info('已取消删除')
+  })
+}
+
+// 编辑成功后的处理
+const handleEditSuccess = async () => {
+  ElMessage.success('服务器更新成功')
+  await fetchServerData()
+}
 
 const serverId = computed(() => route.params.id)
 const loading = computed(() => store.loading)
@@ -421,5 +507,22 @@ watch(() => route.params.id, (newId) => {
     margin-bottom: 0.5rem;
     font-size: 1rem;
   }
+}
+
+.server-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.deleted-notice {
+  font-size: 14px;
+  color: #f56c6c;
 }
 </style>

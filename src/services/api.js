@@ -75,5 +75,71 @@ export default {
       params.cursor = cursor
     }
     return apiClient.get('/servers', { params })
+  },
+
+  // 更新服务器 (需要认证)
+  updateServer(id, serverData, token) {
+    return apiClient.put(`/servers/${id}`, serverData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+  },
+
+  // 发布新服务器 (需要认证)
+  publishServer(serverData, token) {
+    return apiClient.post('/publish', serverData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+  },
+
+  // 软删除服务器 (通过将状态设置为 "deleted")
+  deleteServer(id, token) {
+    // 首先获取当前服务器数据
+    return this.getServerDetail(id).then(response => {
+      const serverData = response.data
+      // 设置状态为已删除
+      serverData.status = 'deleted'
+      return this.updateServer(id, serverData, token)
+    })
+  },
+
+  // GitHub OAuth 认证 - 交换访问令牌为注册表 JWT
+  exchangeGitHubToken(githubToken) {
+    return apiClient.post('/auth/github-at', {
+      github_token: githubToken
+    })
+  },
+
+  // GitHub OIDC 认证 - 交换 OIDC 令牌为注册表 JWT
+  exchangeGitHubOIDCToken(oidcToken) {
+    return apiClient.post('/auth/github-oidc', {
+      oidc_token: oidcToken
+    })
+  },
+
+  // 获取匿名令牌
+  getAnonymousToken() {
+    return apiClient.post('/auth/none')
+  },
+
+  // DNS 认证
+  exchangeDNSToken(domain, timestamp, signedTimestamp) {
+    return apiClient.post('/auth/dns', {
+      domain,
+      timestamp,
+      signed_timestamp: signedTimestamp
+    })
+  },
+
+  // HTTP 认证
+  exchangeHTTPToken(domain, timestamp, signedTimestamp) {
+    return apiClient.post('/auth/http', {
+      domain,
+      timestamp,
+      signed_timestamp: signedTimestamp
+    })
   }
 }

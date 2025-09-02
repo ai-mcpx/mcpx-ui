@@ -10,7 +10,18 @@
     <section class="servers-section">
       <div class="section-header">
         <h2>热门 MCP Servers</h2>
-        <span>{{ totalCount || 0 }} 个服务器</span>
+        <div class="section-actions">
+          <span>{{ totalCount || 0 }} 个服务器</span>
+          <el-button
+            v-if="authStore.isAuthenticated"
+            type="primary"
+            size="small"
+            @click="showPublishDialog"
+          >
+            <el-icon><plus /></el-icon>
+            发布服务器
+          </el-button>
+        </div>
       </div>
 
       <el-row :gutter="20" v-loading="loading">
@@ -45,14 +56,26 @@
       </div>
     </section>
   </div>
+
+  <!-- 服务器发布器 -->
+  <ServerEditor
+    v-model:visible="showPublisher"
+    :is-edit="false"
+    @success="handlePublishSuccess"
+  />
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useServersStore } from '../stores/servers'
+import { useAuthStore } from '../stores/auth'
+import { Plus } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import ServerCard from '../components/ServerCard.vue'
+import ServerEditor from '../components/ServerEditor.vue'
 
 const store = useServersStore()
+const authStore = useAuthStore()
 const loading = computed(() => store.loading)
 const servers = computed(() => store.servers)
 const totalCount = computed(() => store.totalCount || store.servers.length)
@@ -60,6 +83,22 @@ const nextPage = computed(() => store.nextPage)
 
 const currentPage = ref(1)
 const pageSize = ref(20)
+const showPublisher = ref(false)
+
+// 显示发布对话框
+const showPublishDialog = () => {
+  if (!authStore.isAuthenticated) {
+    ElMessage.warning('请先进行身份认证')
+    return
+  }
+  showPublisher.value = true
+}
+
+// 发布成功后的处理
+const handlePublishSuccess = async () => {
+  ElMessage.success('服务器发布成功')
+  await fetchServers() // 重新获取服务器列表
+}
 
 const fetchServers = async (cursor = null) => {
   try {
@@ -125,9 +164,15 @@ onMounted(async () => {
       font-weight: 600;
     }
 
-    span {
-      color: #666;
-      font-size: 1rem;
+    .section-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      span {
+        color: #666;
+        font-size: 1rem;
+      }
     }
   }
 }

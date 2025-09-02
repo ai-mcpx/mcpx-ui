@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import api from '../services/api'
+import { useAuthStore } from './auth'
 
 export const useServersStore = defineStore('servers', {
   state: () => ({
@@ -70,6 +71,103 @@ export const useServersStore = defineStore('servers', {
       } catch (error) {
         this.error = error.message || '搜索服务器失败'
         console.error('Error searching servers:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // 更新服务器
+    async updateServer(id, serverData) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const authStore = useAuthStore()
+        if (!authStore.token) {
+          throw new Error('需要认证令牌才能更新服务器')
+        }
+
+        const response = await api.updateServer(id, serverData, authStore.token)
+        const updatedServer = response.data
+
+        // 更新本地状态
+        if (this.currentServer && this.currentServer.id === id) {
+          this.currentServer = updatedServer
+        }
+
+        // 更新服务器列表中的项目
+        const index = this.servers.findIndex(server => server.id === id)
+        if (index !== -1) {
+          this.servers[index] = updatedServer
+        }
+
+        return updatedServer
+      } catch (error) {
+        this.error = error.response?.data?.message || error.message || '更新服务器失败'
+        console.error(`Error updating server ${id}:`, error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // 发布新服务器
+    async publishServer(serverData) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const authStore = useAuthStore()
+        if (!authStore.token) {
+          throw new Error('需要认证令牌才能发布服务器')
+        }
+
+        const response = await api.publishServer(serverData, authStore.token)
+        const newServer = response.data
+
+        // 添加到本地列表
+        this.servers.unshift(newServer)
+
+        return newServer
+      } catch (error) {
+        this.error = error.response?.data?.message || error.message || '发布服务器失败'
+        console.error('Error publishing server:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // 软删除服务器 (设置状态为 deleted)
+    async deleteServer(id) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const authStore = useAuthStore()
+        if (!authStore.token) {
+          throw new Error('需要认证令牌才能删除服务器')
+        }
+
+        const response = await api.deleteServer(id, authStore.token)
+        const deletedServer = response.data
+
+        // 更新本地状态
+        if (this.currentServer && this.currentServer.id === id) {
+          this.currentServer = deletedServer
+        }
+
+        // 从服务器列表中移除或更新状态
+        const index = this.servers.findIndex(server => server.id === id)
+        if (index !== -1) {
+          this.servers[index] = deletedServer
+        }
+
+        return deletedServer
+      } catch (error) {
+        this.error = error.response?.data?.message || error.message || '删除服务器失败'
+        console.error(`Error deleting server ${id}:`, error)
         throw error
       } finally {
         this.loading = false

@@ -22,6 +22,7 @@
           <router-link to="/">首页</router-link>
           <router-link to="/docs">文档</router-link>
           <a href="https://github.com/LouisCan/mcp-registry-frontend" target="_blank">GitHub</a>
+          <AuthPanel />
         </nav>
       </div>
     </header>
@@ -48,6 +49,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
+import AuthPanel from './components/AuthPanel.vue'
 
 const router = useRouter()
 const searchQuery = ref('')
