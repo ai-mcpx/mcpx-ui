@@ -1,6 +1,4 @@
-### English
-
-# � mcpx-ui
+# mcpx-ui
 
 Modern Vue 3 frontend for the **mcpx registry** with comprehensive authentication, CRUD operations, and enhanced user experience. This application provides an intuitive interface for managing Model Context Protocol (MCP) servers with full integration to the [mcpx backend](https://github.com/ai-mcpx/mcpx).
 
@@ -37,58 +35,6 @@ Modern Vue 3 frontend for the **mcpx registry** with comprehensive authenticatio
 - **CORS Handling** for seamless API integration across domains
 - **Comprehensive API Documentation** with interactive examples
 - **State Management** with Pinia for predictable data flow
-
------
-
-## Project Structure
-
-```
-frontend/
-├── public/               # Static assets
-├── src/
-│   ├── assets/           # Styles, images, and other assets
-│   ├── components/       # Reusable Vue components
-│   ├── router/           # Vue Router configuration
-│   ├── services/         # API service definitions
-│   ├── stores/           # Pinia state management modules
-│   ├── views/            # Page-level components
-│   ├── App.vue           # Root Vue component
-│   └── main.js           # Application entry point
-├── index.html            # Main HTML entry file
-├── package.json          # Project dependencies and scripts
------
-
-## 🏗 Project Structure
-
-```
-mcpx-ui/
-├── public/               # Static assets
-├── src/
-│   ├── assets/           # Styles, images, and other assets
-│   ├── components/       # Reusable Vue components
-│   │   ├── AuthPanel.vue     # Authentication interface
-│   │   ├── ServerCard.vue    # Server list item display
-│   │   └── ServerEditor.vue  # Server create/edit form
-│   ├── router/           # Vue Router configuration
-│   ├── services/         # API service definitions
-│   │   └── api.js            # Enhanced API client with CRUD operations
-│   ├── stores/           # Pinia state management modules
-│   │   ├── auth.js           # Authentication state management
-│   │   └── servers.js        # Server data management
-│   ├── views/            # Page-level components
-│   │   ├── Home.vue          # Server listing with publish option
-│   │   ├── ServerDetail.vue  # Server details with edit/delete
-│   │   ├── Search.vue        # Server search interface
-│   │   └── Docs.vue          # API documentation
-│   ├── App.vue           # Root Vue component with auth integration
-│   └── main.js           # Application entry point
-├── docker-compose-mcpx.yml  # Full stack deployment
-├── nginx.conf                # Production nginx configuration
-├── .env.example             # Environment configuration template
-└── vite.config.js           # Vite build tool configuration
-```
-
------
 
 ## 🚀 Getting Started
 
@@ -158,8 +104,6 @@ npm run build
 npm run preview
 ```
 
------
-
 ## 🔧 Configuration
 
 ### Environment Variables
@@ -210,8 +154,6 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - DNS verification for custom namespaces
 - HTTP-based domain ownership verification
 
------
-
 ## 🛠 Technology Stack
 
 **Frontend Framework:**
@@ -238,9 +180,7 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Nginx** - High-performance web server and reverse proxy
 - **Hot Module Replacement** - Fast development with instant updates
 
------
-
-## � User Interface Features
+## User Interface Features
 
 ### Authentication Panel
 - **Multi-method Login**: GitHub OAuth, GitHub OIDC, Anonymous authentication
@@ -258,8 +198,6 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Real-time Validation**: Form validation with immediate user feedback
 - **Error Handling**: Comprehensive error messages and recovery suggestions
 - **Loading States**: Elegant loading indicators for better user experience
-
------
 
 ## 🔐 Authentication & Security
 
@@ -284,8 +222,6 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Anonymous Namespace**: `io.modelcontextprotocol.anonymous/*` - no auth required
 - **Custom Domains**: `your-domain.com/*` - requires domain verification
 
------
-
 ## 🐳 Docker Deployment
 
 ### Development Container
@@ -305,39 +241,6 @@ docker build -t mcpx-ui:latest .
 docker run -p 80:80 mcpx-ui:latest
 ```
 
-### Container Configuration
-- **Multi-stage Build**: Optimized for production with minimal image size
-- **Nginx Configuration**: Production-ready reverse proxy setup
-- **Health Checks**: Built-in container health monitoring
-- **Volume Mounts**: Persistent configuration and data storage
-
------
-
-## 🔗 API Integration
-
-### Backend Compatibility
-- **mcpx Backend**: Full compatibility with enhanced mcpx registry
-- **REST API**: Complete CRUD operations for server management
-- **Authentication API**: All authentication methods supported
-- **Real-time Updates**: Efficient API polling for live data updates
-
-### Supported Endpoints
-```javascript
-// Server Operations
-GET    /v0/servers        // List servers with pagination
-GET    /v0/servers/:id    // Get server details
-POST   /v0/publish        // Publish new server
-PUT    /v0/servers/:id    // Update existing server
-DELETE /v0/servers/:id    // Delete server
-
-// Authentication
-POST   /api/auth/anonymous     // Anonymous authentication
-POST   /api/auth/github/oauth  // GitHub OAuth
-POST   /api/auth/github/oidc   // GitHub OIDC
-```
-
------
-
 ## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
@@ -355,13 +258,9 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 - **ESLint/Prettier**: Consistent code formatting
 - **Component Testing**: Unit tests for critical components
 
------
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
------
 
 ## 🔗 Related Projects
 
@@ -370,39 +269,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **[Model Context Protocol](https://modelcontextprotocol.io)** - Official MCP specification
 - **DNS Authentication**: Verify domain ownership via TXT records
 - **HTTP Authentication**: Verify domain control via hosted public keys
-
------
-
-## 📡 API Integration
-
-The frontend integrates with the mcpx backend API:
-
-### Core Endpoints
-- `GET /v0/servers` - List servers with pagination
-- `GET /v0/servers/{id}` - Get server details
-- `PUT /v0/servers/{id}` - Update server (authenticated)
-- `POST /v0/publish` - Publish new server (authenticated)
-
-### Authentication Endpoints
-- `POST /v0/auth/github-at` - GitHub OAuth token exchange
-- `POST /v0/auth/github-oidc` - GitHub OIDC token exchange
-- `POST /v0/auth/none` - Anonymous token generation
-- `POST /v0/auth/dns` - DNS-based authentication
-- `POST /v0/auth/http` - HTTP-based authentication
-  * **Vue Router**: The official routing library for Vue.js.
-  * **Pinia**: A lightweight and intuitive state management library for Vue.js.
-  * **Element Plus**: A popular Vue 3 UI component library for building rich web applications.
-  * **Axios**: A promise-based HTTP client for making API requests.
-  * **Vite**: A next-generation frontend tooling that provides an extremely fast development experience.
-
------
-
-## API Integration
-
-The frontend communicates with the backend API via a `/api` proxy. In the development environment, API requests are automatically proxied to `http://localhost:8080/v0`.
-
------
-
-## Styling and Theming
-
-The project uses **SCSS** for styling. You can customize the application's theme colors and variables in the `src/assets/styles/main.scss` file.
