@@ -1,53 +1,42 @@
-### English | [中文](README_ZH.md)
+### English
 
+# � mcpx-ui
 
-# 👋 mcp-registry-frontend
-MCP Registry Frontend: A Vue 3 Application  This repository contains the frontend application for the MCP Registry project, built with Vue 3.
+Modern Vue 3 frontend for the **mcpx registry** with comprehensive authentication, CRUD operations, and enhanced user experience. This application provides an intuitive interface for managing Model Context Protocol (MCP) servers with full integration to the [mcpx backend](https://github.com/ai-mcpx/mcpx).
 
-Here's a refined `README.md` for your MCP Registry Frontend project:
-
-<img width="1246" alt="17771741589061_ pic" src="images/01.png" />
-
-# 🚀 MCP Registry Frontend
-
-This repository houses the **frontend application** for the **MCP Registry project**, built with **Vue 3**. It serves as the user interface for the enhanced [mcpx registry](https://github.com/ai-mcpx/mcpx) backend with full CRUD operations and authentication support.
-
------
-
-## Project Overview
-
-The MCP Registry Frontend provides an intuitive and responsive interface for browsing, searching, publishing, editing, and managing Model Context Protocol (MCP) servers within the registry ecosystem.
-
------
+<img width="1246" alt="mcpx-ui interface" src="images/01.png" />
 
 ## ✨ Key Features
 
-### 🔐 **Authentication System**
+### 🔐 **Enhanced Authentication System**
 - **GitHub OAuth** integration for repository-based permissions
 - **GitHub OIDC** support for GitHub Actions workflows
-- **Anonymous authentication** for public namespaces
+- **Anonymous authentication** for public namespace access
 - **DNS/HTTP authentication** for custom domain verification
-- **JWT token management** with persistent sessions
+- **JWT token management** with persistent sessions and auto-refresh
+- **Permission-based UI** - features dynamically appear based on authentication status
 
-### 📦 **Server Management**
-- **Browse servers** with pagination and search
-- **Publish new servers** with guided form interface
-- **Edit existing servers** with full schema validation
-- **Soft delete** functionality (sets status to "deleted")
-- **Package type support**: npm, pypi, wheel, binary, OCI, NuGet
+### 📦 **Comprehensive Server Management**
+- **Browse & Search** servers with advanced filtering and pagination
+- **Publish New Servers** with guided form interface and validation
+- **Edit Existing Servers** with full schema validation and real-time preview
+- **Delete Servers** with confirmation dialogs and soft delete support
+- **Package Type Support**: npm, PyPI, wheel, binary, OCI, NuGet packages
+- **Version Management** with latest version tracking and history
 
-### 🎨 **User Experience**
-- **Responsive design** for all device sizes
-- **Real-time validation** with comprehensive error handling
-- **Permission-based UI** - features appear based on auth status
-- **Modern Vue 3** with Composition API and Element Plus
-- **Comprehensive documentation** with API examples
+### 🎨 **Modern User Experience**
+- **Responsive Design** optimized for desktop, tablet, and mobile
+- **Real-time Validation** with comprehensive error handling and user feedback
+- **Modern Vue 3** architecture with Composition API and TypeScript support
+- **Element Plus UI** components for consistent, accessible interface
+- **Hot Module Replacement** for lightning-fast development experience
 
-### 🛠 **Developer Features**
-- **Hot module replacement** for fast development
-- **Docker support** with nginx reverse proxy
-- **Environment configuration** with development/production modes
-- **CORS handling** for seamless API integration
+### 🛠 **Developer & Production Features**
+- **Docker Support** with nginx reverse proxy for production deployment
+- **Environment Configuration** with development/production mode switching
+- **CORS Handling** for seamless API integration across domains
+- **Comprehensive API Documentation** with interactive examples
+- **State Management** with Pinia for predictable data flow
 
 -----
 
@@ -108,6 +97,14 @@ mcpx-ui/
 - Node.js 18+ and npm
 - Docker and Docker Compose (for containerized deployment)
 
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js 18+** and npm/yarn
+- **Docker & Docker Compose** (for full stack deployment)
+- **mcpx backend** running (see [mcpx repository](https://github.com/ai-mcpx/mcpx))
+
 ### Local Development
 
 1. **Clone and install dependencies:**
@@ -120,41 +117,45 @@ npm install
 2. **Configure environment:**
 ```bash
 cp .env.example .env
-# Edit .env with your configuration
+# Edit .env with your configuration:
+# VITE_API_BASE_URL=http://localhost:8080
+# VITE_GITHUB_CLIENT_ID=your_github_client_id
 ```
 
 3. **Start development server:**
 ```bash
 npm run dev
 ```
-The application will be available at `http://localhost:5173`.
+The application will be available at `http://localhost:5173` with hot module replacement.
 
 ### Full Stack Deployment
 
-For a complete setup with backend, database, and UI:
+For a complete production setup with backend, database, and UI:
 
 ```bash
-# Deploy the full stack
+# Deploy the full mcpx stack
 docker-compose -f docker-compose-mcpx.yml up -d
 
 # Access the application
 open http://localhost
 ```
 
-This includes:
-- **mcpx backend** on port 8080
-- **PostgreSQL database** with pgAdmin on port 5050
-- **mcpx-ui frontend** through nginx on port 80
-- **Prometheus metrics** on port 9187
+This deployment includes:
+- **mcpx backend** API server on port 8080
+- **PostgreSQL database** with persistent storage
+- **pgAdmin** database management on port 5050
+- **mcpx-ui frontend** served through nginx on port 80
+- **Prometheus metrics** collection on port 9187
+- **Automatic TLS** configuration (production ready)
 
 ### Production Build
 
 ```bash
-# Build for production
+# Build optimized production bundle
 npm run build
 
-# Preview production build
-npm run serve
+# Preview production build locally
+npm run preview
 ```
 
 -----
@@ -163,57 +164,210 @@ npm run serve
 
 ### Environment Variables
 
-Key configuration options in `.env`:
+Configure the application using `.env` file:
 
 ```bash
 # API Configuration
-VITE_API_BASE_URL=/api
+VITE_API_BASE_URL=http://localhost:8080
 VITE_BACKEND_URL=http://localhost:8080
+
+# Authentication Configuration
+VITE_GITHUB_CLIENT_ID=your_github_oauth_client_id
+VITE_AUTH_REDIRECT_URI=http://localhost:5173/auth/callback
 
 # Feature Flags
 VITE_ENABLE_AUTH=true
 VITE_ENABLE_PUBLISH=true
 VITE_ENABLE_EDIT=true
+VITE_ENABLE_DELETE=true
 
-# GitHub OAuth
-VITE_GITHUB_CLIENT_ID=your_github_client_id
+# Development Settings
+VITE_DEBUG_MODE=false
+VITE_LOG_LEVEL=info
 ```
 
 ### Authentication Setup
 
-1. **GitHub OAuth**: Configure client ID in environment variables
-2. **Anonymous Auth**: Enabled by default for `io.modelcontextprotocol.anonymous/*` namespace
-3. **Custom Domains**: Use DNS/HTTP authentication for your domain namespace
+The application supports multiple authentication methods:
+
+#### 1. GitHub OAuth
+```bash
+# Configure GitHub OAuth app
+VITE_GITHUB_CLIENT_ID=your_github_client_id
+# Callback URL: http://localhost:5173/auth/callback
+```
+
+#### 2. Anonymous Authentication
+- Automatically enabled for public namespace access
+- No configuration required
+- Limited to `io.modelcontextprotocol.anonymous/*` namespace
+
+#### 3. GitHub OIDC (Enterprise)
+- Configure in GitHub Actions or enterprise environments
+- Uses JWT tokens for automated workflows
+
+#### 4. Custom Domain Authentication
+- DNS verification for custom namespaces
+- HTTP-based domain ownership verification
 
 -----
 
 ## 🛠 Technology Stack
 
-  * **Vue 3**: Progressive JavaScript framework with Composition API
-  * **Element Plus**: Comprehensive Vue 3 component library
-  * **Pinia**: Intuitive state management for Vue
-  * **Vue Router**: Official routing solution for Vue.js
-  * **Axios**: Promise-based HTTP client for API requests
-  * **Vite**: Fast build tool and development server
-  * **Docker**: Containerization for consistent deployments
-  * **Nginx**: High-performance web server and reverse proxy
+**Frontend Framework:**
+- **Vue 3** - Progressive JavaScript framework with Composition API
+- **TypeScript** - Static type checking and enhanced developer experience
+- **Vite** - Lightning-fast build tool and development server
+
+**UI & Styling:**
+- **Element Plus** - Comprehensive Vue 3 component library
+- **SCSS** - Advanced CSS preprocessing with variables and mixins
+- **Responsive Design** - Mobile-first approach with CSS Grid and Flexbox
+
+**State Management & Routing:**
+- **Pinia** - Intuitive, type-safe state management
+- **Vue Router 4** - Official routing solution with dynamic imports
+
+**HTTP & API:**
+- **Axios** - Promise-based HTTP client with interceptors
+- **REST API** - Full CRUD operations with authentication headers
+- **Error Handling** - Comprehensive error boundary and user feedback
+
+**Development & Production:**
+- **Docker** - Containerization for consistent deployments
+- **Nginx** - High-performance web server and reverse proxy
+- **Hot Module Replacement** - Fast development with instant updates
 
 -----
 
-## 🔐 Authentication & Permissions
+## � User Interface Features
 
-The application supports multiple authentication methods:
+### Authentication Panel
+- **Multi-method Login**: GitHub OAuth, GitHub OIDC, Anonymous authentication
+- **Session Management**: Persistent login sessions with auto-refresh
+- **Permission Display**: Clear indication of authentication status and permissions
 
-### GitHub Integration
-- **OAuth Flow**: Standard GitHub OAuth for user authentication
-- **OIDC Flow**: GitHub Actions integration with OIDC tokens
-- **Permissions**: Automatic namespace permissions based on GitHub username
+### Server Management Interface
+- **Server Browser**: Paginated list with search and filtering capabilities
+- **Publish Form**: Guided server creation with real-time validation
+- **Edit Interface**: In-place editing with schema validation and preview
+- **Delete Confirmation**: Safe deletion with confirmation dialogs
 
-### Anonymous Publishing
-- **No Auth Required**: Publish to `io.modelcontextprotocol.anonymous/*`
-- **Temporary Tokens**: Short-lived JWT tokens for anonymous operations
+### Advanced Features
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- **Real-time Validation**: Form validation with immediate user feedback
+- **Error Handling**: Comprehensive error messages and recovery suggestions
+- **Loading States**: Elegant loading indicators for better user experience
 
-### Custom Domains
+-----
+
+## 🔐 Authentication & Security
+
+### Supported Authentication Methods
+
+| Method | Description | Use Case |
+|--------|-------------|----------|
+| **GitHub OAuth** | Standard OAuth flow | Repository owners, full permissions |
+| **GitHub OIDC** | OpenID Connect | GitHub Actions, CI/CD workflows |
+| **Anonymous** | No authentication | Public namespace publishing |
+| **DNS** | Domain verification | Custom domain namespaces |
+| **HTTP** | HTTP-based auth | Custom authentication systems |
+
+### Security Features
+- **JWT Token Management**: Secure token storage with automatic refresh
+- **CORS Protection**: Properly configured cross-origin resource sharing
+- **Permission-based UI**: Features dynamically enabled based on user permissions
+- **Secure Communication**: HTTPS enforcement in production environments
+
+### Namespace Permissions
+- **GitHub Namespaces**: `io.github.{username}/*` - requires GitHub authentication
+- **Anonymous Namespace**: `io.modelcontextprotocol.anonymous/*` - no auth required
+- **Custom Domains**: `your-domain.com/*` - requires domain verification
+
+-----
+
+## 🐳 Docker Deployment
+
+### Development Container
+```bash
+# Build and run development container
+docker build -t mcpx-ui:dev .
+docker run -p 5173:5173 -v $(pwd):/app mcpx-ui:dev
+```
+
+### Production Deployment
+```bash
+# Full stack deployment with backend
+docker-compose -f docker-compose-mcpx.yml up -d
+
+# UI only deployment
+docker build -t mcpx-ui:latest .
+docker run -p 80:80 mcpx-ui:latest
+```
+
+### Container Configuration
+- **Multi-stage Build**: Optimized for production with minimal image size
+- **Nginx Configuration**: Production-ready reverse proxy setup
+- **Health Checks**: Built-in container health monitoring
+- **Volume Mounts**: Persistent configuration and data storage
+
+-----
+
+## 🔗 API Integration
+
+### Backend Compatibility
+- **mcpx Backend**: Full compatibility with enhanced mcpx registry
+- **REST API**: Complete CRUD operations for server management
+- **Authentication API**: All authentication methods supported
+- **Real-time Updates**: Efficient API polling for live data updates
+
+### Supported Endpoints
+```javascript
+// Server Operations
+GET    /v0/servers        // List servers with pagination
+GET    /v0/servers/:id    // Get server details
+POST   /v0/publish        // Publish new server
+PUT    /v0/servers/:id    // Update existing server
+DELETE /v0/servers/:id    // Delete server
+
+// Authentication
+POST   /api/auth/anonymous     // Anonymous authentication
+POST   /api/auth/github/oauth  // GitHub OAuth
+POST   /api/auth/github/oidc   // GitHub OIDC
+```
+
+-----
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+
+### Development Workflow
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Code Standards
+- **Vue 3 Composition API**: Use modern Vue patterns
+- **TypeScript**: Type safety for better code quality
+- **ESLint/Prettier**: Consistent code formatting
+- **Component Testing**: Unit tests for critical components
+
+-----
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+-----
+
+## 🔗 Related Projects
+
+- **[mcpx](https://github.com/ai-mcpx/mcpx)** - Enhanced registry backend with authentication
+- **[mcpx-cli](https://github.com/ai-mcpx/mcpx-cli)** - Command-line interface for registry operations
+- **[Model Context Protocol](https://modelcontextprotocol.io)** - Official MCP specification
 - **DNS Authentication**: Verify domain ownership via TXT records
 - **HTTP Authentication**: Verify domain control via hosted public keys
 
