@@ -21,12 +21,22 @@
             <h4>外部链接</h4>
             <ul>
               <li>
-                <a href="https://github.com/LouisCan/mcp-registry-frontend" target="_blank">
-                  GitHub 仓库
+                <a href="https://github.com/ai-mcpx/mcpx" target="_blank">
+                  mcpx 注册表 - GitHub 仓库
                 </a>
               </li>
               <li>
-                <a href="https://github.com/LouisCan/mcp-registry-frontend/issues" target="_blank">
+                <a href="https://github.com/ai-mcpx/mcpx-cli" target="_blank">
+                  mcpx-cli 工具 - GitHub 仓库
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/ai-mcpx/mcpx-ui" target="_blank">
+                  mcpx-ui 前端 - GitHub 仓库
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/ai-mcpx" target="_blank">
                   问题反馈
                 </a>
               </li>
@@ -45,14 +55,15 @@
             <ul>
               <li>用于管理 MCP 注册表条目的 RESTful API（列表、获取、创建、更新、删除）</li>
               <li>服务监控的健康检查端点</li>
-              <li>支持多种包注册表类型（npm、PyPI、NuGet、Docker、Wheel、Binary 等）</li>
-              <li>支持各种环境配置</li>
+              <li>支持多种包注册表类型（npm、PyPI、wheel、binary、OCI、homebrew、nuget 等）</li>
+              <li>支持各种环境配置和运行时参数</li>
               <li>优雅的关闭处理</li>
               <li>PostgreSQL 和内存数据库支持</li>
               <li>全面的 API 文档</li>
               <li>基于游标的分页支持</li>
-              <li>GitHub OAuth 认证集成</li>
-              <li>DNS 验证命名空间管理</li>
+              <li>多种认证方式：GitHub OAuth、GitHub OIDC、匿名访问</li>
+              <li>命名空间管理和权限控制</li>
+              <li>完整的 CRUD 操作支持</li>
             </ul>
           </section>
 
@@ -61,10 +72,16 @@
             <p>MCP Registry 提供了一个 RESTful API，用于与注册表进行交互。以下是主要的 API 端点：</p>
 
             <h3>API 响应格式</h3>
-            <p>API 使用包装器格式返回数据，包含服务器信息和注册表元数据：</p>
+            <p>API 使用标准化的 ServerJSON 格式返回数据，包含服务器信息和注册表元数据：</p>
             <ul>
-              <li><code>server</code>: 核心服务器信息（名称、描述、包、远程端点等）</li>
-              <li><code>x-io.modelcontextprotocol.registry</code>: 注册表特定的元数据（ID、发布时间、验证状态等）</li>
+              <li><code>name</code>: 服务器名称（如 "io.github.example/test-server"）</li>
+              <li><code>description</code>: 服务器描述</li>
+              <li><code>status</code>: 服务器状态（"active"、"deprecated"、"deleted"）</li>
+              <li><code>repository</code>: 源代码仓库信息</li>
+              <li><code>version_detail</code>: 版本信息</li>
+              <li><code>packages</code>: 包配置数组</li>
+              <li><code>remotes</code>: 远程连接配置数组</li>
+              <li><code>_meta</code>: 注册表元数据，包含 ID、发布时间等</li>
             </ul>
 
             <h3>分页</h3>
@@ -221,25 +238,27 @@
 
               <h4>请求体示例</h4>
               <pre><code>{
-  "name": "io.modelcontextprotocol/filesystem",
+  "name": "io.github.example/filesystem-server",
   "description": "An updated Node.js server implementing Model Context Protocol (MCP) for filesystem operations with enhanced features.",
   "status": "active",
   "repository": {
-    "url": "https://github.com/modelcontextprotocol/servers",
+    "url": "https://github.com/example/filesystem-server",
     "source": "github",
-    "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
+    "id": "example/filesystem-server"
   },
   "version_detail": {
     "version": "1.1.0"
   },
   "packages": [
     {
-      "registry_name": "npm",
-      "name": "@modelcontextprotocol/server-filesystem",
+      "registry_type": "npm",
+      "identifier": "@example/filesystem-server",
       "version": "1.1.0",
-      "package_arguments": [
+      "runtime_hint": "npx",
+      "runtime_arguments": [
         {
           "type": "positional",
+          "name": "target_dir",
           "value_hint": "target_dir",
           "description": "Path to access",
           "default": "/Users/username/Desktop",
@@ -250,15 +269,16 @@
         {
           "name": "LOG_LEVEL",
           "description": "Logging level (debug, info, warn, error)",
+          "format": "string",
           "default": "info"
         }
       ]
     },
     {
-      "registry_name": "binary",
-      "name": "filesystem-server",
+      "registry_type": "binary",
+      "identifier": "filesystem-server",
       "version": "1.1.0",
-      "binary_url": "https://github.com/example/mcp-filesystem/releases/download/v1.1.0/filesystem-linux-x64",
+      "registry_base_url": "https://github.com/example/filesystem-server/releases",
       "runtime_hint": "binary",
       "runtime_arguments": [
         {
@@ -440,57 +460,82 @@
 
             <h4>Node.js 包 (NPM)</h4>
             <ul>
-              <li><code>registry_name</code>: "npm"</li>
+              <li><code>registry_type</code>: "npm"</li>
+              <li><code>identifier</code>: 包名（如 "@example/server-name"）</li>
               <li><code>runtime_hint</code>: "npx" （推荐）或 "node"</li>
               <li>通过 npm 安装：<code>npm install package_name@version</code></li>
               <li>通过 npx 运行：<code>npx package_name@version</code></li>
             </ul>
 
+            <h4>Python 包 (PyPI)</h4>
+            <ul>
+              <li><code>registry_type</code>: "pypi"</li>
+              <li><code>identifier</code>: 包名</li>
+              <li><code>runtime_hint</code>: "python"</li>
+              <li>通过 pip 安装：<code>pip install package_name==version</code></li>
+            </ul>
+
             <h4>Python Wheel 包</h4>
             <ul>
-              <li><code>registry_name</code>: "wheel"</li>
+              <li><code>registry_type</code>: "wheel"</li>
+              <li><code>identifier</code>: wheel 文件名</li>
               <li><code>runtime_hint</code>: "python"</li>
-              <li><code>wheel_url</code>: 直接下载链接</li>
+              <li><code>registry_base_url</code>: wheel 文件下载地址</li>
               <li>下载并安装：<code>curl -O wheel_url && pip install *.whl</code></li>
             </ul>
 
             <h4>二进制包 (Binary)</h4>
             <ul>
-              <li><code>registry_name</code>: "binary"</li>
+              <li><code>registry_type</code>: "binary"</li>
+              <li><code>identifier</code>: 二进制文件名</li>
               <li><code>runtime_hint</code>: "binary"</li>
-              <li><code>binary_url</code>: 二进制文件直接下载链接</li>
-              <li>下载并执行：<code>curl -L -o binary_name binary_url && chmod +x binary_name && ./binary_name</code></li>
+              <li><code>registry_base_url</code>: 二进制文件下载地址</li>
+              <li>下载并执行：<code>curl -L -o binary_name binary_url && chmod +x binary_name</code></li>
               <li>支持跨平台二进制文件分发</li>
             </ul>
 
-            <h4>Docker 容器</h4>
+            <h4>OCI 容器</h4>
             <ul>
-              <li><code>registry_name</code>: "docker"</li>
+              <li><code>registry_type</code>: "oci"</li>
+              <li><code>identifier</code>: 镜像名称</li>
               <li><code>runtime_hint</code>: "docker"</li>
-              <li>通过 docker 运行：<code>docker run image_name:version</code></li>
+              <li>通过 docker 运行：<code>docker pull image_name:version && docker run image_name:version</code></li>
             </ul>
 
             <h4>.NET 包 (NuGet)</h4>
             <ul>
-              <li><code>registry_name</code>: "nuget"</li>
-              <li><code>runtime_hint</code>: "dnx"</li>
+              <li><code>registry_type</code>: "nuget"</li>
+              <li><code>identifier</code>: 包名</li>
+              <li><code>runtime_hint</code>: "dotnet"</li>
               <li>通过 dotnet 工具安装：<code>dotnet tool install --global package_name --version version</code></li>
             </ul>
 
             <h4>其他支持的类型</h4>
             <ul>
-              <li><strong>Homebrew</strong>: macOS 包管理器（计划中）</li>
+              <li><strong>Homebrew</strong>: macOS 包管理器</li>
+              <li><strong>MCPB</strong>: 专用的 MCP 二进制格式（计划中）</li>
             </ul>
           </section>
 
           <section id="cli" class="docs-section">
             <h2>CLI 工具 (mcpx-cli)</h2>
-            <p>mcpx-cli 是一个功能强大的命令行工具，用于与 mcpx 注册表 API 进行交互。它提供了管理 MCP 服务器的完整功能，包括查看、发布、更新和删除服务器。</p>
+            <p>mcpx-cli 是一个功能强大的命令行工具，用于与 mcpx 注册表 API 进行交互。它提供了管理 MCP 服务器的完整功能，包括查看、发布、更新和删除服务器，并支持多种认证方式。</p>
+
+            <h3>主要特性</h3>
+            <ul>
+              <li><strong>多种认证方式</strong>: 支持 GitHub OAuth、GitHub OIDC 和匿名访问</li>
+              <li><strong>自动令牌管理</strong>: 安全的凭据存储和自动令牌刷新</li>
+              <li><strong>健康检查</strong>: 验证 API 连接状态</li>
+              <li><strong>服务器管理</strong>: 完整的 CRUD 操作支持</li>
+              <li><strong>交互式模式</strong>: 提供 Node.js 和 Python 模板的交互式创建</li>
+              <li><strong>JSON 输出</strong>: 所有响应支持结构化输出</li>
+              <li><strong>分页支持</strong>: 支持基于游标的分页浏览</li>
+            </ul>
 
             <h3>安装</h3>
             <p>从源码构建 mcpx-cli：</p>
             <pre><code># 克隆项目
-git clone &lt;https://github.com/ai-mcpx/mcpx-cli.git&gt;
+git clone https://github.com/ai-mcpx/mcpx-cli.git
 cd mcpx-cli
 
 # 构建二进制文件
@@ -501,6 +546,16 @@ go build -o mcpx-cli .
 
 # 系统安装
 make install</code></pre>
+
+            <h3>认证方式</h3>
+            <p>mcpx-cli 支持多种认证方法：</p>
+            <ul>
+              <li><strong>匿名访问</strong>: 基本访问，无需 GitHub 认证</li>
+              <li><strong>GitHub OAuth</strong>: 完整的 GitHub OAuth 流程</li>
+              <li><strong>GitHub OIDC</strong>: 企业环境的 GitHub OpenID Connect</li>
+              <li><strong>DNS 认证</strong>: 基于域名的认证（计划中）</li>
+              <li><strong>HTTP 认证</strong>: 基于 HTTP 的认证（计划中）</li>
+            </ul>
 
             <h3>基本用法</h3>
             <pre><code>mcpx-cli [全局标志] &lt;命令&gt; [命令标志]</code></pre>
@@ -582,41 +637,38 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;
 mcpx-cli delete &lt;server-id&gt; --json</code></pre>
 
             <h3>服务器 JSON 文件格式</h3>
-            <p>服务器配置使用标准化的 JSON 格式。CLI 支持 PublishRequest 包装格式和直接的 ServerDetail 格式：</p>
+            <p>服务器配置使用标准化的 JSON 格式。mcpx-cli 支持完整的 ServerJSON 格式：</p>
 
-            <h4>PublishRequest 格式（推荐）</h4>
-            <p>这是 CLI 发布时使用的完整格式，包含发布者元数据：</p>
+            <h4>ServerJSON 格式</h4>
+            <p>这是当前使用的标准格式，直接对应 API 的服务器对象：</p>
             <pre><code>{
-  "server": {
-    "name": "io.github.example/test-server-node",
-    "description": "A test MCP server in Node.js",
-    "status": "active",
-    "repository": {
-      "url": "https://github.com/example/test-server-node",
-      "source": "github",
-      "id": "example/test-server-node"
-    },
-    "version_detail": {
+  "name": "io.github.example/test-server-node",
+  "description": "A test MCP server in Node.js",
+  "status": "active",
+  "repository": {
+    "url": "https://github.com/example/test-server-node",
+    "source": "github",
+    "id": "example/test-server-node"
+  },
+  "version_detail": {
+    "version": "1.0.0"
+  },
+  "packages": [
+    {
+      "registry_type": "npm",
+      "identifier": "@example/test-server-node",
       "version": "1.0.0",
-      "release_date": "2025-08-25T12:00:00Z",
-      "is_latest": true
-    },
-    "packages": [
-      {
-        "registry_name": "npm",
-        "name": "@example/test-server-node",
-        "version": "1.0.0",
-        "runtime_hint": "npx",
-        "runtime_arguments": [
-          {
-            "type": "positional",
-            "name": "config_path",
-            "value_hint": "config_path",
-            "description": "Path to configuration file",
-            "default": "./config.json",
-            "is_required": true
-          }
-        ],
+      "runtime_hint": "npx",
+      "runtime_arguments": [
+        {
+          "type": "positional",
+          "name": "config_path",
+          "value_hint": "config_path",
+          "description": "Path to configuration file",
+          "default": "./config.json",
+          "is_required": true
+        }
+      ],
         "environment_variables": [
           {
             "name": "MCP_HOST",
@@ -653,22 +705,93 @@ mcpx-cli delete &lt;server-id&gt; --json</code></pre>
 
             <h4>字段说明</h4>
             <ul>
-              <li><code>server</code>: 服务器的核心信息</li>
-              <li><code>x-publisher</code>: 可选的构建和发布元数据（CLI 自动添加）</li>
               <li><code>name</code>: 服务器唯一标识符，GitHub 服务器使用 io.github.* 格式</li>
+              <li><code>description</code>: 服务器的简短描述</li>
+              <li><code>status</code>: 服务器状态（"active"、"deprecated"、"deleted"）</li>
+              <li><code>repository</code>: 源代码仓库信息</li>
+              <li><code>version_detail</code>: 版本信息</li>
               <li><code>packages</code>: 服务器的包分发信息，支持多个包类型</li>
               <li><code>runtime_arguments</code>: 运行时参数配置</li>
               <li><code>environment_variables</code>: 环境变量设置</li>
               <li><code>remotes</code>: 远程连接配置（可选）</li>
             </ul>
+          </section>
+
+          <section id="publishing" class="docs-section">
+            <h2>发布服务器</h2>
+            <p>发布 MCP 服务器到注册表需要遵循特定的流程和认证要求。</p>
+
+            <h3>认证要求</h3>
+            <p>根据服务器命名空间的不同，发布需要不同级别的认证：</p>
+
+            <h4>匿名发布</h4>
+            <ul>
+              <li>适用于命名空间：<code>io.modelcontextprotocol.anonymous/*</code></li>
+              <li>无需 GitHub 认证</li>
+              <li>适合测试和原型开发</li>
+              <li>使用命令：<code>mcpx-cli publish server.json</code></li>
+            </ul>
+
+            <h4>GitHub 认证发布</h4>
+            <ul>
+              <li>适用于命名空间：<code>io.github.username/*</code></li>
+              <li>需要 GitHub OAuth 或 OIDC 认证</li>
+              <li>只有仓库拥有者可以发布和更新</li>
+              <li>使用命令：<code>mcpx-cli publish server.json --token &lt;github-token&gt;</code></li>
+            </ul>
 
             <h3>发布步骤</h3>
             <ol>
-              <li>准备服务器 JSON 文件</li>
-              <li>验证 JSON 格式是否符合规范</li>
-              <li>使用 CLI 工具或 API 提交服务器信息</li>
-              <li>验证服务器是否已成功发布</li>
+              <li><strong>准备服务器 JSON 文件</strong>
+                <p>创建符合 ServerJSON 格式的配置文件，参考上面的示例。</p>
+              </li>
+              <li><strong>验证 JSON 格式</strong>
+                <p>确保 JSON 文件格式正确，所有必需字段都已填写。</p>
+              </li>
+              <li><strong>选择认证方式</strong>
+                <p>根据命名空间选择匿名或 GitHub 认证。</p>
+              </li>
+              <li><strong>使用 CLI 发布</strong>
+                <pre><code># 匿名发布
+mcpx-cli publish server.json
+
+# GitHub 认证发布
+mcpx-cli publish server.json --token &lt;your-github-token&gt;
+
+# 交互式发布
+mcpx-cli publish --interactive</code></pre>
+              </li>
+              <li><strong>验证发布结果</strong>
+                <p>发布成功后，可以使用以下命令验证：</p>
+                <pre><code># 列出服务器查看是否包含新发布的服务器
+mcpx-cli servers
+
+# 获取特定服务器详情
+mcpx-cli server &lt;server-id&gt;</code></pre>
+              </li>
             </ol>
+
+            <h3>更新和删除</h3>
+            <p>发布后的服务器可以进行更新和删除操作：</p>
+
+            <h4>更新服务器</h4>
+            <pre><code># 更新服务器（需要相应权限）
+mcpx-cli update &lt;server-id&gt; updated-server.json --token &lt;token&gt;</code></pre>
+            <p><strong>注意</strong>：更新时新版本必须大于现有版本。</p>
+
+            <h4>删除服务器</h4>
+            <pre><code># 删除服务器（需要相应权限）
+mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
+            <p><strong>警告</strong>：删除操作不可撤销，请谨慎操作。</p>
+
+            <h3>最佳实践</h3>
+            <ul>
+              <li>使用语义化版本控制（如 1.0.0, 1.1.0, 2.0.0）</li>
+              <li>提供清晰的服务器描述和文档</li>
+              <li>包含完整的运行时参数和环境变量配置</li>
+              <li>测试所有包类型的安装和运行</li>
+              <li>保持仓库信息准确和最新</li>
+            </ul>
           </section>
 
           <section id="faq" class="docs-section">
@@ -684,10 +807,11 @@ mcpx-cli delete &lt;server-id&gt; --json</code></pre>
                 <ul>
                   <li><strong>npm</strong>: Node.js 包管理器</li>
                   <li><strong>PyPI</strong>: Python 包索引</li>
-                  <li><strong>NuGet</strong>: .NET 包管理器</li>
-                  <li><strong>Docker</strong>: 容器注册表</li>
-                  <li><strong>Wheel</strong>: Python wheel 文件</li>
-                  <li><strong>Binary</strong>: 直接二进制文件分发</li>
+                  <li><strong>wheel</strong>: Python wheel 文件</li>
+                  <li><strong>binary</strong>: 直接二进制文件分发</li>
+                  <li><strong>oci</strong>: OCI 容器注册表</li>
+                  <li><strong>nuget</strong>: .NET 包管理器</li>
+                  <li><strong>homebrew</strong>: macOS 包管理器</li>
                 </ul>
               </el-collapse-item>
 
