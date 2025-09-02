@@ -25,32 +25,57 @@ apiClient.interceptors.response.use((response) => {
 
 // Transform the new API format to the format expected by the UI
 function transformServerResponse(serverResponse) {
-  if (!serverResponse.server) {
-    // Already in the old format, return as-is
-    return serverResponse
+  // Check if this is already the new format with _meta
+  if (serverResponse._meta && serverResponse._meta['io.modelcontextprotocol.registry']) {
+    const registry = serverResponse._meta['io.modelcontextprotocol.registry']
+
+    return {
+      id: registry.id,
+      name: serverResponse.name,
+      description: serverResponse.description,
+      status: serverResponse.status,
+      repository: serverResponse.repository,
+      version_detail: {
+        ...serverResponse.version_detail,
+        release_date: registry.release_date || serverResponse.version_detail?.release_date,
+        is_latest: registry.is_latest !== undefined ? registry.is_latest : serverResponse.version_detail?.is_latest
+      },
+      packages: serverResponse.packages || [],
+      remotes: serverResponse.remotes || [],
+      // Add registry metadata
+      published_at: registry.published_at,
+      updated_at: registry.updated_at,
+      is_latest: registry.is_latest
+    }
   }
 
-  const server = serverResponse.server
-  const registry = serverResponse['x-io.modelcontextprotocol.registry'] || {}
+  // Handle legacy format with nested server object
+  if (serverResponse.server) {
+    const server = serverResponse.server
+    const registry = serverResponse['x-io.modelcontextprotocol.registry'] || {}
 
-  return {
-    id: registry.id || server.name,
-    name: server.name,
-    description: server.description,
-    status: server.status,
-    repository: server.repository,
-    version_detail: {
-      ...server.version_detail,
-      release_date: registry.release_date || server.version_detail?.release_date,
-      is_latest: registry.is_latest !== undefined ? registry.is_latest : server.version_detail?.is_latest
-    },
-    packages: server.packages || [],
-    remotes: server.remotes || [],
-    // Add registry metadata
-    published_at: registry.published_at,
-    updated_at: registry.updated_at,
-    is_latest: registry.is_latest
+    return {
+      id: registry.id || server.name,
+      name: server.name,
+      description: server.description,
+      status: server.status,
+      repository: server.repository,
+      version_detail: {
+        ...server.version_detail,
+        release_date: registry.release_date || server.version_detail?.release_date,
+        is_latest: registry.is_latest !== undefined ? registry.is_latest : server.version_detail?.is_latest
+      },
+      packages: server.packages || [],
+      remotes: server.remotes || [],
+      // Add registry metadata
+      published_at: registry.published_at,
+      updated_at: registry.updated_at,
+      is_latest: registry.is_latest
+    }
   }
+
+  // Already in the expected format, return as-is
+  return serverResponse
 }
 
 export default {
