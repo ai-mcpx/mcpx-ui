@@ -284,5 +284,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔗 Related Projects
 
 - **[mcpx](https://github.com/ai-mcpx/mcpx)**
-- **[mcpx-cli](https://github.com/ai-mcpx/mcpx-cli)
-- **[Model Context Protocol](https://modelcontextprotocol.io)
+- **[mcpx-cli](https://github.com/ai-mcpx/mcpx-cli)**
+- **[Model Context Protocol](https://modelcontextprotocol.io)**
