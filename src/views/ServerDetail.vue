@@ -87,7 +87,8 @@
             <div v-if="server.packages && server.packages.length > 0">
               <el-card v-for="(pkg, index) in server.packages" :key="`${pkg.identifier || pkg.registry_type}-${index}`" class="package-card">
                 <div class="package-header">
-                  <el-tag size="small">{{ pkg.registry_type || pkg.identifier }}</el-tag>
+                  <el-tag size="small">{{ pkg.registry_type || 'Unknown' }}</el-tag>
+                  <span class="package-name">{{ pkg.identifier || pkg.name || 'Unknown' }}</span>
                 </div>
 
                 <div class="package-version">
@@ -96,6 +97,10 @@
 
                 <div v-if="pkg.runtime_hint" class="package-runtime">
                   <strong>运行时:</strong> {{ pkg.runtime_hint }}
+                </div>
+
+                <div v-if="pkg.transport_type" class="package-transport">
+                  <strong>传输类型:</strong> {{ pkg.transport_type }}
                 </div>
 
                 <div v-if="pkg.runtime_arguments && pkg.runtime_arguments.length > 0" class="package-runtime-args">
@@ -489,10 +494,16 @@ watch(() => route.params.id, (newId) => {
     margin: 0;
     font-size: 1.1rem;
   }
+
+  .package-name {
+    font-weight: 500;
+    color: #606266;
+  }
 }
 
 .package-version,
 .package-runtime,
+.package-transport,
 .remote-url {
   margin-bottom: 0.75rem;
 }

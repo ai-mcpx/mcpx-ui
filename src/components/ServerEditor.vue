@@ -129,14 +129,24 @@
                     </el-select>
                   </el-form-item>
 
+                  <el-form-item label="传输类型">
+                    <el-select v-model="pkg.transport_type" placeholder="选择传输类型">
+                      <el-option label="Stdio" value="stdio" />
+                      <el-option label="SSE" value="sse" />
+                    </el-select>
+                  </el-form-item>
+
                   <el-form-item label="包名">
-                    <el-input v-model="pkg.name" placeholder="包名" />
+                    <el-input v-model="pkg.identifier" placeholder="包名" />
                   </el-form-item>
 
                   <el-form-item label="运行提示" v-if="pkg.registry_type">
                     <el-select v-model="pkg.runtime_hint" placeholder="选择运行提示">
                       <el-option v-if="pkg.registry_type === 'npm'" label="npx" value="npx" />
                       <el-option v-if="pkg.registry_type === 'pypi'" label="uvx" value="uvx" />
+                      <el-option v-if="pkg.registry_type === 'pypi'" label="python" value="python" />
+                      <el-option v-if="pkg.registry_type === 'wheel'" label="python" value="python" />
+                      <el-option v-if="pkg.registry_type === 'binary'" label="binary" value="binary" />
                       <el-option v-if="pkg.registry_type === 'oci'" label="docker" value="docker" />
                       <el-option v-if="pkg.registry_type === 'nuget'" label="dnx" value="dnx" />
                     </el-select>
@@ -286,8 +296,9 @@ const initForm = () => {
         [{
           registry_type: 'npm',
           registry_base_url: 'https://registry.npmjs.org',
-          name: '',
-          runtime_hint: 'npx'
+          identifier: '',
+          runtime_hint: 'npx',
+          transport_type: 'stdio'
         }]
     })
   } else {
@@ -307,8 +318,9 @@ const initForm = () => {
       packages: [{
         registry_type: 'npm',
         registry_base_url: 'https://registry.npmjs.org',
-        name: '',
-        runtime_hint: 'npx'
+        identifier: '',
+        runtime_hint: 'npx',
+        transport_type: 'stdio'
       }]
     })
   }
@@ -319,8 +331,9 @@ const addPackage = () => {
   formData.packages.push({
     registry_type: 'npm',
     registry_base_url: 'https://registry.npmjs.org',
-    name: '',
-    runtime_hint: 'npx'
+    identifier: '',
+    runtime_hint: 'npx',
+    transport_type: 'stdio'
   })
 }
 

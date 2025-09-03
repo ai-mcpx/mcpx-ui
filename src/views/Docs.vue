@@ -124,8 +124,8 @@
         },
         "packages": [
           {
-            "registry_name": "npm",
-            "name": "@modelcontextprotocol/server-filesystem",
+            "registry_type": "npm",
+            "identifier": "@modelcontextprotocol/server-filesystem",
             "version": "1.0.2",
             "package_arguments": [
               {
@@ -183,8 +183,8 @@
     },
     "packages": [
       {
-        "registry_name": "npm",
-        "name": "@modelcontextprotocol/server-filesystem",
+        "registry_type": "npm",
+        "identifier": "@modelcontextprotocol/server-filesystem",
         "version": "1.0.2",
         "package_arguments": [
           {
@@ -197,8 +197,8 @@
         ]
       },
       {
-        "registry_name": "binary",
-        "name": "filesystem-binary",
+        "registry_type": "binary",
+        "identifier": "filesystem-binary",
         "version": "1.0.2",
         "binary_url": "https://github.com/example/mcp-filesystem/releases/download/v1.0.2/filesystem-linux-x64",
         "runtime_hint": "binary",
@@ -366,8 +366,8 @@
     },
     "packages": [
       {
-        "registry_name": "npm",
-        "name": "@modelcontextprotocol/server-filesystem",
+        "registry_type": "npm",
+        "identifier": "@modelcontextprotocol/server-filesystem",
         "version": "1.0.0",
         "package_arguments": [
           {
@@ -387,8 +387,8 @@
         ]
       },
       {
-        "registry_name": "binary",
-        "name": "filesystem-server",
+        "registry_type": "binary",
+        "identifier": "filesystem-server",
         "version": "1.0.0",
         "binary_url": "https://github.com/example/mcp-filesystem/releases/download/v1.0.0/filesystem-linux-x64",
         "runtime_hint": "binary",
@@ -452,7 +452,7 @@
 
             <h4>Python 包 (PyPI)</h4>
             <ul>
-              <li><code>registry_name</code>: "pypi"</li>
+              <li><code>registry_type</code>: "pypi"</li>
               <li><code>runtime_hint</code>: "uvx" （推荐）或 "python"</li>
               <li>通过 pip 安装：<code>pip install package_name==version</code></li>
               <li>通过 uvx 运行：<code>uvx package_name@version</code></li>

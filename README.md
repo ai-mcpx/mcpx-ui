@@ -19,8 +19,10 @@ Modern Vue 3 frontend for the **mcpx registry** with comprehensive authenticatio
 - **Publish New Servers** with guided form interface and validation
 - **Edit Existing Servers** with full schema validation and real-time preview
 - **Delete Servers** with confirmation dialogs and soft delete support
-- **Package Type Support**: npm, PyPI, wheel, binary, OCI, NuGet packages
+- **Registry Type Support**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB packages
+- **Transport Types**: stdio, SSE (Server-Sent Events) for different communication methods
 - **Version Management** with latest version tracking and history
+- **Package Identification**: Modern schema with `identifier` field for package naming
 
 ### 🎨 **Modern User Experience**
 - **Responsive Design** optimized for desktop, tablet, and mobile
@@ -33,8 +35,10 @@ Modern Vue 3 frontend for the **mcpx registry** with comprehensive authenticatio
 - **Docker Support** with nginx reverse proxy for production deployment
 - **Environment Configuration** with development/production mode switching
 - **CORS Handling** for seamless API integration across domains
-- **Comprehensive API Documentation** with interactive examples
+- **Comprehensive API Documentation** with interactive examples and updated schema
 - **State Management** with Pinia for predictable data flow
+- **Schema Compatibility** with backward compatibility for legacy package fields
+- **Modern Package Schema** supporting the latest mcpx registry specification
 
 ## 🚀 Getting Started
 
@@ -166,6 +170,13 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **SCSS** - Advanced CSS preprocessing with variables and mixins
 - **Responsive Design** - Mobile-first approach with CSS Grid and Flexbox
 
+**Package & Registry Support:**
+- **Registry Types**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB
+- **Transport Types**: stdio (standard I/O), sse (Server-Sent Events)
+- **Runtime Hints**: npx, uvx, python, binary, docker, dnx
+- **Schema Validation**: Real-time validation for package configuration
+- **Backward Compatibility**: Supports both legacy and modern field names
+
 **State Management & Routing:**
 - **Pinia** - Intuitive, type-safe state management
 - **Vue Router 4** - Official routing solution with dynamic imports
@@ -192,6 +203,14 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Publish Form**: Guided server creation with real-time validation
 - **Edit Interface**: In-place editing with schema validation and preview
 - **Delete Confirmation**: Safe deletion with confirmation dialogs
+
+### Package Configuration Interface
+- **Registry Type Selection**: Support for npm, PyPI, wheel, binary, OCI, NuGet, MCPB
+- **Transport Type Configuration**: Choose between stdio and SSE communication
+- **Smart Runtime Hints**: Contextual runtime suggestions based on registry type
+- **Package Identification**: Modern `identifier` field with legacy `name` fallback
+- **Installation Commands**: Auto-generated installation instructions per package type
+- **Multi-Package Support**: Configure multiple packages per server with different types
 
 ### Advanced Features
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices
@@ -264,8 +283,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Related Projects
 
-- **[mcpx](https://github.com/ai-mcpx/mcpx)** - Enhanced registry backend with authentication
-- **[mcpx-cli](https://github.com/ai-mcpx/mcpx-cli)** - Command-line interface for registry operations
-- **[Model Context Protocol](https://modelcontextprotocol.io)** - Official MCP specification
-- **DNS Authentication**: Verify domain ownership via TXT records
-- **HTTP Authentication**: Verify domain control via hosted public keys
+- **[mcpx](https://github.com/ai-mcpx/mcpx)**
+- **[mcpx-cli](https://github.com/ai-mcpx/mcpx-cli)
+- **[Model Context Protocol](https://modelcontextprotocol.io)
