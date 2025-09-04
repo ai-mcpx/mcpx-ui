@@ -56,6 +56,7 @@
               <li>用于管理 MCP 注册表条目的 RESTful API（列表、获取、创建、更新、删除）</li>
               <li>服务监控的健康检查端点</li>
               <li>支持多种包注册表类型（npm、PyPI、wheel、binary、OCI、homebrew、nuget 等）</li>
+              <li>支持多种代码仓库源（GitHub、GitLab、Gerrit）</li>
               <li>支持各种环境配置和运行时参数</li>
               <li>优雅的关闭处理</li>
               <li>PostgreSQL 和内存数据库支持</li>
@@ -77,7 +78,7 @@
               <li><code>name</code>: 服务器名称（如 "io.github.example/test-server"）</li>
               <li><code>description</code>: 服务器描述</li>
               <li><code>status</code>: 服务器状态（"active"、"deprecated"、"deleted"）</li>
-              <li><code>repository</code>: 源代码仓库信息</li>
+              <li><code>repository</code>: 源代码仓库信息（支持 GitHub、GitLab、Gerrit）</li>
               <li><code>version_detail</code>: 版本信息</li>
               <li><code>packages</code>: 包配置数组</li>
               <li><code>remotes</code>: 远程连接配置数组</li>
@@ -426,6 +427,33 @@
             <h2>服务器 JSON 格式</h2>
             <p>MCP 服务器在注册表中使用标准化的 JSON 格式进行表示。以下是主要的数据结构：</p>
 
+            <h3>支持的代码仓库源</h3>
+            <p>MCP Registry 支持多种代码仓库源，为开发者提供灵活的代码托管选择：</p>
+
+            <h4>GitHub</h4>
+            <ul>
+              <li><code>source</code>: "github"</li>
+              <li><code>url</code>: GitHub 仓库 URL（如：https://github.com/owner/repo）</li>
+              <li>支持公开和私有仓库</li>
+              <li>与 GitHub OAuth 集成，支持命名空间权限管理</li>
+            </ul>
+
+            <h4>GitLab</h4>
+            <ul>
+              <li><code>source</code>: "gitlab"</li>
+              <li><code>url</code>: GitLab 仓库 URL（如：https://gitlab.com/owner/repo）</li>
+              <li>支持 GitLab.com 和自托管 GitLab 实例</li>
+              <li>支持公开和私有仓库</li>
+            </ul>
+
+            <h4>Gerrit</h4>
+            <ul>
+              <li><code>source</code>: "gerrit"</li>
+              <li><code>url</code>: Gerrit 实例 URL（支持多种 URL 格式）</li>
+              <li>支持企业级代码审查工作流</li>
+              <li>灵活的 URL 格式支持，包括 Gitiles 和其他 Gerrit 前端</li>
+            </ul>
+
             <h3>Server</h3>
             <p>表示基本的服务器信息。</p>
             <pre><code>{
@@ -441,6 +469,36 @@
     "version": "1.0.2",
     "release_date": "2023-06-15T10:30:00Z",
     "is_latest": true
+  }
+}</code></pre>
+
+            <h4>仓库源示例</h4>
+            <p>不同代码仓库源的配置示例：</p>
+
+            <h5>GitHub 仓库</h5>
+            <pre><code>{
+  "repository": {
+    "url": "https://github.com/example/mcp-server",
+    "source": "github",
+    "id": "example/mcp-server"
+  }
+}</code></pre>
+
+            <h5>GitLab 仓库</h5>
+            <pre><code>{
+  "repository": {
+    "url": "https://gitlab.com/example/mcp-server",
+    "source": "gitlab",
+    "id": "example/mcp-server"
+  }
+}</code></pre>
+
+            <h5>Gerrit 仓库</h5>
+            <pre><code>{
+  "repository": {
+    "url": "https://gerrit.example.com/plugins/gitiles/project/+/refs/heads/main",
+    "source": "gerrit",
+    "id": "project"
   }
 }</code></pre>
 
@@ -708,12 +766,57 @@ mcpx-cli delete &lt;server-id&gt; --json</code></pre>
               <li><code>name</code>: 服务器唯一标识符，GitHub 服务器使用 io.github.* 格式</li>
               <li><code>description</code>: 服务器的简短描述</li>
               <li><code>status</code>: 服务器状态（"active"、"deprecated"、"deleted"）</li>
-              <li><code>repository</code>: 源代码仓库信息</li>
+              <li><code>repository</code>: 源代码仓库信息，支持多种仓库源</li>
               <li><code>version_detail</code>: 版本信息</li>
               <li><code>packages</code>: 服务器的包分发信息，支持多个包类型</li>
               <li><code>runtime_arguments</code>: 运行时参数配置</li>
               <li><code>environment_variables</code>: 环境变量设置</li>
               <li><code>remotes</code>: 远程连接配置（可选）</li>
+            </ul>
+
+            <h4>仓库源配置详解</h4>
+            <p>根据不同的代码托管平台，repository 字段的配置略有不同：</p>
+
+            <h5>GitHub 仓库配置</h5>
+            <pre><code>{
+  "repository": {
+    "url": "https://github.com/owner/repository-name",
+    "source": "github",
+    "id": "owner/repository-name"
+  }
+}</code></pre>
+            <ul>
+              <li><code>url</code>: 完整的 GitHub 仓库 URL</li>
+              <li><code>source</code>: 必须为 "github"</li>
+              <li><code>id</code>: GitHub 仓库标识符（owner/repo 格式）</li>
+            </ul>
+
+            <h5>GitLab 仓库配置</h5>
+            <pre><code>{
+  "repository": {
+    "url": "https://gitlab.com/owner/repository-name",
+    "source": "gitlab",
+    "id": "owner/repository-name"
+  }
+}</code></pre>
+            <ul>
+              <li><code>url</code>: 完整的 GitLab 仓库 URL（支持 gitlab.com 和自托管实例）</li>
+              <li><code>source</code>: 必须为 "gitlab"</li>
+              <li><code>id</code>: GitLab 仓库标识符</li>
+            </ul>
+
+            <h5>Gerrit 仓库配置</h5>
+            <pre><code>{
+  "repository": {
+    "url": "https://gerrit.example.com/plugins/gitiles/project-name/+/refs/heads/main",
+    "source": "gerrit",
+    "id": "project-name"
+  }
+}</code></pre>
+            <ul>
+              <li><code>url</code>: Gerrit 仓库 URL（支持多种格式，包括 Gitiles 和其他前端）</li>
+              <li><code>source</code>: 必须为 "gerrit"</li>
+              <li><code>id</code>: Gerrit 项目标识符</li>
             </ul>
           </section>
 
@@ -738,6 +841,14 @@ mcpx-cli delete &lt;server-id&gt; --json</code></pre>
               <li>需要 GitHub OAuth 或 OIDC 认证</li>
               <li>只有仓库拥有者可以发布和更新</li>
               <li>使用命令：<code>mcpx-cli publish server.json --token &lt;github-token&gt;</code></li>
+            </ul>
+
+            <h4>GitLab/Gerrit 仓库发布</h4>
+            <ul>
+              <li>适用于 GitLab 和 Gerrit 托管的代码仓库</li>
+              <li>支持多种 URL 格式和实例</li>
+              <li>目前使用匿名发布流程</li>
+              <li>使用命令：<code>mcpx-cli publish server.json</code></li>
             </ul>
 
             <h3>发布步骤</h3>
@@ -802,7 +913,17 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
                 <p>Model Context Protocol (MCP) 是一种标准化协议，用于在 AI 模型和上下文提供者之间进行通信。它允许模型访问外部工具、数据源和服务，从而增强其功能。MCP 支持本地和远程服务器，通过标准化的接口提供一致的集成体验。</p>
               </el-collapse-item>
 
-              <el-collapse-item title="支持哪些包注册表？" name="2">
+              <el-collapse-item title="支持哪些代码仓库源？" name="2">
+                <p>MCP Registry 支持以下代码仓库源：</p>
+                <ul>
+                  <li><strong>GitHub</strong>: 支持 github.com 上的公开和私有仓库</li>
+                  <li><strong>GitLab</strong>: 支持 GitLab.com 和自托管 GitLab 实例</li>
+                  <li><strong>Gerrit</strong>: 支持企业级 Gerrit 代码审查系统，包括多种 URL 格式</li>
+                </ul>
+                <p>每种仓库源都有对应的 URL 验证规则和配置格式，详见文档的"服务器 JSON 格式"部分。</p>
+              </el-collapse-item>
+
+              <el-collapse-item title="支持哪些包注册表？" name="3">
                 <p>MCP Registry 目前支持以下包注册表：</p>
                 <ul>
                   <li><strong>npm</strong>: Node.js 包管理器</li>
@@ -815,7 +936,7 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
                 </ul>
               </el-collapse-item>
 
-              <el-collapse-item title="如何贡献到 MCP Registry 项目？" name="3">
+              <el-collapse-item title="如何贡献到 MCP Registry 项目？" name="4">
                 <p>您可以通过以下方式贡献：</p>
                 <ul>
                   <li>在 GitHub Issues 提交问题和功能请求</li>
@@ -826,7 +947,7 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
                 </ul>
               </el-collapse-item>
 
-              <el-collapse-item title="如何报告问题？" name="4">
+              <el-collapse-item title="如何报告问题？" name="5">
                 <p>如果您发现了问题或有改进建议，请通过以下渠道联系：</p>
                 <ul>
                   <li>GitHub Issues 页面提交技术问题</li>
@@ -835,7 +956,7 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
                 </ul>
               </el-collapse-item>
 
-              <el-collapse-item title="注册表是否存储源代码？" name="5">
+              <el-collapse-item title="注册表是否存储源代码？" name="6">
                 <p>不存储。MCP Registry 是一个<strong>元注册表</strong>，它只存储关于 MCP 服务器的元数据，而不托管实际的源代码或包。实际的代码托管在各自的包注册表中（如 npm、PyPI、Docker Hub 等）。</p>
               </el-collapse-item>
             </el-collapse>
