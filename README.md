@@ -19,6 +19,7 @@ Modern Vue 3 frontend for the **mcpx registry** with comprehensive authenticatio
 - **Publish New Servers** with guided form interface and validation
 - **Edit Existing Servers** with full schema validation and real-time preview
 - **Delete Servers** with confirmation dialogs and soft delete support
+- **Repository Support**: GitHub, GitLab, and Gerrit integration with smart URL parsing
 - **Registry Type Support**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB packages
 - **Transport Types**: stdio, SSE (Server-Sent Events) for different communication methods
 - **Version Management** with latest version tracking and history
@@ -129,6 +130,11 @@ VITE_ENABLE_PUBLISH=true
 VITE_ENABLE_EDIT=true
 VITE_ENABLE_DELETE=true
 
+# Repository Configuration
+VITE_ENABLE_GITHUB=true
+VITE_ENABLE_GITLAB=true
+VITE_ENABLE_GERRIT=true
+
 # Development Settings
 VITE_DEBUG_MODE=false
 VITE_LOG_LEVEL=info
@@ -172,6 +178,7 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 
 **Package & Registry Support:**
 - **Registry Types**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB
+- **Repository Sources**: GitHub, GitLab, Gerrit with smart URL detection and validation
 - **Transport Types**: stdio (standard I/O), sse (Server-Sent Events)
 - **Runtime Hints**: npx, uvx, python, binary, docker, dnx
 - **Schema Validation**: Real-time validation for package configuration
@@ -203,6 +210,21 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Publish Form**: Guided server creation with real-time validation
 - **Edit Interface**: In-place editing with schema validation and preview
 - **Delete Confirmation**: Safe deletion with confirmation dialogs
+
+### Repository Integration
+- **Multi-Source Support**: GitHub, GitLab, and Gerrit repository integration
+- **Smart URL Parsing**: Automatic repository name extraction and display
+- **Visual Indicators**: Color-coded tags for different repository sources
+- **Dynamic Help Text**: Context-aware URL format guidance for each repository type
+- **Flexible Repository IDs**: Support for different ID formats per repository source
+
+#### Supported Repository Sources
+
+| Source | URL Format | Example | Visual Tag |
+|--------|------------|---------|------------|
+| **GitHub** | `https://github.com/user/repo` | `https://github.com/microsoft/vscode` | Green (Success) |
+| **GitLab** | `https://gitlab.com/user/repo` | `https://gitlab.com/gitlab-org/gitlab` | Orange (Warning) |
+| **Gerrit** | `http://host:port/project/path` | `http://gerrit.example.com/my-project` | Blue (Info) |
 
 ### Package Configuration Interface
 - **Registry Type Selection**: Support for npm, PyPI, wheel, binary, OCI, NuGet, MCPB

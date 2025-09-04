@@ -81,6 +81,12 @@ const getServerIcon = (server) => {
     const repoName = getRepositoryName(server.repository)
     return `https://github.com/${repoName}.png`
   }
+  if (server.repository && server.repository.source === 'gitlab') {
+    const repoName = getRepositoryName(server.repository)
+    return `https://gitlab.com/${repoName}/-/avatar.png`
+  }
+  // For Gerrit and other sources, we don't have a standard avatar API
+  // so we'll fall back to the initial letter
   return ''
 }
 
@@ -90,6 +96,23 @@ const getRepositoryName = (repository) => {
   try {
     const url = new URL(repository.url)
     const pathParts = url.pathname.split('/').filter(Boolean)
+
+    // For GitHub and GitLab: username/repo format
+    if (repository.source === 'github' || repository.source === 'gitlab') {
+      if (pathParts.length >= 2) {
+        return `${pathParts[0]}/${pathParts[1]}`
+      }
+    }
+
+    // For Gerrit: show hostname and project path
+    if (repository.source === 'gerrit') {
+      if (pathParts.length >= 1) {
+        return `${url.hostname}/${pathParts[0]}`
+      }
+      return url.hostname
+    }
+
+    // Default fallback: show hostname and first path component if available
     if (pathParts.length >= 2) {
       return `${pathParts[0]}/${pathParts[1]}`
     }
@@ -103,6 +126,7 @@ const getSourceTagType = (source) => {
   const types = {
     'github': 'success',
     'gitlab': 'warning',
+    'gerrit': 'info',
     'default': 'info'
   }
   

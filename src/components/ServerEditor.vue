@@ -67,21 +67,32 @@
           <el-form-item label="仓库 URL" prop="repository_url">
             <el-input
               v-model="formData.repository.url"
-              placeholder="https://github.com/username/repo"
+              placeholder="例如: https://github.com/username/repo 或 http://gerrit.example.com/project"
             />
           </el-form-item>
 
           <el-form-item label="仓库源" prop="repository_source">
             <el-select v-model="formData.repository.source" placeholder="选择仓库源">
               <el-option label="GitHub" value="github" />
+              <el-option label="GitLab" value="gitlab" />
+              <el-option label="Gerrit" value="gerrit" />
             </el-select>
+            <div class="form-help">
+              <span v-if="formData.repository.source === 'github'">GitHub 格式: https://github.com/username/repo</span>
+              <span v-else-if="formData.repository.source === 'gitlab'">GitLab 格式: https://gitlab.com/username/repo</span>
+              <span v-else-if="formData.repository.source === 'gerrit'">Gerrit 格式: http://host:port/project/path</span>
+              <span v-else>请选择仓库源类型以查看URL格式示例</span>
+            </div>
           </el-form-item>
 
           <el-form-item label="仓库 ID" prop="repository_id">
             <el-input
               v-model="formData.repository.id"
-              placeholder="username/repo"
+              placeholder="例如: username/repo 或 project-id"
             />
+            <div class="form-help">
+              <span>仓库的唯一标识符，具体格式取决于仓库源</span>
+            </div>
           </el-form-item>
 
           <!-- 包信息 -->
