@@ -120,14 +120,12 @@ export default {
     })
   },
 
-  // 软删除服务器 (通过将状态设置为 "deleted")
+  // 删除服务器 (使用 DELETE 端点)
   deleteServer(id, token) {
-    // 首先获取当前服务器数据
-    return this.getServerDetail(id).then(response => {
-      const serverData = response.data
-      // 设置状态为已删除
-      serverData.status = 'deleted'
-      return this.updateServer(id, serverData, token)
+    return apiClient.delete(`/servers/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     })
   },
 

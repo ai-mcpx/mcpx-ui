@@ -151,20 +151,19 @@ export const useServersStore = defineStore('servers', {
         }
 
         const response = await api.deleteServer(id, authStore.token)
-        const deletedServer = response.data
 
-        // 更新本地状态
+        // 更新本地状态 - 从列表中移除已删除的服务器
         if (this.currentServer && this.currentServer.id === id) {
-          this.currentServer = deletedServer
+          this.currentServer = null
         }
 
-        // 从服务器列表中移除或更新状态
+        // 从服务器列表中移除
         const index = this.servers.findIndex(server => server.id === id)
         if (index !== -1) {
-          this.servers[index] = deletedServer
+          this.servers.splice(index, 1)
         }
 
-        return deletedServer
+        return response.data
       } catch (error) {
         this.error = error.response?.data?.message || error.message || '删除服务器失败'
         console.error(`Error deleting server ${id}:`, error)

@@ -55,16 +55,20 @@
             <ul>
               <li>用于管理 MCP 注册表条目的 RESTful API（列表、获取、创建、更新、删除）</li>
               <li>服务监控的健康检查端点</li>
-              <li>支持多种包注册表类型（npm、PyPI、wheel、binary、OCI、homebrew、nuget 等）</li>
+              <li>支持多种包注册表类型（npm、PyPI、wheel、binary、OCI、nuget、mcpb 等）</li>
               <li>支持多种代码仓库源（GitHub、GitLab、Gerrit）</li>
               <li>支持各种环境配置和运行时参数</li>
               <li>优雅的关闭处理</li>
               <li>PostgreSQL 和内存数据库支持</li>
               <li>全面的 API 文档</li>
               <li>基于游标的分页支持</li>
-              <li>多种认证方式：GitHub OAuth、GitHub OIDC、匿名访问</li>
+              <li>多种认证方式：GitHub OAuth、GitHub OIDC、匿名访问、DNS 验证、HTTP 验证</li>
               <li>命名空间管理和权限控制</li>
               <li>完整的 CRUD 操作支持</li>
+              <li>支持 streamable-http 传输类型</li>
+              <li>增强的运行时提示支持（包括 wheel 运行时）</li>
+              <li>现代 Vue 3 前端界面</li>
+              <li>功能强大的命令行工具 (mcpx-cli)</li>
             </ul>
           </section>
 
@@ -537,7 +541,7 @@
             <ul>
               <li><code>registry_type</code>: "wheel"</li>
               <li><code>identifier</code>: wheel 文件名</li>
-              <li><code>runtime_hint</code>: "python"</li>
+              <li><code>runtime_hint</code>: "python" 或 "wheel"</li>
               <li><code>registry_base_url</code>: wheel 文件下载地址</li>
               <li>下载并安装：<code>curl -O wheel_url && pip install *.whl</code></li>
             </ul>
@@ -570,8 +574,34 @@
 
             <h4>其他支持的类型</h4>
             <ul>
-              <li><strong>Homebrew</strong>: macOS 包管理器</li>
-              <li><strong>MCPB</strong>: 专用的 MCP 二进制格式（计划中）</li>
+              <li><strong>MCPB</strong>: 专用的 MCP 二进制格式</li>
+            </ul>
+
+            <h3>支持的传输类型</h3>
+            <p>MCP Registry 支持多种传输类型，用于不同的通信方式：</p>
+
+            <h4>Stdio (标准输入输出)</h4>
+            <ul>
+              <li><code>transport_type</code>: "stdio"</li>
+              <li>通过标准输入输出进行通信</li>
+              <li>适用于本地进程和脚本</li>
+              <li>最常用的传输方式</li>
+            </ul>
+
+            <h4>SSE (服务器发送事件)</h4>
+            <ul>
+              <li><code>transport_type</code>: "sse"</li>
+              <li>基于 HTTP 的服务器发送事件</li>
+              <li>支持实时数据流</li>
+              <li>适用于 Web 应用</li>
+            </ul>
+
+            <h4>Streamable HTTP</h4>
+            <ul>
+              <li><code>transport_type</code>: "streamable-http"</li>
+              <li>支持流式 HTTP 通信</li>
+              <li>适用于需要流式数据传输的场景</li>
+              <li>支持大文件和实时数据流</li>
             </ul>
           </section>
 
@@ -585,9 +615,12 @@
               <li><strong>自动令牌管理</strong>: 安全的凭据存储和自动令牌刷新</li>
               <li><strong>健康检查</strong>: 验证 API 连接状态</li>
               <li><strong>服务器管理</strong>: 完整的 CRUD 操作支持</li>
-              <li><strong>交互式模式</strong>: 提供 Node.js 和 Python 模板的交互式创建</li>
+              <li><strong>交互式模式</strong>: 提供 Node.js、Python、Binary 和 Gerrit 模板的交互式创建</li>
               <li><strong>JSON 输出</strong>: 所有响应支持结构化输出</li>
               <li><strong>分页支持</strong>: 支持基于游标的分页浏览</li>
+              <li><strong>多仓库源支持</strong>: 支持 GitHub、GitLab 和 Gerrit 仓库</li>
+              <li><strong>多包类型支持</strong>: 支持 npm、PyPI、wheel、binary、OCI、NuGet、MCPB</li>
+              <li><strong>传输类型支持</strong>: 支持 stdio、SSE 和 streamable-http</li>
             </ul>
 
             <h3>安装</h3>
@@ -666,11 +699,18 @@ mcpx-cli publish server.json
 # GitHub 命名空间服务器（需要认证）
 mcpx-cli publish server.json --token &lt;github-token&gt;
 
-# 交互式模式
+# 交互式模式（支持多种模板）
 mcpx-cli publish --interactive
 
 # 交互式模式 + GitHub 认证
-mcpx-cli publish --interactive --token &lt;github-token&gt;</code></pre>
+mcpx-cli publish --interactive --token &lt;github-token&gt;
+
+# 交互式模式支持以下模板：
+# - node: Node.js 服务器模板
+# - python-pypi: Python PyPI 包模板
+# - python-wheel: Python Wheel 包模板
+# - binary: 二进制包模板
+# - gerrit: Gerrit 仓库模板</code></pre>
 
             <h5>5. 更新服务器</h5>
             <p>更新现有服务器的信息：</p>
@@ -740,7 +780,7 @@ mcpx-cli delete &lt;server-id&gt; --json</code></pre>
     ],
     "remotes": [
       {
-        "transport_type": "http",
+        "transport_type": "streamable-http",
         "url": "http://localhost:8000",
         "headers": [
           {
@@ -848,7 +888,17 @@ mcpx-cli delete &lt;server-id&gt; --json</code></pre>
               <li>适用于 GitLab 和 Gerrit 托管的代码仓库</li>
               <li>支持多种 URL 格式和实例</li>
               <li>目前使用匿名发布流程</li>
+              <li>支持企业级 Gerrit 代码审查工作流</li>
               <li>使用命令：<code>mcpx-cli publish server.json</code></li>
+            </ul>
+
+            <h4>企业认证发布</h4>
+            <ul>
+              <li>适用于企业环境和 CI/CD 工作流</li>
+              <li>支持 GitHub OIDC 认证</li>
+              <li>支持 DNS 和 HTTP 验证（计划中）</li>
+              <li>适用于自动化发布流程</li>
+              <li>使用命令：<code>mcpx-cli publish server.json --token &lt;oidc-token&gt;</code></li>
             </ul>
 
             <h3>发布步骤</h3>
@@ -869,8 +919,11 @@ mcpx-cli publish server.json
 # GitHub 认证发布
 mcpx-cli publish server.json --token &lt;your-github-token&gt;
 
-# 交互式发布
-mcpx-cli publish --interactive</code></pre>
+# 交互式发布（支持多种模板）
+mcpx-cli publish --interactive
+
+# 交互式发布 + GitHub 认证
+mcpx-cli publish --interactive --token &lt;your-github-token&gt;</code></pre>
               </li>
               <li><strong>验证发布结果</strong>
                 <p>发布成功后，可以使用以下命令验证：</p>
@@ -902,6 +955,11 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
               <li>包含完整的运行时参数和环境变量配置</li>
               <li>测试所有包类型的安装和运行</li>
               <li>保持仓库信息准确和最新</li>
+              <li>选择合适的传输类型（stdio 用于本地，streamable-http 用于流式数据）</li>
+              <li>为不同平台提供相应的包类型（npm、PyPI、binary 等）</li>
+              <li>使用交互式模式快速创建和测试服务器配置</li>
+              <li>利用 CLI 的 JSON 输出进行自动化集成</li>
+              <li>定期更新和维护已发布的服务器</li>
             </ul>
           </section>
 
@@ -932,8 +990,9 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
                   <li><strong>binary</strong>: 直接二进制文件分发</li>
                   <li><strong>oci</strong>: OCI 容器注册表</li>
                   <li><strong>nuget</strong>: .NET 包管理器</li>
-                  <li><strong>homebrew</strong>: macOS 包管理器</li>
+                  <li><strong>mcpb</strong>: 专用的 MCP 二进制格式</li>
                 </ul>
+                <p>每种包类型都支持相应的运行时提示和传输类型配置。</p>
               </el-collapse-item>
 
               <el-collapse-item title="如何贡献到 MCP Registry 项目？" name="4">
@@ -958,6 +1017,18 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
 
               <el-collapse-item title="注册表是否存储源代码？" name="6">
                 <p>不存储。MCP Registry 是一个<strong>元注册表</strong>，它只存储关于 MCP 服务器的元数据，而不托管实际的源代码或包。实际的代码托管在各自的包注册表中（如 npm、PyPI、Docker Hub 等）。</p>
+              </el-collapse-item>
+
+              <el-collapse-item title="支持哪些认证方式？" name="7">
+                <p>MCP Registry 支持多种认证方式：</p>
+                <ul>
+                  <li><strong>GitHub OAuth</strong>: 标准的 GitHub OAuth 流程，适用于 GitHub 托管的项目</li>
+                  <li><strong>GitHub OIDC</strong>: GitHub OpenID Connect，适用于企业环境和 CI/CD 工作流</li>
+                  <li><strong>匿名访问</strong>: 无需认证的访问方式，适用于公共命名空间</li>
+                  <li><strong>DNS 验证</strong>: 基于域名验证的认证方式（计划中）</li>
+                  <li><strong>HTTP 验证</strong>: 基于 HTTP 的认证方式（计划中）</li>
+                </ul>
+                <p>不同的命名空间可能需要不同的认证方式，GitHub 命名空间通常需要 GitHub 认证，而匿名命名空间可以使用匿名访问。</p>
               </el-collapse-item>
             </el-collapse>
           </section>

@@ -179,8 +179,8 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 **Package & Registry Support:**
 - **Registry Types**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB
 - **Repository Sources**: GitHub, GitLab, Gerrit with smart URL detection and validation
-- **Transport Types**: stdio (standard I/O), sse (Server-Sent Events)
-- **Runtime Hints**: npx, uvx, python, binary, docker, dnx
+- **Transport Types**: stdio (standard I/O), sse (Server-Sent Events), streamable-http
+- **Runtime Hints**: npx, uvx, python, wheel, binary, docker, dnx
 - **Schema Validation**: Real-time validation for package configuration
 - **Backward Compatibility**: Supports both legacy and modern field names
 
@@ -209,7 +209,7 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Server Browser**: Paginated list with search and filtering capabilities
 - **Publish Form**: Guided server creation with real-time validation
 - **Edit Interface**: In-place editing with schema validation and preview
-- **Delete Confirmation**: Safe deletion with confirmation dialogs
+- **Delete Confirmation**: Safe deletion with confirmation dialogs and permanent removal
 
 ### Repository Integration
 - **Multi-Source Support**: GitHub, GitLab, and Gerrit repository integration
@@ -228,8 +228,8 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 
 ### Package Configuration Interface
 - **Registry Type Selection**: Support for npm, PyPI, wheel, binary, OCI, NuGet, MCPB
-- **Transport Type Configuration**: Choose between stdio and SSE communication
-- **Smart Runtime Hints**: Contextual runtime suggestions based on registry type
+- **Transport Type Configuration**: Choose between stdio, SSE, and streamable-http communication
+- **Smart Runtime Hints**: Contextual runtime suggestions including npx, uvx, python, wheel, binary, docker, dnx
 - **Package Identification**: Modern `identifier` field with legacy `name` fallback
 - **Installation Commands**: Auto-generated installation instructions per package type
 - **Multi-Package Support**: Configure multiple packages per server with different types
