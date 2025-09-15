@@ -17,6 +17,9 @@ apiClient.interceptors.response.use((response) => {
   } else if (response.data && response.data.server) {
     // Transform single server response
     response.data = transformServerResponse(response.data)
+  } else if (response.data && response.data._meta) {
+    // Transform single server response (direct format)
+    response.data = transformServerResponse(response.data)
   }
   return response
 }, (error) => {
@@ -26,8 +29,8 @@ apiClient.interceptors.response.use((response) => {
 // Transform the new API format to the format expected by the UI
 function transformServerResponse(serverResponse) {
   // Check if this is already the new format with _meta
-  if (serverResponse._meta && serverResponse._meta['io.modelcontextprotocol.registry']) {
-    const registry = serverResponse._meta['io.modelcontextprotocol.registry']
+  if (serverResponse._meta && serverResponse._meta['io.modelcontextprotocol.registry/official']) {
+    const registry = serverResponse._meta['io.modelcontextprotocol.registry/official']
 
     return {
       id: registry.id,
@@ -36,8 +39,8 @@ function transformServerResponse(serverResponse) {
       status: serverResponse.status,
       repository: serverResponse.repository,
       version_detail: {
-        ...serverResponse.version_detail,
-        release_date: registry.release_date || serverResponse.version_detail?.release_date,
+        version: serverResponse.version || serverResponse.version_detail?.version,
+        release_date: registry.published_at || serverResponse.version_detail?.release_date,
         is_latest: registry.is_latest !== undefined ? registry.is_latest : serverResponse.version_detail?.is_latest
       },
       packages: serverResponse.packages || [],
