@@ -58,7 +58,7 @@
           <!-- 版本信息 -->
           <el-form-item label="版本" prop="version">
             <el-input
-              v-model="formData.version_detail.version"
+              v-model="formData.version"
               placeholder="例如: 1.0.0"
             />
           </el-form-item>
@@ -126,6 +126,7 @@
                       <el-option label="MCPB" value="mcpb" />
                       <el-option label="Wheel" value="wheel" />
                       <el-option label="Binary" value="binary" />
+                      <el-option label="Docker" value="docker" />
                     </el-select>
                   </el-form-item>
 
@@ -141,7 +142,7 @@
                   </el-form-item>
 
                   <el-form-item label="传输类型">
-                    <el-select v-model="pkg.transport_type" placeholder="选择传输类型">
+                    <el-select v-model="pkg.transport.type" placeholder="选择传输类型">
                       <el-option label="Stdio" value="stdio" />
                       <el-option label="SSE" value="sse" />
                       <el-option label="Streamable HTTP" value="streamable-http" />
@@ -161,6 +162,7 @@
                       <el-option v-if="pkg.registry_type === 'wheel'" label="wheel" value="wheel" />
                       <el-option v-if="pkg.registry_type === 'binary'" label="binary" value="binary" />
                       <el-option v-if="pkg.registry_type === 'oci'" label="docker" value="docker" />
+                      <el-option v-if="pkg.registry_type === 'docker'" label="docker" value="docker" />
                       <el-option v-if="pkg.registry_type === 'nuget'" label="dnx" value="dnx" />
                     </el-select>
                   </el-form-item>
@@ -236,6 +238,7 @@ const formData = reactive({
   name: '',
   description: '',
   status: 'active',
+  version: '1.0.0',
   version_detail: {
     version: '1.0.0'
   },
@@ -247,8 +250,11 @@ const formData = reactive({
   packages: [{
     registry_type: 'npm',
     registry_base_url: 'https://registry.npmjs.org',
-    name: '',
-    runtime_hint: 'npx'
+    identifier: '',
+    runtime_hint: 'npx',
+    transport: {
+      type: 'stdio'
+    }
   }]
 })
 
@@ -292,12 +298,14 @@ const initForm = () => {
 
   if (props.isEdit && props.server) {
     // 编辑模式：填充现有数据
+    const version = props.server.version || props.server.version_detail?.version || '1.0.0'
     Object.assign(formData, {
       name: props.server.name || '',
       description: props.server.description || '',
       status: props.server.status || 'active',
+      version: version,
       version_detail: {
-        version: props.server.version_detail?.version || '1.0.0'
+        version: version
       },
       repository: {
         url: props.server.repository?.url || '',
@@ -305,13 +313,16 @@ const initForm = () => {
         id: props.server.repository?.id || ''
       },
       packages: props.server.packages?.length > 0 ?
-        props.server.packages.map(pkg => ({ ...pkg })) :
+        props.server.packages.map(pkg => ({
+          ...pkg,
+          transport: pkg.transport || { type: pkg.transport_type || 'stdio' }
+        })) :
         [{
           registry_type: 'npm',
           registry_base_url: 'https://registry.npmjs.org',
           identifier: '',
           runtime_hint: 'npx',
-          transport_type: 'stdio'
+          transport: { type: 'stdio' }
         }]
     })
   } else {
@@ -320,6 +331,7 @@ const initForm = () => {
       name: '',
       description: '',
       status: 'active',
+      version: '1.0.0',
       version_detail: {
         version: '1.0.0'
       },
@@ -333,7 +345,7 @@ const initForm = () => {
         registry_base_url: 'https://registry.npmjs.org',
         identifier: '',
         runtime_hint: 'npx',
-        transport_type: 'stdio'
+        transport: { type: 'stdio' }
       }]
     })
   }
@@ -346,7 +358,7 @@ const addPackage = () => {
     registry_base_url: 'https://registry.npmjs.org',
     identifier: '',
     runtime_hint: 'npx',
-    transport_type: 'stdio'
+    transport: { type: 'stdio' }
   })
 }
 

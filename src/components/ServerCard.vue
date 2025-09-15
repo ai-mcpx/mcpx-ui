@@ -10,7 +10,7 @@
         <div class="server-title">
           <h3>{{ formatServerName(server.name) }}</h3>
           <div class="server-meta">
-            <el-tag size="small" type="info">{{ server.version_detail.version }}</el-tag>
+            <el-tag size="small" type="info">{{ server.version || server.version_detail?.version || 'Unknown' }}</el-tag>
             <span v-if="server.version_detail.is_latest" class="latest-tag">最新</span>
           </div>
         </div>

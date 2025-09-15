@@ -28,7 +28,7 @@
         <div class="server-title-info">
           <h1>{{ formatServerName(server.name) }}</h1>
           <div class="server-meta">
-            <el-tag size="small">{{ server.version_detail.version }}</el-tag>
+            <el-tag size="small">{{ server.version || server.version_detail?.version || 'Unknown' }}</el-tag>
             <span v-if="server.version_detail.is_latest" class="latest-tag">最新版本</span>
             <span v-if="server.version_detail.release_date && formatDate(server.version_detail.release_date)" class="release-date">发布于 {{ formatDate(server.version_detail.release_date) }}</span>
           </div>
@@ -99,8 +99,8 @@
                   <strong>运行时:</strong> {{ pkg.runtime_hint }}
                 </div>
 
-                <div v-if="pkg.transport_type" class="package-transport">
-                  <strong>传输类型:</strong> {{ pkg.transport_type }}
+                <div v-if="pkg.transport?.type || pkg.transport_type" class="package-transport">
+                  <strong>传输类型:</strong> {{ pkg.transport?.type || pkg.transport_type }}
                 </div>
 
                 <div v-if="pkg.runtime_arguments && pkg.runtime_arguments.length > 0" class="package-runtime-args">
@@ -164,7 +164,7 @@
             <div v-if="server.remotes && server.remotes.length > 0">
               <el-card v-for="(remote, index) in server.remotes" :key="index" class="remote-card">
                 <div class="remote-header">
-                  <h4>{{ remote.transport_type }}</h4>
+                  <h4>{{ remote.type || remote.transport_type || 'Unknown' }}</h4>
                 </div>
 
                 <div class="remote-url">
@@ -281,8 +281,9 @@ const versions = computed(() => {
   const versionSet = new Set()
 
   // Add current server version
-  if (server.value.version_detail?.version) {
-    versionSet.add(server.value.version_detail.version.trim())
+  const serverVersion = server.value.version || server.value.version_detail?.version
+  if (serverVersion) {
+    versionSet.add(serverVersion.trim())
   }
 
   // Add versions from packages
@@ -386,6 +387,7 @@ const getInstallCommand = (pkg) => {
     'homebrew': `brew install ${packageName}@${version}`,
     'nuget': `dotnet add package ${packageName} --version ${version}`,
     'oci': `docker pull ${packageName}:${version}`,
+    'docker': `docker pull ${packageName}:${version}`,
     'mcpb': `Download from ${pkg.registry_base_url || 'registry'}: ${packageName} version ${version}`
   }
 

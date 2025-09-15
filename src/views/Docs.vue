@@ -55,7 +55,7 @@
             <ul>
               <li>用于管理 MCP 注册表条目的 RESTful API（列表、获取、创建、更新、删除）</li>
               <li>服务监控的健康检查端点</li>
-              <li>支持多种包注册表类型（npm、PyPI、wheel、binary、OCI、nuget、mcpb 等）</li>
+              <li>支持多种包注册表类型（npm、PyPI、wheel、binary、OCI、docker、nuget、mcpb 等）</li>
               <li>支持多种代码仓库源（GitHub、GitLab、Gerrit）</li>
               <li>支持各种环境配置和运行时参数</li>
               <li>优雅的关闭处理</li>
@@ -124,6 +124,7 @@
           "source": "github",
           "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
         },
+        "version": "1.0.2",
         "version_detail": {
           "version": "1.0.2"
         },
@@ -564,6 +565,15 @@
               <li>通过 docker 运行：<code>docker pull image_name:version && docker run image_name:version</code></li>
             </ul>
 
+            <h4>Docker 容器</h4>
+            <ul>
+              <li><code>registry_type</code>: "docker"</li>
+              <li><code>identifier</code>: 镜像名称</li>
+              <li><code>runtime_hint</code>: "docker"</li>
+              <li>通过 docker 运行：<code>docker pull image_name:version && docker run image_name:version</code></li>
+              <li>与 OCI 类型类似，但专门用于 Docker 容器</li>
+            </ul>
+
             <h4>.NET 包 (NuGet)</h4>
             <ul>
               <li><code>registry_type</code>: "nuget"</li>
@@ -577,12 +587,37 @@
               <li><strong>MCPB</strong>: 专用的 MCP 二进制格式</li>
             </ul>
 
+            <h3>JSON 格式更新</h3>
+            <p>MCP Registry 支持新的 JSON 格式，同时保持向后兼容性：</p>
+
+            <h4>版本字段</h4>
+            <ul>
+              <li><code>version</code>: 新的顶级版本字段（推荐）</li>
+              <li><code>version_detail.version</code>: 传统版本字段（向后兼容）</li>
+              <li>系统会优先使用 <code>version</code> 字段，如果不存在则回退到 <code>version_detail.version</code></li>
+            </ul>
+
+            <h4>传输类型字段</h4>
+            <ul>
+              <li><code>transport.type</code>: 新的嵌套传输类型字段（推荐）</li>
+              <li><code>transport_type</code>: 传统传输类型字段（向后兼容）</li>
+              <li>系统会优先使用 <code>transport.type</code> 字段，如果不存在则回退到 <code>transport_type</code></li>
+            </ul>
+
+            <h4>开发特性</h4>
+            <ul>
+              <li>支持 localhost URL 用于开发和测试</li>
+              <li>移除了 file_sha256 要求，简化了包发布流程</li>
+              <li>移除了 HTTP 可访问性验证，加快了开发速度</li>
+              <li>支持所有新的注册表类型（docker、binary、wheel 等）</li>
+            </ul>
+
             <h3>支持的传输类型</h3>
             <p>MCP Registry 支持多种传输类型，用于不同的通信方式：</p>
 
             <h4>Stdio (标准输入输出)</h4>
             <ul>
-              <li><code>transport_type</code>: "stdio"</li>
+              <li><code>transport.type</code>: "stdio"</li>
               <li>通过标准输入输出进行通信</li>
               <li>适用于本地进程和脚本</li>
               <li>最常用的传输方式</li>
@@ -590,7 +625,7 @@
 
             <h4>SSE (服务器发送事件)</h4>
             <ul>
-              <li><code>transport_type</code>: "sse"</li>
+              <li><code>transport.type</code>: "sse"</li>
               <li>基于 HTTP 的服务器发送事件</li>
               <li>支持实时数据流</li>
               <li>适用于 Web 应用</li>
@@ -598,7 +633,7 @@
 
             <h4>Streamable HTTP</h4>
             <ul>
-              <li><code>transport_type</code>: "streamable-http"</li>
+              <li><code>transport.type</code>: "streamable-http"</li>
               <li>支持流式 HTTP 通信</li>
               <li>适用于需要流式数据传输的场景</li>
               <li>支持大文件和实时数据流</li>
@@ -615,11 +650,11 @@
               <li><strong>自动令牌管理</strong>: 安全的凭据存储和自动令牌刷新</li>
               <li><strong>健康检查</strong>: 验证 API 连接状态</li>
               <li><strong>服务器管理</strong>: 完整的 CRUD 操作支持</li>
-              <li><strong>交互式模式</strong>: 提供 Node.js、Python、Binary 和 Gerrit 模板的交互式创建</li>
+              <li><strong>交互式模式</strong>: 提供 Node.js、Python、Binary、Docker 和 Gerrit 模板的交互式创建</li>
               <li><strong>JSON 输出</strong>: 所有响应支持结构化输出</li>
               <li><strong>分页支持</strong>: 支持基于游标的分页浏览</li>
               <li><strong>多仓库源支持</strong>: 支持 GitHub、GitLab 和 Gerrit 仓库</li>
-              <li><strong>多包类型支持</strong>: 支持 npm、PyPI、wheel、binary、OCI、NuGet、MCPB</li>
+              <li><strong>多包类型支持</strong>: 支持 npm、PyPI、wheel、binary、OCI、docker、NuGet、MCPB</li>
               <li><strong>传输类型支持</strong>: 支持 stdio、SSE 和 streamable-http</li>
             </ul>
 
@@ -780,7 +815,7 @@ mcpx-cli delete &lt;server-id&gt; --json</code></pre>
     ],
     "remotes": [
       {
-        "transport_type": "streamable-http",
+        "type": "streamable-http",
         "url": "http://localhost:8000",
         "headers": [
           {
