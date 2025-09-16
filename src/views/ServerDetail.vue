@@ -88,7 +88,6 @@
               <el-card v-for="(pkg, index) in server.packages" :key="`${pkg.identifier || pkg.registry_type}-${index}`" class="package-card">
                 <div class="package-header">
                   <el-tag size="small">{{ pkg.registry_type || 'Unknown' }}</el-tag>
-                  <span class="package-name">{{ pkg.identifier || pkg.name || 'Unknown' }}</span>
                 </div>
 
                 <div class="package-version">
