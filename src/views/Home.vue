@@ -11,7 +11,7 @@
       <div class="section-header">
         <h2>热门 MCP Servers</h2>
         <div class="section-actions">
-          <span>{{ totalCount || 0 }} 个服务器</span>
+          <span>{{ totalCount || 0 }} 个服务器（最新版本）</span>
           <el-button
             v-if="authStore.isAuthenticated"
             type="primary"
@@ -41,6 +41,13 @@
         <el-col v-if="!loading && servers.length === 0" :span="24">
           <div style="text-align: center; padding: 2rem; color: #666;">
             <p>暂无可用的 MCP 服务器</p>
+          </div>
+        </el-col>
+
+        <!-- Show message when servers are filtered but none are latest versions -->
+        <el-col v-if="!loading && store.servers.length > 0 && servers.length === 0" :span="24">
+          <div style="text-align: center; padding: 2rem; color: #666;">
+            <p>暂无可用的最新版本服务器</p>
           </div>
         </el-col>
       </el-row>
@@ -77,13 +84,62 @@ import ServerEditor from '../components/ServerEditor.vue'
 const store = useServersStore()
 const authStore = useAuthStore()
 const loading = computed(() => store.loading)
-const servers = computed(() => store.servers)
-const totalCount = computed(() => store.totalCount || store.servers.length)
+
+// Filter servers to show only the latest version of each server
+const servers = computed(() => {
+  if (!store.servers || store.servers.length === 0) {
+    return []
+  }
+
+  // Group servers by server ID (using the id field which should be serverId)
+  const serverMap = new Map()
+
+  store.servers.forEach(server => {
+    const serverId = server.id || server.serverId
+    if (!serverId) return
+
+    // If this server is not in the map, or if this version is newer, add/update it
+    if (!serverMap.has(serverId)) {
+      serverMap.set(serverId, server)
+    } else {
+      const existingServer = serverMap.get(serverId)
+      // Compare versions - if current server has a newer version, replace it
+      const currentVersion = server.version || server.version_detail?.version || '0.0.0'
+      const existingVersion = existingServer.version || existingServer.version_detail?.version || '0.0.0'
+
+      if (compareVersions(currentVersion, existingVersion) > 0) {
+        serverMap.set(serverId, server)
+      }
+    }
+  })
+
+  return Array.from(serverMap.values())
+})
+
+const totalCount = computed(() => servers.value.length)
 const nextPage = computed(() => store.nextPage)
 
 const currentPage = ref(1)
 const pageSize = ref(20)
 const showPublisher = ref(false)
+
+// Version comparison function for semantic versioning
+const compareVersions = (version1, version2) => {
+  const v1Parts = version1.split('.').map(Number)
+  const v2Parts = version2.split('.').map(Number)
+
+  const maxLength = Math.max(v1Parts.length, v2Parts.length)
+
+  for (let i = 0; i < maxLength; i++) {
+    const v1Part = v1Parts[i] || 0
+    const v2Part = v2Parts[i] || 0
+
+    if (v1Part > v2Part) return 1
+    if (v1Part < v2Part) return -1
+  }
+
+  return 0
+}
 
 // 显示发布对话框
 const showPublishDialog = () => {

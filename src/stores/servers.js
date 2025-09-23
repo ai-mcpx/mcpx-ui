@@ -139,34 +139,34 @@ export const useServersStore = defineStore('servers', {
       }
     },
 
-    // 软删除服务器 (设置状态为 deleted)
-    async deleteServer(id) {
+    // 软删除服务器版本 (设置状态为 deleted)
+    async deleteServerVersion(versionId) {
       this.loading = true
       this.error = null
 
       try {
         const authStore = useAuthStore()
         if (!authStore.token) {
-          throw new Error('需要认证令牌才能删除服务器')
+          throw new Error('需要认证令牌才能删除服务器版本')
         }
 
-        const response = await api.deleteServer(id, authStore.token)
+        const response = await api.deleteServerVersion(versionId, authStore.token)
 
-        // 更新本地状态 - 从列表中移除已删除的服务器
-        if (this.currentServer && this.currentServer.id === id) {
+        // 更新本地状态 - 从列表中移除已删除的服务器版本
+        if (this.currentServer && this.currentServer.versionId === versionId) {
           this.currentServer = null
         }
 
-        // 从服务器列表中移除
-        const index = this.servers.findIndex(server => server.id === id)
+        // 从服务器列表中移除匹配的版本
+        const index = this.servers.findIndex(server => server.versionId === versionId)
         if (index !== -1) {
           this.servers.splice(index, 1)
         }
 
         return response.data
       } catch (error) {
-        this.error = error.response?.data?.message || error.message || '删除服务器失败'
-        console.error(`Error deleting server ${id}:`, error)
+        this.error = error.response?.data?.message || error.message || '删除服务器版本失败'
+        console.error(`Error deleting server version ${versionId}:`, error)
         throw error
       } finally {
         this.loading = false

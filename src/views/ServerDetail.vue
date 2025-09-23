@@ -29,8 +29,16 @@
           <h1>{{ formatServerName(server.name) }}</h1>
           <div class="server-meta">
             <el-tag size="small">{{ server.version || server.version_detail?.version || 'Unknown' }}</el-tag>
-            <span v-if="server.version_detail.is_latest" class="latest-tag">最新版本</span>
-            <span v-if="server.version_detail.release_date && formatDate(server.version_detail.release_date)" class="release-date">发布于 {{ formatDate(server.version_detail.release_date) }}</span>
+            <span v-if="server.version_detail?.is_latest" class="latest-tag">最新版本</span>
+            <span v-if="server.version_detail?.release_date && formatDate(server.version_detail.release_date)" class="release-date">发布于 {{ formatDate(server.version_detail.release_date) }}</span>
+          </div>
+          <div class="server-ids" v-if="server.id || server.versionId">
+            <div v-if="server.id" class="server-id">
+              <strong>服务器ID:</strong> {{ server.id }}
+            </div>
+            <div v-if="server.versionId" class="version-id">
+              <strong>版本ID:</strong> {{ server.versionId }}
+            </div>
           </div>
 
           <div class="repository-link" v-if="server.repository">
@@ -85,33 +93,33 @@
           <div class="installation-info">
             <h3>安装包</h3>
             <div v-if="server.packages && server.packages.length > 0">
-              <el-card v-for="(pkg, index) in server.packages" :key="`${pkg.identifier || pkg.registry_type}-${index}`" class="package-card">
+              <el-card v-for="(pkg, index) in server.packages" :key="`${pkg.identifier || pkg.registryType}-${index}`" class="package-card">
                 <div class="package-header">
-                  <el-tag size="small">{{ pkg.registry_type || 'Unknown' }}</el-tag>
+                  <el-tag size="small">{{ pkg.registryType || pkg.registry_type || 'Unknown' }}</el-tag>
                 </div>
 
                 <div class="package-version">
                   <strong>版本:</strong> {{ pkg.version }}
                 </div>
 
-                <div v-if="pkg.runtime_hint" class="package-runtime">
-                  <strong>运行时:</strong> {{ pkg.runtime_hint }}
+                <div v-if="pkg.runtimeHint || pkg.runtime_hint" class="package-runtime">
+                  <strong>运行时:</strong> {{ pkg.runtimeHint || pkg.runtime_hint }}
                 </div>
 
                 <div v-if="pkg.transport?.type || pkg.transport_type" class="package-transport">
                   <strong>传输类型:</strong> {{ pkg.transport?.type || pkg.transport_type }}
                 </div>
 
-                <div v-if="pkg.runtime_arguments && pkg.runtime_arguments.length > 0" class="package-runtime-args">
+                <div v-if="(pkg.runtimeArguments && pkg.runtimeArguments.length > 0) || (pkg.runtime_arguments && pkg.runtime_arguments.length > 0)" class="package-runtime-args">
                   <h5>运行时参数:</h5>
-                  <el-table :data="pkg.runtime_arguments" stripe style="width: 100%">
+                  <el-table :data="pkg.runtimeArguments || pkg.runtime_arguments" stripe style="width: 100%">
                     <el-table-column prop="name" label="名称" width="150" />
                     <el-table-column prop="type" label="类型" width="100" />
                     <el-table-column prop="description" label="描述" />
-                    <el-table-column prop="is_required" label="必需" width="80">
+                    <el-table-column prop="isRequired" label="必需" width="80">
                       <template #default="{ row }">
-                        <el-tag :type="row.is_required ? 'danger' : 'info'" size="small">
-                          {{ row.is_required ? '是' : '否' }}
+                        <el-tag :type="(row.isRequired || row.is_required) ? 'danger' : 'info'" size="small">
+                          {{ (row.isRequired || row.is_required) ? '是' : '否' }}
                         </el-tag>
                       </template>
                     </el-table-column>
@@ -119,16 +127,16 @@
                   </el-table>
                 </div>
 
-                <div v-if="pkg.environment_variables && pkg.environment_variables.length > 0" class="package-env-vars">
+                <div v-if="(pkg.environmentVariables && pkg.environmentVariables.length > 0) || (pkg.environment_variables && pkg.environment_variables.length > 0)" class="package-env-vars">
                   <h5>环境变量:</h5>
-                  <el-table :data="pkg.environment_variables" stripe style="width: 100%">
+                  <el-table :data="pkg.environmentVariables || pkg.environment_variables" stripe style="width: 100%">
                     <el-table-column prop="name" label="名称" width="180" />
                     <el-table-column prop="description" label="描述" />
                     <el-table-column prop="format" label="格式" width="100" />
-                    <el-table-column prop="is_required" label="必需" width="80">
+                    <el-table-column prop="isRequired" label="必需" width="80">
                       <template #default="{ row }">
-                        <el-tag :type="row.is_required ? 'danger' : 'info'" size="small">
-                          {{ row.is_required ? '是' : '否' }}
+                        <el-tag :type="(row.isRequired || row.is_required) ? 'danger' : 'info'" size="small">
+                          {{ (row.isRequired || row.is_required) ? '是' : '否' }}
                         </el-tag>
                       </template>
                     </el-table-column>
@@ -245,8 +253,13 @@ const showDeleteConfirm = () => {
     return
   }
 
+  if (!server.value?.versionId) {
+    ElMessage.error('无法获取版本ID，无法删除')
+    return
+  }
+
   ElMessageBox.confirm(
-    '此操作将永久删除该服务器，是否继续？',
+    `此操作将删除服务器版本 ${server.value.versionId}，是否继续？`,
     '警告',
     {
       confirmButtonText: '确定删除',
@@ -255,8 +268,8 @@ const showDeleteConfirm = () => {
     }
   ).then(async () => {
     try {
-      await store.deleteServer(serverId.value)
-      ElMessage.success('服务器已删除')
+      await store.deleteServerVersion(server.value.versionId)
+      ElMessage.success('服务器版本已删除')
       // 重新获取服务器数据以显示更新后的状态
       await fetchServerData()
     } catch (error) {
@@ -374,7 +387,7 @@ const openRepository = (url) => {
 const getInstallCommand = (pkg) => {
   if (!pkg) return ''
 
-  const registryType = pkg.registry_type || ''
+  const registryType = pkg.registryType || pkg.registry_type || ''
   const packageName = pkg.identifier || pkg.name || ''
   const version = pkg.version || ''
 
@@ -387,7 +400,7 @@ const getInstallCommand = (pkg) => {
     'nuget': `dotnet add package ${packageName} --version ${version}`,
     'oci': `docker pull ${packageName}:${version}`,
     'docker': `docker pull ${packageName}:${version}`,
-    'mcpb': `Download from ${pkg.registry_base_url || 'registry'}: ${packageName} version ${version}`
+    'mcpb': `Download from ${pkg.registryBaseUrl || pkg.registry_base_url || 'registry'}: ${packageName} version ${version}`
   }
 
   return commands[registryType] || `# Install ${packageName} version ${version}`
@@ -466,6 +479,25 @@ watch(() => route.params.id, (newId) => {
   .release-date {
     color: #909399;
     font-size: 0.9rem;
+  }
+}
+
+.server-ids {
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: #606266;
+
+  .server-id, .version-id {
+    margin-bottom: 4px;
+    font-family: monospace;
+    background: #f5f7fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

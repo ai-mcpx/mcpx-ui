@@ -18,11 +18,12 @@ Modern Vue 3 frontend for the **mcpx registry** with comprehensive authenticatio
 - **Browse & Search** servers with advanced filtering and pagination
 - **Publish New Servers** with guided form interface and validation
 - **Edit Existing Servers** with full schema validation and real-time preview
-- **Delete Servers** with confirmation dialogs and soft delete support
+- **Delete Server Versions** with version-based deletion and confirmation dialogs
 - **Repository Support**: GitHub, GitLab, and Gerrit integration with smart URL parsing
 - **Registry Type Support**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB packages
-- **Transport Types**: stdio, SSE (Server-Sent Events) for different communication methods
+- **Transport Types**: stdio, SSE (Server-Sent Events), streamable-http for different communication methods
 - **Version Management** with latest version tracking and history
+- **Server & Version IDs**: Display of unique server and version identifiers
 - **Package Identification**: Modern schema with `identifier` field for package naming
 
 ### 🎨 **Modern User Experience**
@@ -177,12 +178,13 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Responsive Design** - Mobile-first approach with CSS Grid and Flexbox
 
 **Package & Registry Support:**
-- **Registry Types**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB
+- **Registry Types**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB, Docker
 - **Repository Sources**: GitHub, GitLab, Gerrit with smart URL detection and validation
 - **Transport Types**: stdio (standard I/O), sse (Server-Sent Events), streamable-http
 - **Runtime Hints**: npx, uvx, python, wheel, binary, docker, dnx
-- **Schema Validation**: Real-time validation for package configuration
-- **Backward Compatibility**: Supports both legacy and modern field names
+- **Schema Validation**: Real-time validation for package configuration with camelCase field names
+- **Backward Compatibility**: Supports both legacy (snake_case) and modern (camelCase) field names
+- **Version-based Operations**: Delete individual server versions using unique version IDs
 
 **State Management & Routing:**
 - **Pinia** - Intuitive, type-safe state management
@@ -209,7 +211,8 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Server Browser**: Paginated list with search and filtering capabilities
 - **Publish Form**: Guided server creation with real-time validation
 - **Edit Interface**: In-place editing with schema validation and preview
-- **Delete Confirmation**: Safe deletion with confirmation dialogs and permanent removal
+- **Version-based Deletion**: Delete individual server versions using unique version IDs
+- **Server & Version Display**: Clear display of server IDs and version IDs for identification
 
 ### Repository Integration
 - **Multi-Source Support**: GitHub, GitLab, and Gerrit repository integration
@@ -227,12 +230,13 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 | **Gerrit** | `http://host:port/project/path` | `http://gerrit.example.com/my-project` | Blue (Info) |
 
 ### Package Configuration Interface
-- **Registry Type Selection**: Support for npm, PyPI, wheel, binary, OCI, NuGet, MCPB
+- **Registry Type Selection**: Support for npm, PyPI, wheel, binary, OCI, NuGet, MCPB, Docker
 - **Transport Type Configuration**: Choose between stdio, SSE, and streamable-http communication
 - **Smart Runtime Hints**: Contextual runtime suggestions including npx, uvx, python, wheel, binary, docker, dnx
 - **Package Identification**: Modern `identifier` field with legacy `name` fallback
 - **Installation Commands**: Auto-generated installation instructions per package type
 - **Multi-Package Support**: Configure multiple packages per server with different types
+- **CamelCase Schema**: Modern JSON field naming convention (registryType, runtimeHint, etc.)
 
 ### Advanced Features
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices

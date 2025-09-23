@@ -11,19 +11,23 @@
           <h3>{{ formatServerName(server.name) }}</h3>
           <div class="server-meta">
             <el-tag size="small" type="info">{{ server.version || server.version_detail?.version || 'Unknown' }}</el-tag>
-            <span v-if="server.version_detail.is_latest" class="latest-tag">最新</span>
+            <span v-if="server.version_detail?.is_latest" class="latest-tag">最新</span>
+          </div>
+          <div class="server-ids" v-if="server.id || server.versionId">
+            <span v-if="server.id" class="server-id">ID: {{ server.id }}</span>
+            <span v-if="server.versionId" class="version-id">版本: {{ server.versionId }}</span>
           </div>
         </div>
       </div>
-      
+
       <p class="server-description">{{ truncateDescription(server.description) }}</p>
-      
+
       <div class="server-footer">
         <div class="repository-info" v-if="server.repository">
           <el-icon><link /></el-icon>
-          <a 
-            :href="server.repository.url" 
-            target="_blank" 
+          <a
+            :href="server.repository.url"
+            target="_blank"
             @click.stop
             class="repo-link"
           >
@@ -31,9 +35,9 @@
           </a>
         </div>
         <div class="server-tags">
-          <el-tag 
-            v-if="server.repository && server.repository.source" 
-            size="small" 
+          <el-tag
+            v-if="server.repository && server.repository.source"
+            size="small"
             :type="getSourceTagType(server.repository.source)"
           >
             {{ server.repository.source }}
@@ -92,7 +96,7 @@ const getServerIcon = (server) => {
 
 const getRepositoryName = (repository) => {
   if (!repository || !repository.url) return ''
-  
+
   try {
     const url = new URL(repository.url)
     const pathParts = url.pathname.split('/').filter(Boolean)
@@ -129,7 +133,7 @@ const getSourceTagType = (source) => {
     'gerrit': 'info',
     'default': 'info'
   }
-  
+
   return types[source] || types.default
 }
 </script>
@@ -147,7 +151,7 @@ const getSourceTagType = (source) => {
   display: flex;
   flex-direction: column;
   transition: transform 0.2s;
-  
+
   &:hover {
     transform: translateY(-5px);
   }
@@ -165,7 +169,7 @@ const getSourceTagType = (source) => {
 
 .server-title {
   flex: 1;
-  
+
   h3 {
     margin: 0 0 4px 0;
     font-size: 1.1rem;
@@ -178,11 +182,32 @@ const getSourceTagType = (source) => {
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   .latest-tag {
     font-size: 0.75rem;
     color: #67c23a;
     font-weight: 500;
+  }
+}
+
+.server-ids {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: #909399;
+
+  .server-id, .version-id {
+    font-family: monospace;
+    background: #f5f7fa;
+    padding: 1px 4px;
+    border-radius: 2px;
+    display: inline-block;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -207,11 +232,11 @@ const getSourceTagType = (source) => {
   align-items: center;
   gap: 4px;
   color: #909399;
-  
+
   .repo-link {
     color: #409eff;
     text-decoration: none;
-    
+
     &:hover {
       text-decoration: underline;
     }

@@ -33,22 +33,24 @@ function transformServerResponse(serverResponse) {
     const registry = serverResponse._meta['io.modelcontextprotocol.registry/official']
 
     return {
-      id: registry.id,
+      id: registry.serverId, // Use serverId from metadata
+      versionId: registry.versionId, // Add versionId from metadata
       name: serverResponse.name,
       description: serverResponse.description,
       status: serverResponse.status,
       repository: serverResponse.repository,
+      version: serverResponse.version || serverResponse.version_detail?.version,
       version_detail: {
         version: serverResponse.version || serverResponse.version_detail?.version,
-        release_date: registry.published_at || serverResponse.version_detail?.release_date,
-        is_latest: registry.is_latest !== undefined ? registry.is_latest : serverResponse.version_detail?.is_latest
+        release_date: registry.publishedAt || serverResponse.version_detail?.release_date,
+        is_latest: registry.isLatest !== undefined ? registry.isLatest : serverResponse.version_detail?.is_latest
       },
       packages: serverResponse.packages || [],
       remotes: serverResponse.remotes || [],
       // Add registry metadata
-      published_at: registry.published_at,
-      updated_at: registry.updated_at,
-      is_latest: registry.is_latest
+      published_at: registry.publishedAt,
+      updated_at: registry.updatedAt,
+      is_latest: registry.isLatest
     }
   }
 
@@ -123,12 +125,45 @@ export default {
     })
   },
 
-  // 删除服务器 (使用 DELETE 端点)
-  deleteServer(id, token) {
-    return apiClient.delete(`/servers/${id}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+  // 删除服务器版本 (使用 PUT 端点进行软删除)
+  deleteServerVersion(versionId, token) {
+    // First get all servers to find the one with matching version ID
+    return apiClient.get('/servers').then(response => {
+      const servers = response.data.servers || []
+      const targetServer = servers.find(server => {
+        if (server._meta && server._meta['io.modelcontextprotocol.registry/official']) {
+          return server._meta['io.modelcontextprotocol.registry/official'].versionId === versionId
+        }
+        return false
+      })
+
+      if (!targetServer) {
+        throw new Error(`Version not found: ${versionId}`)
       }
+
+      const registry = targetServer._meta['io.modelcontextprotocol.registry/official']
+      const serverId = registry.serverId
+      const version = targetServer.version
+
+      // Use PUT endpoint to soft delete by setting status to deleted
+      const endpoint = `/servers/${serverId}?version=${version}`
+      const editRequest = {
+        name: targetServer.name,
+        description: targetServer.description,
+        status: 'deleted', // Set status to deleted
+        repository: {
+          url: targetServer.repository.url,
+          source: targetServer.repository.source,
+          id: targetServer.repository.id
+        },
+        version: targetServer.version
+      }
+
+      return apiClient.put(endpoint, editRequest, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
     })
   },
 

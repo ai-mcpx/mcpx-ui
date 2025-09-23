@@ -118,7 +118,7 @@
                   </div>
 
                   <el-form-item label="类型">
-                    <el-select v-model="pkg.registry_type" placeholder="选择包类型">
+                    <el-select v-model="pkg.registryType" placeholder="选择包类型">
                       <el-option label="NPM" value="npm" />
                       <el-option label="PyPI" value="pypi" />
                       <el-option label="OCI" value="oci" />
@@ -131,7 +131,7 @@
                   </el-form-item>
 
                   <el-form-item label="注册表 URL">
-                    <el-select v-model="pkg.registry_base_url" placeholder="选择注册表">
+                    <el-select v-model="pkg.registryBaseUrl" placeholder="选择注册表">
                       <el-option label="https://registry.npmjs.org" value="https://registry.npmjs.org" />
                       <el-option label="https://pypi.org" value="https://pypi.org" />
                       <el-option label="https://docker.io" value="https://docker.io" />
@@ -153,17 +153,17 @@
                     <el-input v-model="pkg.identifier" placeholder="包名" />
                   </el-form-item>
 
-                  <el-form-item label="运行提示" v-if="pkg.registry_type">
-                    <el-select v-model="pkg.runtime_hint" placeholder="选择运行提示">
-                      <el-option v-if="pkg.registry_type === 'npm'" label="npx" value="npx" />
-                      <el-option v-if="pkg.registry_type === 'pypi'" label="uvx" value="uvx" />
-                      <el-option v-if="pkg.registry_type === 'pypi'" label="python" value="python" />
-                      <el-option v-if="pkg.registry_type === 'wheel'" label="python" value="python" />
-                      <el-option v-if="pkg.registry_type === 'wheel'" label="wheel" value="wheel" />
-                      <el-option v-if="pkg.registry_type === 'binary'" label="binary" value="binary" />
-                      <el-option v-if="pkg.registry_type === 'oci'" label="docker" value="docker" />
-                      <el-option v-if="pkg.registry_type === 'docker'" label="docker" value="docker" />
-                      <el-option v-if="pkg.registry_type === 'nuget'" label="dnx" value="dnx" />
+                  <el-form-item label="运行提示" v-if="pkg.registryType">
+                    <el-select v-model="pkg.runtimeHint" placeholder="选择运行提示">
+                      <el-option v-if="pkg.registryType === 'npm'" label="npx" value="npx" />
+                      <el-option v-if="pkg.registryType === 'pypi'" label="uvx" value="uvx" />
+                      <el-option v-if="pkg.registryType === 'pypi'" label="python" value="python" />
+                      <el-option v-if="pkg.registryType === 'wheel'" label="python" value="python" />
+                      <el-option v-if="pkg.registryType === 'wheel'" label="wheel" value="wheel" />
+                      <el-option v-if="pkg.registryType === 'binary'" label="binary" value="binary" />
+                      <el-option v-if="pkg.registryType === 'oci'" label="docker" value="docker" />
+                      <el-option v-if="pkg.registryType === 'docker'" label="docker" value="docker" />
+                      <el-option v-if="pkg.registryType === 'nuget'" label="dnx" value="dnx" />
                     </el-select>
                   </el-form-item>
                 </el-card>
@@ -248,10 +248,10 @@ const formData = reactive({
     id: ''
   },
   packages: [{
-    registry_type: 'npm',
-    registry_base_url: 'https://registry.npmjs.org',
+    registryType: 'npm',
+    registryBaseUrl: 'https://registry.npmjs.org',
     identifier: '',
-    runtime_hint: 'npx',
+    runtimeHint: 'npx',
     transport: {
       type: 'stdio'
     }
@@ -314,14 +314,17 @@ const initForm = () => {
       },
       packages: props.server.packages?.length > 0 ?
         props.server.packages.map(pkg => ({
-          ...pkg,
+          registryType: pkg.registryType || pkg.registry_type || 'npm',
+          registryBaseUrl: pkg.registryBaseUrl || pkg.registry_base_url || 'https://registry.npmjs.org',
+          identifier: pkg.identifier || '',
+          runtimeHint: pkg.runtimeHint || pkg.runtime_hint || 'npx',
           transport: pkg.transport || { type: pkg.transport_type || 'stdio' }
         })) :
         [{
-          registry_type: 'npm',
-          registry_base_url: 'https://registry.npmjs.org',
+          registryType: 'npm',
+          registryBaseUrl: 'https://registry.npmjs.org',
           identifier: '',
-          runtime_hint: 'npx',
+          runtimeHint: 'npx',
           transport: { type: 'stdio' }
         }]
     })
@@ -354,10 +357,10 @@ const initForm = () => {
 // 添加包
 const addPackage = () => {
   formData.packages.push({
-    registry_type: 'npm',
-    registry_base_url: 'https://registry.npmjs.org',
+    registryType: 'npm',
+    registryBaseUrl: 'https://registry.npmjs.org',
     identifier: '',
-    runtime_hint: 'npx',
+    runtimeHint: 'npx',
     transport: { type: 'stdio' }
   })
 }

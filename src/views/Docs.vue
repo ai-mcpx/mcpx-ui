@@ -53,7 +53,7 @@
 
             <h3>主要功能</h3>
             <ul>
-              <li>用于管理 MCP 注册表条目的 RESTful API（列表、获取、创建、更新、删除）</li>
+              <li>用于管理 MCP 注册表条目的 RESTful API（列表、获取、创建、更新、版本删除）</li>
               <li>服务监控的健康检查端点</li>
               <li>支持多种包注册表类型（npm、PyPI、wheel、binary、OCI、docker、nuget、mcpb 等）</li>
               <li>支持多种代码仓库源（GitHub、GitLab、Gerrit）</li>
@@ -69,6 +69,9 @@
               <li>增强的运行时提示支持（包括 wheel 运行时）</li>
               <li>现代 Vue 3 前端界面</li>
               <li>功能强大的命令行工具 (mcpx-cli)</li>
+              <li>版本管理：支持服务器 ID 和版本 ID 的独立管理</li>
+              <li>软删除：版本级别的软删除功能</li>
+              <li>camelCase JSON 格式：现代化的字段命名约定</li>
             </ul>
           </section>
 
@@ -83,10 +86,11 @@
               <li><code>description</code>: 服务器描述</li>
               <li><code>status</code>: 服务器状态（"active"、"deprecated"、"deleted"）</li>
               <li><code>repository</code>: 源代码仓库信息（支持 GitHub、GitLab、Gerrit）</li>
-              <li><code>version_detail</code>: 版本信息</li>
-              <li><code>packages</code>: 包配置数组</li>
+              <li><code>version</code>: 服务器版本（推荐使用）</li>
+              <li><code>version_detail</code>: 版本信息（向后兼容）</li>
+              <li><code>packages</code>: 包配置数组（使用 camelCase 字段名）</li>
               <li><code>remotes</code>: 远程连接配置数组</li>
-              <li><code>_meta</code>: 注册表元数据，包含 ID、发布时间等</li>
+              <li><code>_meta</code>: 注册表元数据，包含 serverId、versionId、发布时间等</li>
             </ul>
 
             <h3>分页</h3>
@@ -115,41 +119,39 @@
               <pre><code>{
   "servers": [
     {
-      "server": {
-        "name": "io.modelcontextprotocol/filesystem",
-        "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
-        "status": "active",
-        "repository": {
-          "url": "https://github.com/modelcontextprotocol/servers",
-          "source": "github",
-          "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
-        },
-        "version": "1.0.2",
-        "version_detail": {
-          "version": "1.0.2"
-        },
-        "packages": [
-          {
-            "registry_type": "npm",
-            "identifier": "@modelcontextprotocol/server-filesystem",
-            "version": "1.0.2",
-            "package_arguments": [
-              {
-                "type": "positional",
-                "value_hint": "target_dir",
-                "description": "Path to access",
-                "default": "/Users/username/Desktop",
-                "is_required": true
-              }
-            ]
-          }
-        ]
+      "name": "io.modelcontextprotocol/filesystem",
+      "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
+      "status": "active",
+      "repository": {
+        "url": "https://github.com/modelcontextprotocol/servers",
+        "source": "github",
+        "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
       },
-      "x-io.modelcontextprotocol.registry": {
-        "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1",
-        "published_at": "2023-06-15T10:30:00Z",
-        "updated_at": "2023-06-15T10:30:00Z",
-        "is_latest": true
+      "version": "1.0.2",
+      "packages": [
+        {
+          "registryType": "npm",
+          "identifier": "@modelcontextprotocol/server-filesystem",
+          "version": "1.0.2",
+          "runtimeArguments": [
+            {
+              "type": "positional",
+              "valueHint": "target_dir",
+              "description": "Path to access",
+              "default": "/Users/username/Desktop",
+              "isRequired": true
+            }
+          ]
+        }
+      ],
+      "_meta": {
+        "io.modelcontextprotocol.registry/official": {
+          "serverId": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1",
+          "versionId": "b6f9c8e1-d5e5-5b2e-c23g-3907b34g5d5g2",
+          "publishedAt": "2023-06-15T10:30:00Z",
+          "updatedAt": "2023-06-15T10:30:00Z",
+          "isLatest": true
+        }
       }
     }
   ],
@@ -314,11 +316,11 @@
                 <li><strong>500 Internal Server Error</strong> - 服务器内部错误</li>
               </ul>
 
-            <h3>删除服务器</h3>
+            <h3>删除服务器版本</h3>
             <el-card class="api-card">
-              <div class="api-method delete">DELETE</div>
-              <div class="api-path">/v0/servers/{id}</div>
-              <p>从注册表中永久删除指定的 MCP 服务器。此操作不可撤销，将完全移除服务器及其所有相关信息。</p>
+              <div class="api-method put">PUT</div>
+              <div class="api-path">/v0/servers/{serverId}?version={version}</div>
+              <p>软删除指定的 MCP 服务器版本。此操作将服务器状态设置为 "deleted"，但保留服务器元数据。使用版本 ID 进行精确删除。</p>
 
               <h4>路径参数</h4>
               <el-table :data="deleteServerParams" style="width: 100%">
@@ -327,27 +329,40 @@
                 <el-table-column prop="description" label="描述" />
               </el-table>
 
+              <h4>请求体示例</h4>
+              <pre><code>{
+  "name": "io.github.example/test-server",
+  "description": "A test MCP server",
+  "status": "deleted",
+  "repository": {
+    "url": "https://github.com/example/test-server",
+    "source": "github",
+    "id": "example/test-server"
+  },
+  "version": "1.0.0"
+}</code></pre>
+
               <h4>响应示例</h4>
               <h5>成功响应 (200 OK)</h5>
               <pre><code>{
-  "message": "Server deleted successfully",
-  "id": "a5e8a7f0-d4e4-4a1d-b12f-2896a23fd4f1"
+  "message": "Version deleted successfully",
+  "versionId": "b6f9c8e1-d5e5-5b2e-c23g-3907b34g5d5g2"
 }</code></pre>
 
               <h4>错误响应</h4>
               <ul>
-                <li><strong>400 Bad Request</strong> - 服务器 ID 格式无效（必须是有效的 UUID）</li>
-                <li><strong>404 Not Found</strong> - 指定的服务器 ID 不存在</li>
-                <li><strong>405 Method Not Allowed</strong> - HTTP 方法不被允许</li>
+                <li><strong>400 Bad Request</strong> - 请求数据无效或版本 ID 格式无效</li>
+                <li><strong>403 Forbidden</strong> - 没有删除此版本的权限</li>
+                <li><strong>404 Not Found</strong> - 指定的版本 ID 不存在</li>
                 <li><strong>500 Internal Server Error</strong> - 服务器内部错误，删除失败</li>
               </ul>
 
               <h4>注意事项</h4>
               <ul>
-                <li>⚠️ <strong>此操作无法撤销</strong>：一旦删除，服务器信息将永久丢失</li>
-                <li>🔒 <strong>权限要求</strong>：删除操作可能需要适当的授权</li>
-                <li>📋 <strong>依赖检查</strong>：删除前请确认没有其他系统依赖此服务器</li>
-                <li>💾 <strong>数据备份</strong>：建议在删除前备份重要的服务器配置信息</li>
+                <li>🔄 <strong>软删除</strong>：此操作将状态设置为 "deleted"，但保留元数据</li>
+                <li>🔒 <strong>权限要求</strong>：删除操作需要适当的授权（通常是服务器所有者）</li>
+                <li>📋 <strong>版本精确性</strong>：使用版本 ID 进行精确删除，避免误删其他版本</li>
+                <li>💾 <strong>数据保留</strong>：删除的版本元数据会被保留，但状态标记为已删除</li>
               </ul>
             </el-card>
 
@@ -588,7 +603,14 @@
             </ul>
 
             <h3>JSON 格式更新</h3>
-            <p>MCP Registry 支持新的 JSON 格式，同时保持向后兼容性：</p>
+            <p>MCP Registry 支持新的 camelCase JSON 格式，同时保持向后兼容性：</p>
+
+            <h4>字段命名约定</h4>
+            <ul>
+              <li><strong>camelCase 字段名</strong>：推荐使用 camelCase 命名（如 <code>registryType</code>、<code>runtimeHint</code>）</li>
+              <li><strong>snake_case 字段名</strong>：传统 snake_case 命名（如 <code>registry_type</code>、<code>runtime_hint</code>）仍然支持</li>
+              <li><strong>向后兼容</strong>：系统会优先使用 camelCase 字段，如果不存在则回退到 snake_case 字段</li>
+            </ul>
 
             <h4>版本字段</h4>
             <ul>
@@ -602,6 +624,15 @@
               <li><code>transport.type</code>: 新的嵌套传输类型字段（推荐）</li>
               <li><code>transport_type</code>: 传统传输类型字段（向后兼容）</li>
               <li>系统会优先使用 <code>transport.type</code> 字段，如果不存在则回退到 <code>transport_type</code></li>
+            </ul>
+
+            <h4>包配置字段</h4>
+            <ul>
+              <li><code>registryType</code>: 包注册表类型（推荐）</li>
+              <li><code>registryBaseUrl</code>: 注册表基础 URL（推荐）</li>
+              <li><code>runtimeHint</code>: 运行时提示（推荐）</li>
+              <li><code>runtimeArguments</code>: 运行时参数（推荐）</li>
+              <li><code>environmentVariables</code>: 环境变量（推荐）</li>
             </ul>
 
             <h4>开发特性</h4>
@@ -650,12 +681,15 @@
               <li><strong>自动令牌管理</strong>: 安全的凭据存储和自动令牌刷新</li>
               <li><strong>健康检查</strong>: 验证 API 连接状态</li>
               <li><strong>服务器管理</strong>: 完整的 CRUD 操作支持</li>
-              <li><strong>交互式模式</strong>: 提供 Node.js、Python、Binary、Docker 和 Gerrit 模板的交互式创建</li>
+              <li><strong>版本管理</strong>: 支持服务器 ID 和版本 ID 的独立管理</li>
+              <li><strong>版本删除</strong>: 使用版本 ID 进行精确的版本删除</li>
+              <li><strong>交互式模式</strong>: 提供 Node.js、Python、Binary、Docker、OCI、MCPB 和 Gerrit 模板的交互式创建</li>
               <li><strong>JSON 输出</strong>: 所有响应支持结构化输出</li>
               <li><strong>分页支持</strong>: 支持基于游标的分页浏览</li>
               <li><strong>多仓库源支持</strong>: 支持 GitHub、GitLab 和 Gerrit 仓库</li>
               <li><strong>多包类型支持</strong>: 支持 npm、PyPI、wheel、binary、OCI、docker、NuGet、MCPB</li>
               <li><strong>传输类型支持</strong>: 支持 stdio、SSE 和 streamable-http</li>
+              <li><strong>camelCase 支持</strong>: 支持现代化的 JSON 字段命名约定</li>
             </ul>
 
             <h3>安装</h3>
@@ -745,6 +779,9 @@ mcpx-cli publish --interactive --token &lt;github-token&gt;
 # - python-pypi: Python PyPI 包模板
 # - python-wheel: Python Wheel 包模板
 # - binary: 二进制包模板
+# - docker: Docker 容器模板
+# - oci: OCI 容器模板
+# - mcpb: MCPB 二进制模板
 # - gerrit: Gerrit 仓库模板</code></pre>
 
             <h5>5. 更新服务器</h5>
@@ -758,16 +795,19 @@ mcpx-cli update &lt;server-id&gt; server.json --token &lt;github-token&gt;
 # JSON 输出
 mcpx-cli update &lt;server-id&gt; server.json --json</code></pre>
 
-            <h5>6. 删除服务器</h5>
-            <p>从注册表中删除服务器：</p>
-            <pre><code># 基本删除
-mcpx-cli delete &lt;server-id&gt;
+            <h5>6. 删除服务器版本</h5>
+            <p>从注册表中删除服务器版本（使用版本 ID）：</p>
+            <pre><code># 基本删除（使用版本 ID）
+mcpx-cli delete &lt;version-id&gt;
 
 # 带认证删除
-mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;
+mcpx-cli delete &lt;version-id&gt; --token &lt;token&gt;
 
 # JSON 输出
-mcpx-cli delete &lt;server-id&gt; --json</code></pre>
+mcpx-cli delete &lt;version-id&gt; --json
+
+# 获取版本 ID 的方法
+mcpx-cli servers  # 查看服务器列表，获取版本 ID</code></pre>
 
             <h3>服务器 JSON 文件格式</h3>
             <p>服务器配置使用标准化的 JSON 格式。mcpx-cli 支持完整的 ServerJSON 格式：</p>
@@ -788,26 +828,26 @@ mcpx-cli delete &lt;server-id&gt; --json</code></pre>
   },
   "packages": [
     {
-      "registry_type": "npm",
+      "registryType": "npm",
       "identifier": "@example/test-server-node",
       "version": "1.0.0",
-      "runtime_hint": "npx",
-      "runtime_arguments": [
+      "runtimeHint": "npx",
+      "runtimeArguments": [
         {
           "type": "positional",
           "name": "config_path",
-          "value_hint": "config_path",
+          "valueHint": "config_path",
           "description": "Path to configuration file",
           "default": "./config.json",
           "is_required": true
         }
       ],
-        "environment_variables": [
+        "environmentVariables": [
           {
             "name": "MCP_HOST",
             "description": "Server host address",
             "format": "string",
-            "is_required": false,
+            "isRequired": false,
             "default": "0.0.0.0"
           }
         ]
@@ -842,10 +882,11 @@ mcpx-cli delete &lt;server-id&gt; --json</code></pre>
               <li><code>description</code>: 服务器的简短描述</li>
               <li><code>status</code>: 服务器状态（"active"、"deprecated"、"deleted"）</li>
               <li><code>repository</code>: 源代码仓库信息，支持多种仓库源</li>
-              <li><code>version_detail</code>: 版本信息</li>
+              <li><code>version</code>: 服务器版本（推荐使用）</li>
+              <li><code>version_detail</code>: 版本信息（向后兼容）</li>
               <li><code>packages</code>: 服务器的包分发信息，支持多个包类型</li>
-              <li><code>runtime_arguments</code>: 运行时参数配置</li>
-              <li><code>environment_variables</code>: 环境变量设置</li>
+              <li><code>runtimeArguments</code>: 运行时参数配置（camelCase 格式）</li>
+              <li><code>environmentVariables</code>: 环境变量设置（camelCase 格式）</li>
               <li><code>remotes</code>: 远程连接配置（可选）</li>
             </ul>
 
@@ -978,10 +1019,13 @@ mcpx-cli server &lt;server-id&gt;</code></pre>
 mcpx-cli update &lt;server-id&gt; updated-server.json --token &lt;token&gt;</code></pre>
             <p><strong>注意</strong>：更新时新版本必须大于现有版本。</p>
 
-            <h4>删除服务器</h4>
-            <pre><code># 删除服务器（需要相应权限）
-mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
-            <p><strong>警告</strong>：删除操作不可撤销，请谨慎操作。</p>
+            <h4>删除服务器版本</h4>
+            <pre><code># 删除服务器版本（使用版本 ID）
+mcpx-cli delete &lt;version-id&gt; --token &lt;token&gt;
+
+# 获取版本 ID
+mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
+            <p><strong>注意</strong>：这是软删除操作，将服务器状态设置为 "deleted"，但保留元数据。</p>
 
             <h3>最佳实践</h3>
             <ul>
@@ -1024,10 +1068,11 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
                   <li><strong>wheel</strong>: Python wheel 文件</li>
                   <li><strong>binary</strong>: 直接二进制文件分发</li>
                   <li><strong>oci</strong>: OCI 容器注册表</li>
+                  <li><strong>docker</strong>: Docker 容器注册表</li>
                   <li><strong>nuget</strong>: .NET 包管理器</li>
                   <li><strong>mcpb</strong>: 专用的 MCP 二进制格式</li>
                 </ul>
-                <p>每种包类型都支持相应的运行时提示和传输类型配置。</p>
+                <p>每种包类型都支持相应的运行时提示和传输类型配置，并使用 camelCase 字段命名约定。</p>
               </el-collapse-item>
 
               <el-collapse-item title="如何贡献到 MCP Registry 项目？" name="4">
@@ -1064,6 +1109,18 @@ mcpx-cli delete &lt;server-id&gt; --token &lt;token&gt;</code></pre>
                   <li><strong>HTTP 验证</strong>: 基于 HTTP 的认证方式（计划中）</li>
                 </ul>
                 <p>不同的命名空间可能需要不同的认证方式，GitHub 命名空间通常需要 GitHub 认证，而匿名命名空间可以使用匿名访问。</p>
+              </el-collapse-item>
+
+              <el-collapse-item title="什么是版本管理？" name="8">
+                <p>MCP Registry 支持独立的服务器和版本管理：</p>
+                <ul>
+                  <li><strong>服务器 ID</strong>: 唯一标识一个逻辑服务器，在多个版本间保持不变</li>
+                  <li><strong>版本 ID</strong>: 唯一标识一个特定的服务器版本，每次发布都会生成新的版本 ID</li>
+                  <li><strong>版本删除</strong>: 可以删除特定的服务器版本，而不影响其他版本</li>
+                  <li><strong>软删除</strong>: 删除操作将状态设置为 "deleted"，但保留元数据</li>
+                  <li><strong>权限控制</strong>: 只有服务器所有者可以删除版本</li>
+                </ul>
+                <p>这种设计允许更精细的版本管理，支持回滚和版本清理操作。</p>
               </el-collapse-item>
             </el-collapse>
           </section>
