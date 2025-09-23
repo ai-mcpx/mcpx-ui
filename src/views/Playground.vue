@@ -84,7 +84,7 @@
                     :loading="isStarting"
                     :disabled="isRunning"
                   >
-                    <el-icon><play /></el-icon>
+                    <el-icon><CaretRight /></el-icon>
                     Start Server
                   </el-button>
                   <el-button
@@ -93,7 +93,7 @@
                     size="small"
                     @click="stopServer"
                   >
-                    <el-icon><stop /></el-icon>
+                    <el-icon><CircleClose /></el-icon>
                     Stop Server
                   </el-button>
                   <el-button
@@ -113,7 +113,7 @@
               <el-empty description="Select a server to start testing">
                 <template #image>
                   <el-icon size="64" color="#409eff">
-                    <server />
+                    <Monitor />
                   </el-icon>
                 </template>
               </el-empty>
@@ -274,10 +274,10 @@ import { MCPClient, MockMCPClient } from '../services/mcpClient'
 import {
   Refresh,
   Search,
-  Play,
-  Stop,
+  CaretRight,
+  CircleClose,
   Delete,
-  Server
+  Monitor
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
