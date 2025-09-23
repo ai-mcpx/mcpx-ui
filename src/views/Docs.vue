@@ -10,6 +10,7 @@
             @select="scrollToSection"
           >
             <el-menu-item index="overview">概述</el-menu-item>
+            <el-menu-item index="playground">Playground</el-menu-item>
             <el-menu-item index="api">API 参考</el-menu-item>
             <el-menu-item index="server-json">服务器 JSON 格式</el-menu-item>
             <el-menu-item index="cli">CLI 工具</el-menu-item>
@@ -72,7 +73,139 @@
               <li>版本管理：支持服务器 ID 和版本 ID 的独立管理</li>
               <li>软删除：版本级别的软删除功能</li>
               <li>camelCase JSON 格式：现代化的字段命名约定</li>
+              <li>交互式 Playground：实时测试和运行 MCP 服务器</li>
             </ul>
+          </section>
+
+          <section id="playground" class="docs-section">
+            <h2>🎮 Playground</h2>
+            <p>MCP Registry Playground 是一个交互式工具，允许您直接在浏览器中测试和运行 MCP 服务器。它提供了实时连接、工具执行和调试功能。</p>
+
+            <h3>主要功能</h3>
+            <ul>
+              <li><strong>实时服务器测试</strong>：连接到 MCP 服务器并进行实时通信</li>
+              <li><strong>工具执行</strong>：执行 MCP 工具并查看结果</li>
+              <li><strong>WebSocket 通信</strong>：使用 WebSocket 进行双向通信</li>
+              <li><strong>交互式日志</strong>：实时查看服务器输出和调试信息</li>
+              <li><strong>模拟服务器支持</strong>：内置模拟服务器用于演示和测试</li>
+              <li><strong>基于模式的表单</strong>：根据工具输入模式动态生成表单</li>
+              <li><strong>参数验证</strong>：工具参数的类型安全输入验证</li>
+            </ul>
+
+            <h3>如何使用 Playground</h3>
+            <ol>
+              <li><strong>选择服务器</strong>：从左侧面板浏览并选择要测试的 MCP 服务器</li>
+              <li><strong>启动连接</strong>：点击"Start Server"按钮建立与服务器的连接</li>
+              <li><strong>查看工具</strong>：连接成功后，查看可用的 MCP 工具列表</li>
+              <li><strong>执行工具</strong>：点击工具旁边的"Execute"按钮，填写参数并执行</li>
+              <li><strong>查看结果</strong>：在日志面板中查看工具执行结果和服务器输出</li>
+              <li><strong>停止服务器</strong>：测试完成后，点击"Stop Server"断开连接</li>
+            </ol>
+
+            <h3>Playground 特性</h3>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <h4>🔍 服务器选择</h4>
+                <p>浏览和搜索可用的 MCP 服务器，支持按名称和描述过滤</p>
+              </div>
+              <div class="feature-card">
+                <h4>🔗 连接管理</h4>
+                <p>启动/停止服务器连接，带有状态指示器和连接状态显示</p>
+              </div>
+              <div class="feature-card">
+                <h4>🛠 工具发现</h4>
+                <p>自动发现和列出可用工具，包括工具描述和输入模式</p>
+              </div>
+              <div class="feature-card">
+                <h4>⚡ 动态执行</h4>
+                <p>使用自定义参数和参数执行工具，支持多种数据类型</p>
+              </div>
+              <div class="feature-card">
+                <h4>📊 实时反馈</h4>
+                <p>实时日志和执行结果，便于调试和监控</p>
+              </div>
+              <div class="feature-card">
+                <h4>❌ 错误处理</h4>
+                <p>全面的错误报告和调试信息，帮助快速定位问题</p>
+              </div>
+            </div>
+
+            <h3>支持的协议</h3>
+            <p>Playground 支持标准的 MCP 协议功能：</p>
+            <ul>
+              <li><strong>工具调用</strong>：执行 MCP 工具并获取结果</li>
+              <li><strong>资源访问</strong>：读取和操作 MCP 资源</li>
+              <li><strong>提示获取</strong>：获取和使用 MCP 提示</li>
+              <li><strong>会话管理</strong>：初始化和管理 MCP 会话</li>
+            </ul>
+
+            <h3>技术实现</h3>
+            <p>Playground 使用以下技术实现：</p>
+            <ul>
+              <li><strong>WebSocket 客户端</strong>：用于与 MCP 服务器的实时通信</li>
+              <li><strong>JSON-RPC 2.0</strong>：标准的 MCP 协议消息格式</li>
+              <li><strong>动态表单生成</strong>：基于工具输入模式自动生成用户界面</li>
+              <li><strong>模拟服务器</strong>：用于演示和测试的内置模拟实现</li>
+            </ul>
+
+            <h3>代码示例</h3>
+            <p>以下是如何在 Playground 中执行 MCP 工具的示例：</p>
+
+            <h4>1. 文件系统工具</h4>
+            <pre><code>// 工具名称: filesystem_read
+// 参数: { "path": "/tmp/example.txt" }
+// 结果: 文件内容或错误信息</code></pre>
+
+            <h4>2. 网络搜索工具</h4>
+            <pre><code>// 工具名称: web_search
+// 参数: { "query": "Model Context Protocol" }
+// 结果: 搜索结果列表</code></pre>
+
+            <h4>3. 数据库工具</h4>
+            <pre><code>// 工具名称: database_query
+// 参数: { "sql": "SELECT * FROM users LIMIT 10" }
+// 结果: 查询结果集</code></pre>
+
+            <h3>高级功能</h3>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <h4>🔄 实时连接</h4>
+                <p>WebSocket 连接提供低延迟的实时通信，支持双向数据传输</p>
+              </div>
+              <div class="feature-card">
+                <h4>📝 动态表单</h4>
+                <p>根据工具输入模式自动生成表单，支持字符串、数字、布尔值等类型</p>
+              </div>
+              <div class="feature-card">
+                <h4>🔍 智能验证</h4>
+                <p>基于 JSON Schema 的参数验证，确保输入数据的正确性</p>
+              </div>
+              <div class="feature-card">
+                <h4>📊 性能监控</h4>
+                <p>实时监控工具执行时间和服务器响应性能</p>
+              </div>
+            </div>
+
+            <h3>故障排除</h3>
+            <div class="troubleshooting">
+              <h4>常见问题</h4>
+              <ul>
+                <li><strong>连接失败</strong>：检查服务器是否正在运行，网络连接是否正常</li>
+                <li><strong>工具执行错误</strong>：验证参数格式和类型是否正确</li>
+                <li><strong>权限问题</strong>：确保有足够的权限执行特定工具</li>
+                <li><strong>超时错误</strong>：检查服务器响应时间，考虑增加超时设置</li>
+              </ul>
+            </div>
+
+            <div class="info-box">
+              <h4>💡 提示</h4>
+              <p>Playground 目前使用模拟服务器进行演示。在实际使用中，您需要配置真实的 MCP 服务器端点。模拟服务器提供了完整的 MCP 协议实现，包括工具发现、参数验证和结果返回。</p>
+            </div>
+
+            <div class="warning-box">
+              <h4>⚠️ 注意事项</h4>
+              <p>Playground 仅用于测试和演示目的。在生产环境中使用 MCP 服务器时，请确保遵循安全最佳实践，包括适当的身份验证、授权和输入验证。</p>
+            </div>
           </section>
 
           <section id="api" class="docs-section">
@@ -1344,6 +1477,101 @@ onUnmounted(() => {
 
     code {
       font-family: monospace;
+    }
+  }
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.feature-card {
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(58, 123, 213, 0.1);
+  }
+
+  h4 {
+    margin: 0 0 0.75rem 0;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+    line-height: 1.5;
+  }
+}
+
+.info-box {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background-color: #e3f2fd;
+  border-left: 4px solid var(--primary-color);
+  border-radius: 4px;
+
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--primary-color);
+  }
+
+  p {
+    margin: 0;
+    color: #333;
+  }
+}
+
+.warning-box {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: #856404;
+  }
+
+  p {
+    margin: 0;
+    color: #856404;
+  }
+}
+
+.troubleshooting {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+
+  h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.5rem;
+
+    li {
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+
+      strong {
+        color: var(--primary-color);
+      }
     }
   }
 }

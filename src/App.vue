@@ -20,17 +20,18 @@
         </div>
         <nav class="main-nav">
           <router-link to="/">首页</router-link>
+          <router-link to="/playground">Playground</router-link>
           <router-link to="/docs">文档</router-link>
           <a href="https://github.com/LouisCan/mcp-registry-frontend" target="_blank">GitHub</a>
           <AuthPanel />
         </nav>
       </div>
     </header>
-    
+
     <main class="app-main">
       <router-view />
     </main>
-    
+
     <footer class="app-footer">
       <div class="footer-content">
         <p>支持标准化集成，共建智能应用生态，支持动态注册，智能集成的 MCP Registry</p>
@@ -61,9 +62,9 @@ const mcpxCliVersion = ref(import.meta.env.VITE_MCPX_CLI_VERSION || '1.0.0')
 
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
-    router.push({ 
-      path: '/search', 
-      query: { q: searchQuery.value } 
+    router.push({
+      path: '/search',
+      query: { q: searchQuery.value }
     })
   }
 }
@@ -123,7 +124,7 @@ body {
   font-size: 1.2rem;
   display: flex;
   align-items: center;
-  
+
   h1 {
     margin: 0;
     font-size: 1.5rem;
@@ -139,17 +140,17 @@ body {
 .main-nav {
   display: flex;
   gap: 1.5rem;
-  
+
   a {
     color: white;
     text-decoration: none;
     font-weight: 500;
     transition: opacity 0.2s;
-    
+
     &:hover {
       opacity: 0.8;
     }
-    
+
     &.router-link-active {
       font-weight: 700;
       border-bottom: 2px solid white;

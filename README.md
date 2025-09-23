@@ -26,6 +26,15 @@ Modern Vue 3 frontend for the **mcpx registry** with comprehensive authenticatio
 - **Server & Version IDs**: Display of unique server and version identifiers
 - **Package Identification**: Modern schema with `identifier` field for package naming
 
+### 🎮 **Interactive Playground**
+- **Live Server Testing** with real-time MCP protocol communication
+- **Tool Execution** with dynamic form generation based on tool schemas
+- **WebSocket Integration** for seamless server communication
+- **Interactive Logs** with real-time server output and debugging
+- **Mock Server Support** for demonstration and testing purposes
+- **Tool Discovery** with automatic tool listing and schema inspection
+- **Argument Validation** with type-safe input forms for tool parameters
+
 ### 🎨 **Modern User Experience**
 - **Responsive Design** optimized for desktop, tablet, and mobile
 - **Real-time Validation** with comprehensive error handling and user feedback
@@ -79,6 +88,24 @@ cp .env.example .env
 npm run dev
 ```
 The application will be available at `http://localhost:5173` with hot module replacement.
+
+### 🎮 Using the Playground
+
+The MCP Registry includes an interactive playground for testing MCP servers:
+
+1. **Access Playground**: Navigate to `/playground` or click "Playground" in the navigation
+2. **Select Server**: Choose from available MCP servers in the left panel
+3. **Start Connection**: Click "Start Server" to establish WebSocket connection
+4. **Execute Tools**: Use the dynamic forms to execute MCP tools with custom parameters
+5. **View Results**: Monitor real-time logs and execution results
+6. **Stop Server**: Disconnect when finished testing
+
+**Playground Features:**
+- **Real-time Communication**: WebSocket-based MCP protocol implementation
+- **Dynamic Forms**: Auto-generated input forms based on tool schemas
+- **Mock Server**: Built-in mock server for demonstration and testing
+- **Live Logging**: Real-time server output and debugging information
+- **Tool Discovery**: Automatic detection and listing of available tools
 
 ### Full Stack Deployment
 
@@ -243,6 +270,38 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Real-time Validation**: Form validation with immediate user feedback
 - **Error Handling**: Comprehensive error messages and recovery suggestions
 - **Loading States**: Elegant loading indicators for better user experience
+
+### 🎮 Interactive Playground
+- **Live Server Testing**: Connect to and test MCP servers in real-time
+- **Tool Execution**: Execute MCP tools with dynamic form generation
+- **WebSocket Communication**: Real-time bidirectional communication with servers
+- **Interactive Logs**: Real-time server output and debugging information
+- **Mock Server Support**: Built-in mock server for demonstration purposes
+- **Schema-based Forms**: Dynamic form generation based on tool input schemas
+- **Argument Validation**: Type-safe input validation for tool parameters
+
+#### Playground Features:
+- **Server Selection**: Browse and select from available MCP servers
+- **Connection Management**: Start/stop server connections with status indicators
+- **Tool Discovery**: Automatic discovery and listing of available tools
+- **Dynamic Execution**: Execute tools with custom arguments and parameters
+- **Real-time Feedback**: Live logs and execution results
+- **Error Handling**: Comprehensive error reporting and debugging
+
+#### Technical Implementation:
+- **WebSocket Client**: Real-time bidirectional communication with MCP servers
+- **JSON-RPC 2.0**: Standard MCP protocol message format implementation
+- **Dynamic Form Generation**: Schema-based form creation for tool parameters
+- **Mock Server**: Complete MCP protocol implementation for demonstrations
+- **Type-safe Validation**: Input validation based on tool input schemas
+- **Event-driven Architecture**: Reactive updates based on server events
+
+#### Supported MCP Operations:
+- **Tool Calls**: Execute MCP tools with custom parameters and view results
+- **Resource Access**: Read and manipulate MCP resources (future enhancement)
+- **Prompt Management**: Get and use MCP prompts (future enhancement)
+- **Session Management**: Initialize and manage MCP sessions
+- **Capability Discovery**: Automatic detection of server capabilities
 
 ## 🔐 Authentication & Security
 
