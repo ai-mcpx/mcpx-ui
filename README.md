@@ -25,7 +25,8 @@ Modern Vue 3 frontend for the **MCP Registry** with comprehensive authentication
 - **Registry Type Support**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB packages
 - **Transport Types**: stdio, SSE (Server-Sent Events), streamable-http for different communication methods
 - **Version Management** with latest version tracking and history
-- **Server & Version IDs**: Display of unique server and version identifiers
+- **Smart ID Generation**: Automatic generation of consistent server IDs and version IDs for better tracking
+- **Server & Version IDs**: Display of unique server and version identifiers with fallback generation
 - **Package Identification**: Modern schema with `identifier` field for package naming
 
 ### 🎮 **Interactive Playground**
@@ -53,6 +54,9 @@ Modern Vue 3 frontend for the **MCP Registry** with comprehensive authentication
 - **Schema Compatibility** with backward compatibility for legacy package fields
 - **Modern Package Schema** supporting the latest MCP Registry specification
 - **Interactive Templates** for quick server configuration creation
+- **Updated Schema Support** - The `status` field is no longer allowed in publisher-controlled server.json files (now managed by registry)
+- **Smart ID Generation** - Automatic generation of consistent server and version IDs for better tracking and identification
+- **CLI Integration** - Seamless integration with mcpx-cli for consistent server management across tools
 
 ## 🚀 Getting Started
 
@@ -243,6 +247,7 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Edit Interface**: In-place editing with schema validation and preview
 - **Version-based Deletion**: Delete individual server versions using unique version IDs
 - **Server & Version Display**: Clear display of server IDs and version IDs for identification
+- **Smart ID Generation**: Automatic fallback generation of IDs when not provided by API
 
 ### Repository Integration
 - **Multi-Source Support**: GitHub, GitLab, and Gerrit repository integration
@@ -305,6 +310,29 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 - **Prompt Management**: Get and use MCP prompts (future enhancement)
 - **Session Management**: Initialize and manage MCP sessions
 - **Capability Discovery**: Automatic detection of server capabilities
+
+## 🆔 Smart ID Generation
+
+The mcpx-ui now supports smart ID generation for better server and version tracking:
+
+### **Automatic ID Generation**
+- **Server IDs**: Generated using SHA256 + UUID based on server name for consistency
+- **Version IDs**: Generated using SHA256 + UUID based on server name + version for uniqueness
+- **Deterministic**: Same input always generates the same ID
+- **Fallback Mechanism**: Automatically generates IDs when API doesn't provide them
+- **API Compatibility**: Works seamlessly with existing API responses
+
+### **Benefits**
+- **Consistent Tracking**: Same server always gets the same ID across sessions
+- **Better UX**: Users always see meaningful IDs instead of empty fields
+- **Backward Compatibility**: Works with both old and new API response formats
+- **Reliable Identification**: Deterministic generation ensures consistent server identification
+
+### **Technical Implementation**
+- **Client-side Generation**: IDs generated in the frontend when not provided by API
+- **Hash-based**: Uses SHA256 hashing for deterministic, collision-resistant IDs
+- **UUID Integration**: Combines with UUID for additional uniqueness guarantees
+- **Transparent Operation**: Users don't need to know about the generation process
 
 ## 🔐 Authentication & Security
 

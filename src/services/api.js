@@ -20,6 +20,9 @@ apiClient.interceptors.response.use((response) => {
   } else if (response.data && response.data._meta) {
     // Transform single server response (direct format)
     response.data = transformServerResponse(response.data)
+  } else if (response.data && response.data.name && response.data.version) {
+    // Transform direct server response (new API format)
+    response.data = transformServerResponse(response.data)
   }
   return response
 }, (error) => {
@@ -51,6 +54,32 @@ function transformServerResponse(serverResponse) {
       publishedAt: registry.publishedAt,
       updatedAt: registry.updatedAt,
       isLatest: registry.isLatest
+    }
+  }
+
+  // Handle current API format (ServerResponse with Meta field)
+  if (serverResponse.server && serverResponse.meta) {
+    const server = serverResponse.server
+    const meta = serverResponse.meta
+
+    return {
+      id: server.name, // Use name as ID since serverId is not available
+      name: server.name,
+      description: server.description,
+      status: meta.official?.status || 'active',
+      repository: server.repository,
+      version: server.version,
+      versionDetail: {
+        version: server.version,
+        releaseDate: meta.official?.publishedAt,
+        isLatest: meta.official?.isLatest || false
+      },
+      packages: server.packages || [],
+      remotes: server.remotes || [],
+      // Add registry metadata
+      publishedAt: meta.official?.publishedAt,
+      updatedAt: meta.official?.updatedAt,
+      isLatest: meta.official?.isLatest || false
     }
   }
 
@@ -98,8 +127,25 @@ function transformServerResponse(serverResponse) {
     }
   }
 
-  // Already in the expected format, return as-is
-  return serverResponse
+  // Fallback: ensure we have required fields
+  return {
+    id: serverResponse.id || serverResponse.name || 'unknown',
+    name: serverResponse.name || 'Unknown Server',
+    description: serverResponse.description || 'No description available',
+    status: serverResponse.status || 'active',
+    repository: serverResponse.repository || {},
+    version: serverResponse.version || '1.0.0',
+    versionDetail: {
+      version: serverResponse.version || '1.0.0',
+      releaseDate: serverResponse.versionDetail?.releaseDate || new Date().toISOString(),
+      isLatest: serverResponse.versionDetail?.isLatest || true
+    },
+    packages: serverResponse.packages || [],
+    remotes: serverResponse.remotes || [],
+    publishedAt: serverResponse.publishedAt,
+    updatedAt: serverResponse.updatedAt,
+    isLatest: serverResponse.isLatest || true
+  }
 }
 
 export default {

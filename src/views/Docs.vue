@@ -817,6 +817,7 @@
             <ul>
               <li><strong>多种认证方式</strong>: 支持 GitHub OAuth、GitHub OIDC 和匿名访问</li>
               <li><strong>自动令牌管理</strong>: 安全的凭据存储和自动令牌刷新</li>
+              <li><strong>智能 ID 生成</strong>: 自动生成一致的服务器 ID 和版本 ID，确保更好的跟踪和识别</li>
               <li><strong>健康检查</strong>: 验证 API 连接状态</li>
               <li><strong>服务器管理</strong>: 完整的 CRUD 操作支持</li>
               <li><strong>版本管理</strong>: 支持服务器 ID 和版本 ID 的独立管理</li>
@@ -828,6 +829,16 @@
               <li><strong>多包类型支持</strong>: 支持 npm、PyPI、wheel、binary、OCI、docker、NuGet、MCPB</li>
               <li><strong>传输类型支持</strong>: 支持 stdio、SSE 和 streamable-http</li>
               <li><strong>camelCase 支持</strong>: 支持现代化的 JSON 字段命名约定</li>
+            </ul>
+
+            <h3>智能 ID 生成</h3>
+            <p>mcpx-cli 现在具备智能 ID 生成功能，确保服务器和版本的一致标识：</p>
+            <ul>
+              <li><strong>服务器 ID</strong>: 基于服务器名称使用 SHA256 + UUID 生成，确保一致性</li>
+              <li><strong>版本 ID</strong>: 基于服务器名称 + 版本生成，确保唯一性</li>
+              <li><strong>确定性</strong>: 相同的输入总是生成相同的 ID</li>
+              <li><strong>回退机制</strong>: 当 API 不提供 ID 时，CLI 自动生成</li>
+              <li><strong>兼容性</strong>: 与现有 API 响应兼容，即使 API 不包含 ID 字段</li>
             </ul>
 
             <h3>安装</h3>
@@ -974,6 +985,7 @@ mcpx-cli servers  # 查看服务器列表</code></pre>
     "source": "github",
     "id": "example/test-server-node"
   },
+  "version": "1.0.0",
   "version_detail": {
     "version": "1.0.0"
   },
