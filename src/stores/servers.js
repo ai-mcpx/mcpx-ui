@@ -82,9 +82,41 @@ export const useServersStore = defineStore('servers', {
       this.error = null
 
       try {
-        const response = await api.getServerDetail(serverName, version)
-        this.currentServer = response.data || response
-        return this.currentServer
+        // First try the direct API endpoint
+        try {
+          const response = await api.getServerDetail(serverName, version)
+          this.currentServer = response.data || response
+          return this.currentServer
+        } catch (apiError) {
+          console.warn(`Direct API failed for ${serverName}, trying workaround:`, apiError.message)
+
+          // Workaround: Find the server in the existing servers list
+          if (this.servers && this.servers.length > 0) {
+            const server = this.servers.find(s => s.name === serverName)
+            if (server) {
+              console.log(`Found server in existing list: ${serverName}`)
+              this.currentServer = server
+              return server
+            }
+          }
+
+          // If not found in existing list, fetch all servers and find the target
+          console.log(`Server not in existing list, fetching all servers to find: ${serverName}`)
+          const response = await api.getServers({ limit: 1000 }) // Get all servers
+          const servers = response.data.servers || response.data
+
+          if (Array.isArray(servers)) {
+            const server = servers.find(s => s.server?.name === serverName || s.name === serverName)
+            if (server) {
+              console.log(`Found server in fresh list: ${serverName}`)
+              this.currentServer = server
+              return server
+            }
+          }
+
+          // If still not found, throw the original error
+          throw apiError
+        }
       } catch (error) {
         this.error = error.message || '获取服务器详情失败'
         console.error(`Error fetching server ${serverName}:`, error)
