@@ -151,17 +151,17 @@ function transformServerResponse(serverResponse) {
 export default {
   // 获取服务器列表
   getServers(params = {}) {
-    return apiClient.get('/v0/servers', { params })
+    return apiClient.get('/servers', { params })
   },
 
   // 获取服务器详情
   getServerDetail(serverName, version = null) {
     if (version) {
-      // Get specific version: /v0/servers/{serverName}/versions/{version}
-      return apiClient.get(`/v0/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}`)
+      // Get specific version: /servers/{serverName}/versions/{version}
+      return apiClient.get(`/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}`)
     } else {
-      // Get latest version: /v0/servers/{serverName}
-      return apiClient.get(`/v0/servers/${encodeURIComponent(serverName)}`)
+      // Get latest version: /servers/{serverName}
+      return apiClient.get(`/servers/${encodeURIComponent(serverName)}`)
     }
   },
 
@@ -174,12 +174,12 @@ export default {
     if (cursor) {
       params.cursor = cursor
     }
-    return apiClient.get('/v0/servers', { params })
+    return apiClient.get('/servers', { params })
   },
 
   // 更新服务器 (需要认证)
   updateServer(serverName, version, serverData, token) {
-    return apiClient.put(`/v0/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}`, serverData, {
+    return apiClient.put(`/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}`, serverData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -188,7 +188,7 @@ export default {
 
   // 发布新服务器 (需要认证)
   publishServer(serverData, token) {
-    return apiClient.post('/v0/publish', serverData, {
+    return apiClient.post('/publish', serverData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -198,7 +198,7 @@ export default {
   // 删除服务器版本 (使用 PUT 端点进行软删除)
   deleteServerVersion(serverName, version, token) {
     // Use PUT endpoint to soft delete by setting status to deleted
-    const endpoint = `/v0/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}?status=deleted`
+    const endpoint = `/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}?status=deleted`
     const editRequest = {
       name: serverName,
       description: 'Server marked for deletion',
@@ -219,26 +219,26 @@ export default {
 
   // GitHub OAuth 认证 - 交换访问令牌为注册表 JWT
   exchangeGitHubToken(githubToken) {
-    return apiClient.post('/v0/auth/github-at', {
+    return apiClient.post('/auth/github-at', {
       github_token: githubToken
     })
   },
 
   // GitHub OIDC 认证 - 交换 OIDC 令牌为注册表 JWT
   exchangeGitHubOIDCToken(oidcToken) {
-    return apiClient.post('/v0/auth/github-oidc', {
+    return apiClient.post('/auth/github-oidc', {
       oidc_token: oidcToken
     })
   },
 
   // 获取匿名令牌
   getAnonymousToken() {
-    return apiClient.post('/v0/auth/none')
+    return apiClient.post('/auth/none')
   },
 
   // DNS 认证
   exchangeDNSToken(domain, timestamp, signedTimestamp) {
-    return apiClient.post('/v0/auth/dns', {
+    return apiClient.post('/auth/dns', {
       domain,
       timestamp,
       signed_timestamp: signedTimestamp
@@ -247,7 +247,7 @@ export default {
 
   // HTTP 认证
   exchangeHTTPToken(domain, timestamp, signedTimestamp) {
-    return apiClient.post('/v0/auth/http', {
+    return apiClient.post('/auth/http', {
       domain,
       timestamp,
       signed_timestamp: signedTimestamp
