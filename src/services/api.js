@@ -10,6 +10,9 @@ const apiClient = axios.create({
 
 // Add request interceptor to conditionally add auth headers
 apiClient.interceptors.request.use((config) => {
+  console.log('Making API request:', config.method?.toUpperCase(), config.url)
+  console.log('Request config:', config)
+
   // Only add auth headers for endpoints that require authentication
   const authRequiredEndpoints = ['/publish', '/servers/*/versions/*', '/auth/']
   const needsAuth = authRequiredEndpoints.some(endpoint =>
@@ -20,7 +23,10 @@ apiClient.interceptors.request.use((config) => {
     const token = localStorage.getItem('mcp_registry_token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
+      console.log('Added auth header for protected endpoint')
     }
+  } else {
+    console.log('Skipping auth header for public endpoint')
   }
 
   return config
@@ -28,28 +34,64 @@ apiClient.interceptors.request.use((config) => {
 
 // Response interceptor to transform the new API format
 apiClient.interceptors.response.use((response) => {
+  console.log('API response received:', response.status, response.config.url)
+  console.log('Response data before transformation:', response.data)
+
   // Handle the new wrapper format for server responses
   if (response.data && Array.isArray(response.data.servers)) {
-    // Transform servers list response
+    console.log('Transforming servers list response')
     response.data.servers = response.data.servers.map(transformServerResponse)
   } else if (response.data && response.data.server) {
-    // Transform single server response
+    console.log('Transforming single server response')
     response.data = transformServerResponse(response.data)
   } else if (response.data && response.data._meta) {
-    // Transform single server response (direct format)
+    console.log('Transforming direct format response')
     response.data = transformServerResponse(response.data)
   } else if (response.data && response.data.name && response.data.version) {
-    // Transform direct server response (new API format)
+    console.log('Transforming new API format response')
     response.data = transformServerResponse(response.data)
+  } else {
+    console.log('No transformation applied to response')
   }
+
+  console.log('Response data after transformation:', response.data)
   return response
 }, (error) => {
+  console.error('API request failed:', error.config?.url, error.response?.status, error.message)
+  console.error('Error response data:', error.response?.data)
   return Promise.reject(error)
 })
 
 // Transform the new API format to the format expected by the UI
 function transformServerResponse(serverResponse) {
-  // Check if this is the new format with _meta
+  // Check if this is the new format with server and _meta as separate fields
+  if (serverResponse.server && serverResponse._meta && serverResponse._meta['io.modelcontextprotocol.registry/official']) {
+    const server = serverResponse.server
+    const registry = serverResponse._meta['io.modelcontextprotocol.registry/official']
+
+    return {
+      id: registry.serverId || server.name, // Use serverId from metadata or fallback to name
+      versionId: registry.versionId || `${server.name}@${server.version}`, // Add versionId from metadata or generate
+      name: server.name,
+      description: server.description,
+      status: registry.status || 'active', // Use status from metadata
+      repository: server.repository,
+      version: server.version,
+      versionDetail: {
+        version: server.version,
+        releaseDate: registry.publishedAt,
+        isLatest: registry.isLatest !== undefined ? registry.isLatest : true
+      },
+      packages: server.packages || [],
+      remotes: server.remotes || [],
+      // Add registry metadata
+      publishedAt: registry.publishedAt,
+      updatedAt: registry.updatedAt,
+      isLatest: registry.isLatest
+    }
+  }
+
+  // Check if this is the old format with _meta at top level
   if (serverResponse._meta && serverResponse._meta['io.modelcontextprotocol.registry/official']) {
     const registry = serverResponse._meta['io.modelcontextprotocol.registry/official']
 

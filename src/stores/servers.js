@@ -31,28 +31,41 @@ export const useServersStore = defineStore('servers', {
         }
 
         console.log('Fetching servers with params:', params)
+        console.log('API URL:', '/api/servers')
         const response = await api.getServers(params)
-        console.log('API response:', response.data)
+        console.log('Full API response:', response)
+        console.log('Response status:', response.status)
+        console.log('Response data:', response.data)
 
         // Handle different response formats
         if (Array.isArray(response.data)) {
           // Direct array response
+          console.log('Handling direct array response')
           this.servers = response.data
           this.totalCount = response.data.length
         } else if (response.data && Array.isArray(response.data.servers)) {
           // Wrapped response with servers array
+          console.log('Handling wrapped response with servers array')
           this.servers = response.data.servers
-          this.totalCount = response.data.total_count || response.data.servers.length
+          this.totalCount = response.data.metadata?.count || response.data.total_count || response.data.servers.length
+        } else if (response.data && response.data.body && Array.isArray(response.data.body.servers)) {
+          // Huma API wrapped response
+          console.log('Handling Huma API wrapped response')
+          this.servers = response.data.body.servers
+          this.totalCount = response.data.body.metadata?.count || response.data.body.servers.length
         } else {
           // Fallback - try to extract servers from any other format
+          console.log('Using fallback - unexpected response format')
           this.servers = []
           this.totalCount = 0
           console.warn('Unexpected API response format:', response.data)
+          console.warn('Response structure:', JSON.stringify(response.data, null, 2))
         }
 
-        this.nextPage = response.data.next || null
+        this.nextPage = response.data.next || response.data.body?.metadata?.nextCursor || null
 
-        console.log('Servers loaded:', this.servers.length, 'servers')
+        console.log('Final servers loaded:', this.servers.length, 'servers')
+        console.log('Servers data:', this.servers)
         return response.data
       } catch (error) {
         this.error = error.message || '获取服务器列表失败'
