@@ -30,14 +30,34 @@ export const useServersStore = defineStore('servers', {
           params.cursor = cursor
         }
 
+        console.log('Fetching servers with params:', params)
         const response = await api.getServers(params)
-        this.servers = response.data.servers || []
-        this.totalCount = response.data.total_count || 0
+        console.log('API response:', response.data)
+
+        // Handle different response formats
+        if (Array.isArray(response.data)) {
+          // Direct array response
+          this.servers = response.data
+          this.totalCount = response.data.length
+        } else if (response.data && Array.isArray(response.data.servers)) {
+          // Wrapped response with servers array
+          this.servers = response.data.servers
+          this.totalCount = response.data.total_count || response.data.servers.length
+        } else {
+          // Fallback - try to extract servers from any other format
+          this.servers = []
+          this.totalCount = 0
+          console.warn('Unexpected API response format:', response.data)
+        }
+
         this.nextPage = response.data.next || null
+
+        console.log('Servers loaded:', this.servers.length, 'servers')
         return response.data
       } catch (error) {
         this.error = error.message || '获取服务器列表失败'
         console.error('Error fetching servers:', error)
+        console.error('Error details:', error.response?.data)
         throw error
       } finally {
         this.loading = false

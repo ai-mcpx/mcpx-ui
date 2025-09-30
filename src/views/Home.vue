@@ -43,13 +43,6 @@
             <p>暂无可用的 MCP 服务器</p>
           </div>
         </el-col>
-
-        <!-- Show message when servers are filtered but none are latest versions -->
-        <el-col v-if="!loading && store.servers.length > 0 && servers.length === 0" :span="24">
-          <div style="text-align: center; padding: 2rem; color: #666;">
-            <p>暂无可用的最新版本服务器</p>
-          </div>
-        </el-col>
       </el-row>
 
       <div class="pagination-container" v-if="totalCount > 0">
@@ -176,6 +169,12 @@ const handlePageChange = (page) => {
 
 onMounted(async () => {
   try {
+    // Auto-authenticate with anonymous auth if not already authenticated
+    if (!authStore.isAuthenticated) {
+      console.log('Auto-authenticating with anonymous auth...')
+      await authStore.getAnonymousAuth()
+    }
+
     await fetchServers()
   } catch (error) {
     console.error('Failed to load servers:', error)
