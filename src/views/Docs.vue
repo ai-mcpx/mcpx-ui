@@ -228,7 +228,6 @@
             <ul>
               <li><code>name</code>: 服务器名称（如 "io.github.example/test-server"）</li>
               <li><code>description</code>: 服务器描述</li>
-              <li><code>status</code>: 服务器状态（"active"、"deprecated"、"deleted"）</li>
               <li><code>repository</code>: 源代码仓库信息（支持 GitHub、GitLab、Gerrit）</li>
               <li><code>version</code>: 服务器版本（推荐使用）</li>
               <li><code>version_detail</code>: 版本信息（向后兼容）</li>
@@ -265,7 +264,6 @@
     {
       "name": "io.modelcontextprotocol/filesystem",
       "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
-      "status": "active",
       "repository": {
         "url": "https://github.com/modelcontextprotocol/servers",
         "source": "github",
@@ -324,7 +322,6 @@
   "server": {
     "name": "io.modelcontextprotocol/filesystem",
     "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
-    "status": "active",
     "repository": {
       "url": "https://github.com/modelcontextprotocol/servers",
       "source": "github",
@@ -392,7 +389,6 @@
               <pre><code>{
   "name": "io.github.example/filesystem-server",
   "description": "An updated Node.js server implementing Model Context Protocol (MCP) for filesystem operations with enhanced features.",
-  "status": "active",
   "repository": {
     "url": "https://github.com/example/filesystem-server",
     "source": "github",
@@ -477,7 +473,6 @@
               <pre><code>{
   "name": "io.github.example/test-server",
   "description": "A test MCP server",
-  "status": "deleted",
   "repository": {
     "url": "https://github.com/example/test-server",
     "source": "github",
@@ -521,7 +516,6 @@
   "server": {
     "name": "io.modelcontextprotocol/filesystem",
     "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
-    "status": "active",
     "repository": {
       "url": "https://github.com/modelcontextprotocol/servers",
       "source": "github"
@@ -975,7 +969,6 @@ mcpx-cli servers  # 查看服务器列表</code></pre>
             <pre><code>{
   "name": "io.github.example/test-server-node",
   "description": "A test MCP server in Node.js",
-  "status": "active",
   "repository": {
     "url": "https://github.com/example/test-server-node",
     "source": "github",
@@ -1038,7 +1031,6 @@ mcpx-cli servers  # 查看服务器列表</code></pre>
             <ul>
               <li><code>name</code>: 服务器唯一标识符，GitHub 服务器使用 io.github.* 格式</li>
               <li><code>description</code>: 服务器的简短描述</li>
-              <li><code>status</code>: 服务器状态（"active"、"deprecated"、"deleted"）</li>
               <li><code>repository</code>: 源代码仓库信息，支持多种仓库源</li>
               <li><code>version</code>: 服务器版本（推荐使用）</li>
               <li><code>version_detail</code>: 版本信息（向后兼容）</li>

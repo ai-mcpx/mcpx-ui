@@ -44,16 +44,6 @@
             />
           </el-form-item>
 
-          <el-form-item label="状态" prop="status">
-            <el-select v-model="formData.status" placeholder="选择状态">
-              <el-option label="活跃" value="active" />
-              <el-option label="已弃用" value="deprecated" />
-              <el-option v-if="isEdit && currentStatus === 'deleted'" label="已删除" value="deleted" disabled />
-            </el-select>
-            <div class="form-help">
-              <span v-if="currentStatus === 'deleted'">注意：已删除的服务器无法恢复</span>
-            </div>
-          </el-form-item>
 
           <!-- 版本信息 -->
           <el-form-item label="版本" prop="version">
@@ -231,13 +221,11 @@ const error = ref('')
 const loading = computed(() => serversStore.loading)
 
 // 当前服务器状态（用于编辑时的限制）
-const currentStatus = computed(() => props.server?.status)
 
 // 表单数据
 const formData = reactive({
   name: '',
   description: '',
-  status: 'active',
   version: '1.0.0',
   versionDetail: {
     version: '1.0.0'
@@ -302,7 +290,6 @@ const initForm = () => {
     Object.assign(formData, {
       name: props.server.name || '',
       description: props.server.description || '',
-      status: props.server.status || 'active',
       version: version,
       versionDetail: {
         version: version
@@ -333,7 +320,6 @@ const initForm = () => {
     Object.assign(formData, {
       name: '',
       description: '',
-      status: 'active',
       version: '1.0.0',
       versionDetail: {
         version: '1.0.0'

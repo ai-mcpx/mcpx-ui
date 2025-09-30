@@ -60,7 +60,7 @@
             type="primary"
             size="small"
             @click="showEditDialog"
-            :disabled="server.status === 'deleted'"
+            :disabled="server._meta?.status === 'deleted'"
           >
             <el-icon><edit /></el-icon>
             编辑
@@ -69,13 +69,13 @@
             type="danger"
             size="small"
             @click="showDeleteConfirm"
-            :disabled="server.status === 'deleted'"
+            :disabled="server._meta?.status === 'deleted'"
           >
             <el-icon><delete /></el-icon>
             删除
           </el-button>
         </div>
-        <div v-if="server.status === 'deleted'" class="deleted-notice">
+        <div v-if="server._meta?.status === 'deleted'" class="deleted-notice">
           <el-tag type="danger" size="small">已删除</el-tag>
         </div>
       </div>
