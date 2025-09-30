@@ -1,16 +1,18 @@
 # mcpx-ui
 
-Modern Vue 3 frontend for the **mcpx registry** with comprehensive authentication, CRUD operations, and enhanced user experience. This application provides an intuitive interface for managing Model Context Protocol (MCP) servers with full integration to the [mcpx backend](https://github.com/ai-mcpx/mcpx).
+Modern Vue 3 frontend for the **MCP Registry** with comprehensive authentication, CRUD operations, and enhanced user experience. This application provides an intuitive interface for managing Model Context Protocol (MCP) servers with full integration to the [mcpx backend](https://github.com/ai-mcpx/mcpx).
+
+> **🎉 Preview Release**: MCP Registry has launched in preview! While the system is now more stable, this is still a preview release and breaking changes or data resets may occur. We'd love your feedback in [GitHub discussions](https://github.com/modelcontextprotocol/registry/discussions) or in the [#registry-dev Discord](https://discord.com/channels/1358869848138059966/1369487942862504016).
 
 <img width="1246" alt="mcpx-ui interface" src="images/01.png" />
 
 ## ✨ Key Features
 
 ### 🔐 **Enhanced Authentication System**
-- **GitHub OAuth** integration for repository-based permissions
-- **GitHub OIDC** support for GitHub Actions workflows
-- **Anonymous authentication** for public namespace access
-- **DNS/HTTP authentication** for custom domain verification
+- **Anonymous authentication** for public namespace access (currently available)
+- **GitHub OAuth** integration for repository-based permissions (planned)
+- **GitHub OIDC** support for GitHub Actions workflows (planned)
+- **DNS/HTTP authentication** for custom domain verification (planned)
 - **JWT token management** with persistent sessions and auto-refresh
 - **Permission-based UI** - features dynamically appear based on authentication status
 
@@ -29,11 +31,11 @@ Modern Vue 3 frontend for the **mcpx registry** with comprehensive authenticatio
 ### 🎮 **Interactive Playground**
 - **Live Server Testing** with real-time MCP protocol communication
 - **Tool Execution** with dynamic form generation based on tool schemas
-- **WebSocket Integration** for seamless server communication
-- **Interactive Logs** with real-time server output and debugging
 - **Mock Server Support** for demonstration and testing purposes
+- **Interactive Logs** with real-time server output and debugging
 - **Tool Discovery** with automatic tool listing and schema inspection
 - **Argument Validation** with type-safe input forms for tool parameters
+- **Vue 3 Components** with Element Plus UI and Pinia state management
 
 ### 🎨 **Modern User Experience**
 - **Responsive Design** optimized for desktop, tablet, and mobile
@@ -46,10 +48,11 @@ Modern Vue 3 frontend for the **mcpx registry** with comprehensive authenticatio
 - **Docker Support** with nginx reverse proxy for production deployment
 - **Environment Configuration** with development/production mode switching
 - **CORS Handling** for seamless API integration across domains
-- **Comprehensive API Documentation** with interactive examples and updated schema
+- **Comprehensive Documentation** with interactive examples and updated schema
 - **State Management** with Pinia for predictable data flow
 - **Schema Compatibility** with backward compatibility for legacy package fields
-- **Modern Package Schema** supporting the latest mcpx registry specification
+- **Modern Package Schema** supporting the latest MCP Registry specification
+- **Interactive Templates** for quick server configuration creation
 
 ## 🚀 Getting Started
 
@@ -95,17 +98,17 @@ The MCP Registry includes an interactive playground for testing MCP servers:
 
 1. **Access Playground**: Navigate to `/playground` or click "Playground" in the navigation
 2. **Select Server**: Choose from available MCP servers in the left panel
-3. **Start Connection**: Click "Start Server" to establish WebSocket connection
+3. **Start Connection**: Click "Start Server" to establish connection
 4. **Execute Tools**: Use the dynamic forms to execute MCP tools with custom parameters
 5. **View Results**: Monitor real-time logs and execution results
 6. **Stop Server**: Disconnect when finished testing
 
 **Playground Features:**
-- **Real-time Communication**: WebSocket-based MCP protocol implementation
+- **Mock Server Support**: Built-in mock server for demonstration and testing
 - **Dynamic Forms**: Auto-generated input forms based on tool schemas
-- **Mock Server**: Built-in mock server for demonstration and testing
 - **Live Logging**: Real-time server output and debugging information
 - **Tool Discovery**: Automatic detection and listing of available tools
+- **Vue 3 Implementation**: Modern reactive interface with Element Plus components
 
 ### Full Stack Deployment
 
@@ -172,23 +175,23 @@ VITE_LOG_LEVEL=info
 
 The application supports multiple authentication methods:
 
-#### 1. GitHub OAuth
-```bash
-# Configure GitHub OAuth app
-VITE_GITHUB_CLIENT_ID=your_github_client_id
-# Callback URL: http://localhost:5173/auth/callback
-```
-
-#### 2. Anonymous Authentication
+#### 1. Anonymous Authentication (Currently Available)
 - Automatically enabled for public namespace access
 - No configuration required
 - Limited to `io.modelcontextprotocol.anonymous/*` namespace
 
-#### 3. GitHub OIDC (Enterprise)
+#### 2. GitHub OAuth (Planned)
+```bash
+# Configure GitHub OAuth app (when available)
+VITE_GITHUB_CLIENT_ID=your_github_client_id
+# Callback URL: http://localhost:5173/auth/callback
+```
+
+#### 3. GitHub OIDC (Planned)
 - Configure in GitHub Actions or enterprise environments
 - Uses JWT tokens for automated workflows
 
-#### 4. Custom Domain Authentication
+#### 4. Custom Domain Authentication (Planned)
 - DNS verification for custom namespaces
 - HTTP-based domain ownership verification
 
@@ -307,13 +310,13 @@ VITE_GITHUB_CLIENT_ID=your_github_client_id
 
 ### Supported Authentication Methods
 
-| Method | Description | Use Case |
-|--------|-------------|----------|
-| **GitHub OAuth** | Standard OAuth flow | Repository owners, full permissions |
-| **GitHub OIDC** | OpenID Connect | GitHub Actions, CI/CD workflows |
-| **Anonymous** | No authentication | Public namespace publishing |
-| **DNS** | Domain verification | Custom domain namespaces |
-| **HTTP** | HTTP-based auth | Custom authentication systems |
+| Method | Description | Use Case | Status |
+|--------|-------------|----------|--------|
+| **Anonymous** | No authentication | Public namespace publishing | ✅ Available |
+| **GitHub OAuth** | Standard OAuth flow | Repository owners, full permissions | 🚧 Planned |
+| **GitHub OIDC** | OpenID Connect | GitHub Actions, CI/CD workflows | 🚧 Planned |
+| **DNS** | Domain verification | Custom domain namespaces | 🚧 Planned |
+| **HTTP** | HTTP-based auth | Custom authentication systems | 🚧 Planned |
 
 ### Security Features
 - **JWT Token Management**: Secure token storage with automatic refresh
@@ -347,7 +350,13 @@ docker run -p 80:80 mcpx-ui:latest
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
+We welcome contributions! The MCP Registry project uses multiple channels for collaboration:
+
+### Community Channels
+- **[Discord](https://modelcontextprotocol.io/community/communication)** - Real-time community discussions
+- **[GitHub Discussions](https://github.com/modelcontextprotocol/registry/discussions)** - Propose and discuss product/technical requirements
+- **[GitHub Issues](https://github.com/modelcontextprotocol/registry/issues)** - Track well-scoped technical work
+- **[Pull Requests](https://github.com/modelcontextprotocol/registry/pulls)** - Contribute work towards issues
 
 ### Development Workflow
 1. Fork the repository
@@ -368,6 +377,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Related Projects
 
-- **[mcpx](https://github.com/ai-mcpx/mcpx)**
-- **[mcpx-cli](https://github.com/ai-mcpx/mcpx-cli)**
-- **[Model Context Protocol](https://modelcontextprotocol.io)**
+- **[MCP Registry](https://github.com/modelcontextprotocol/registry)** - The official MCP Registry backend
+- **[mcpx](https://github.com/ai-mcpx/mcpx)** - Community MCP Registry implementation
+- **[mcpx-cli](https://github.com/ai-mcpx/mcpx-cli)** - Command-line interface for MCP Registry
+- **[Model Context Protocol](https://modelcontextprotocol.io)** - Official MCP documentation and resources
+
+## 📚 Documentation
+
+- **[Live API Documentation](https://registry.modelcontextprotocol.io/docs)** - Interactive API documentation
+- **[Publishing Guide](https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md)** - How to publish MCP servers
+- **[Ecosystem Vision](https://github.com/modelcontextprotocol/registry/blob/main/docs/explanations/ecosystem-vision.md)** - Understanding the MCP ecosystem
+- **[Full Documentation](./docs)** - Complete project documentation

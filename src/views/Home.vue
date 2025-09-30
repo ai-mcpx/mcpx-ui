@@ -91,24 +91,24 @@ const servers = computed(() => {
     return []
   }
 
-  // Group servers by server ID (using the id field which should be serverId)
+  // Group servers by server name
   const serverMap = new Map()
 
   store.servers.forEach(server => {
-    const serverId = server.id || server.serverId
-    if (!serverId) return
+    const serverName = server.name
+    if (!serverName) return
 
     // If this server is not in the map, or if this version is newer, add/update it
-    if (!serverMap.has(serverId)) {
-      serverMap.set(serverId, server)
+    if (!serverMap.has(serverName)) {
+      serverMap.set(serverName, server)
     } else {
-      const existingServer = serverMap.get(serverId)
+      const existingServer = serverMap.get(serverName)
       // Compare versions - if current server has a newer version, replace it
-      const currentVersion = server.version || server.version_detail?.version || '0.0.0'
-      const existingVersion = existingServer.version || existingServer.version_detail?.version || '0.0.0'
+      const currentVersion = server.version || server.versionDetail?.version || '0.0.0'
+      const existingVersion = existingServer.version || existingServer.versionDetail?.version || '0.0.0'
 
       if (compareVersions(currentVersion, existingVersion) > 0) {
-        serverMap.set(serverId, server)
+        serverMap.set(serverName, server)
       }
     }
   })

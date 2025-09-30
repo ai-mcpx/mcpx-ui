@@ -52,28 +52,37 @@
             <h2>概述</h2>
             <p>MCP Registry 是一个社区驱动的 Model Context Protocol (MCP) 服务器注册表。它提供了一个集中式的存储库，用于发现和管理各种 MCP 实现及其相关的元数据、配置和功能。</p>
 
+            <div class="info-box">
+              <h4>🎉 预览版发布</h4>
+              <p>MCP Registry 已于 2025年9月8日发布预览版！虽然系统现在更加稳定，但这仍然是一个预览版本，可能会发生破坏性更改或数据重置。我们欢迎您在 <a href="https://github.com/modelcontextprotocol/registry/discussions" target="_blank">GitHub 讨论</a> 中提供反馈。</p>
+            </div>
+
             <h3>主要功能</h3>
             <ul>
-              <li>用于管理 MCP 注册表条目的 RESTful API（列表、获取、创建、更新、版本删除）</li>
-              <li>服务监控的健康检查端点</li>
-              <li>支持多种包注册表类型（npm、PyPI、wheel、binary、OCI、docker、nuget、mcpb 等）</li>
-              <li>支持多种代码仓库源（GitHub、GitLab、Gerrit）</li>
-              <li>支持各种环境配置和运行时参数</li>
-              <li>优雅的关闭处理</li>
-              <li>PostgreSQL 和内存数据库支持</li>
-              <li>全面的 API 文档</li>
-              <li>基于游标的分页支持</li>
-              <li>多种认证方式：GitHub OAuth、GitHub OIDC、匿名访问、DNS 验证、HTTP 验证</li>
-              <li>命名空间管理和权限控制</li>
-              <li>完整的 CRUD 操作支持</li>
-              <li>支持 streamable-http 传输类型</li>
-              <li>增强的运行时提示支持（包括 wheel 运行时）</li>
-              <li>现代 Vue 3 前端界面</li>
-              <li>功能强大的命令行工具 (mcpx-cli)</li>
-              <li>版本管理：支持服务器 ID 和版本 ID 的独立管理</li>
-              <li>软删除：版本级别的软删除功能</li>
-              <li>camelCase JSON 格式：现代化的字段命名约定</li>
-              <li>交互式 Playground：实时测试和运行 MCP 服务器</li>
+              <li><strong>RESTful API</strong>：用于管理 MCP 注册表条目的完整 API（列表、获取、创建、更新、版本删除）</li>
+              <li><strong>健康检查</strong>：服务监控的健康检查端点</li>
+              <li><strong>多包类型支持</strong>：npm、PyPI、wheel、binary、OCI、docker、NuGet、MCPB 等</li>
+              <li><strong>多仓库源支持</strong>：GitHub、GitLab、Gerrit 代码仓库</li>
+              <li><strong>环境配置</strong>：支持各种环境配置和运行时参数</li>
+              <li><strong>数据库支持</strong>：PostgreSQL 和内存数据库支持</li>
+              <li><strong>分页支持</strong>：基于游标的高性能分页</li>
+              <li><strong>认证系统</strong>：GitHub OAuth、GitHub OIDC、匿名访问、DNS 验证、HTTP 验证</li>
+              <li><strong>命名空间管理</strong>：基于域名的权限控制和所有权验证</li>
+              <li><strong>版本管理</strong>：支持服务器 ID 和版本 ID 的独立管理</li>
+              <li><strong>软删除</strong>：版本级别的软删除功能</li>
+              <li><strong>现代格式</strong>：camelCase JSON 格式和现代化的字段命名约定</li>
+              <li><strong>传输类型</strong>：支持 stdio、SSE 和 streamable-http 传输类型</li>
+              <li><strong>Vue 3 前端</strong>：现代响应式用户界面</li>
+              <li><strong>CLI 工具</strong>：功能强大的命令行工具 (mcpx-cli)</li>
+              <li><strong>交互式 Playground</strong>：实时测试和运行 MCP 服务器</li>
+              <li><strong>交互式发布</strong>：支持多种模板的交互式服务器发布</li>
+            </ul>
+
+            <h3>当前维护者</h3>
+            <ul>
+              <li><strong>Adam Jones</strong> (Anthropic) - <a href="https://github.com/domdomegg" target="_blank">@domdomegg</a></li>
+              <li><strong>Tadas Antanavicius</strong> (PulseMCP) - <a href="https://github.com/tadasant" target="_blank">@tadasant</a></li>
+              <li><strong>Toby Padilla</strong> (GitHub) - <a href="https://github.com/toby" target="_blank">@toby</a></li>
             </ul>
           </section>
 
@@ -83,9 +92,10 @@
 
             <h3>主要功能</h3>
             <ul>
-              <li><strong>实时服务器测试</strong>：连接到 MCP 服务器并进行实时通信</li>
-              <li><strong>工具执行</strong>：执行 MCP 工具并查看结果</li>
-              <li><strong>WebSocket 通信</strong>：使用 WebSocket 进行双向通信</li>
+              <li><strong>服务器选择</strong>：从注册表浏览和搜索可用的 MCP 服务器</li>
+              <li><strong>实时连接</strong>：启动/停止服务器连接，带有状态指示器</li>
+              <li><strong>工具发现</strong>：自动发现和列出可用工具，包括工具描述和输入模式</li>
+              <li><strong>动态执行</strong>：使用自定义参数执行工具，支持多种数据类型</li>
               <li><strong>交互式日志</strong>：实时查看服务器输出和调试信息</li>
               <li><strong>模拟服务器支持</strong>：内置模拟服务器用于演示和测试</li>
               <li><strong>基于模式的表单</strong>：根据工具输入模式动态生成表单</li>
@@ -102,27 +112,27 @@
               <li><strong>停止服务器</strong>：测试完成后，点击"Stop Server"断开连接</li>
             </ol>
 
-            <h3>Playground 特性</h3>
+            <h3>Playground 界面</h3>
             <div class="feature-grid">
               <div class="feature-card">
-                <h4>🔍 服务器选择</h4>
-                <p>浏览和搜索可用的 MCP 服务器，支持按名称和描述过滤</p>
+                <h4>🔍 服务器选择面板</h4>
+                <p>左侧面板显示所有可用的 MCP 服务器，支持搜索和过滤功能</p>
               </div>
               <div class="feature-card">
-                <h4>🔗 连接管理</h4>
+                <h4>🔗 连接控制</h4>
                 <p>启动/停止服务器连接，带有状态指示器和连接状态显示</p>
               </div>
               <div class="feature-card">
-                <h4>🛠 工具发现</h4>
-                <p>自动发现和列出可用工具，包括工具描述和输入模式</p>
+                <h4>🛠 工具列表</h4>
+                <p>显示可用工具及其描述，支持点击执行</p>
               </div>
               <div class="feature-card">
-                <h4>⚡ 动态执行</h4>
-                <p>使用自定义参数和参数执行工具，支持多种数据类型</p>
+                <h4>⚡ 参数输入</h4>
+                <p>动态生成表单，支持字符串、数字、布尔值等多种数据类型</p>
               </div>
               <div class="feature-card">
-                <h4>📊 实时反馈</h4>
-                <p>实时日志和执行结果，便于调试和监控</p>
+                <h4>📊 实时日志</h4>
+                <p>显示服务器输出、工具执行结果和调试信息</p>
               </div>
               <div class="feature-card">
                 <h4>❌ 错误处理</h4>
@@ -142,10 +152,11 @@
             <h3>技术实现</h3>
             <p>Playground 使用以下技术实现：</p>
             <ul>
-              <li><strong>WebSocket 客户端</strong>：用于与 MCP 服务器的实时通信</li>
-              <li><strong>JSON-RPC 2.0</strong>：标准的 MCP 协议消息格式</li>
+              <li><strong>Vue 3 组件</strong>：现代化的响应式用户界面</li>
+              <li><strong>Element Plus</strong>：丰富的 UI 组件库</li>
+              <li><strong>Pinia 状态管理</strong>：服务器状态和用户交互管理</li>
+              <li><strong>模拟 MCP 客户端</strong>：用于演示和测试的内置模拟实现</li>
               <li><strong>动态表单生成</strong>：基于工具输入模式自动生成用户界面</li>
-              <li><strong>模拟服务器</strong>：用于演示和测试的内置模拟实现</li>
             </ul>
 
             <h3>代码示例</h3>
@@ -170,7 +181,7 @@
             <div class="feature-grid">
               <div class="feature-card">
                 <h4>🔄 实时连接</h4>
-                <p>WebSocket 连接提供低延迟的实时通信，支持双向数据传输</p>
+                <p>支持实时连接状态监控和自动重连机制</p>
               </div>
               <div class="feature-card">
                 <h4>📝 动态表单</h4>
@@ -832,20 +843,20 @@ git clone https://github.com/ai-mcpx/mcpx-cli.git
 cd mcpx-cli
 
 # 构建二进制文件
-make build
-
-# 或直接使用 Go
 go build -o mcpx-cli .
 
-# 系统安装
-make install</code></pre>
+# 或使用构建脚本
+./build.sh
+
+# 系统安装（可选）
+sudo cp mcpx-cli /usr/local/bin/</code></pre>
 
             <h3>认证方式</h3>
             <p>mcpx-cli 支持多种认证方法：</p>
             <ul>
               <li><strong>匿名访问</strong>: 基本访问，无需 GitHub 认证</li>
-              <li><strong>GitHub OAuth</strong>: 完整的 GitHub OAuth 流程</li>
-              <li><strong>GitHub OIDC</strong>: 企业环境的 GitHub OpenID Connect</li>
+              <li><strong>GitHub OAuth</strong>: 完整的 GitHub OAuth 流程（计划中）</li>
+              <li><strong>GitHub OIDC</strong>: 企业环境的 GitHub OpenID Connect（计划中）</li>
               <li><strong>DNS 认证</strong>: 基于域名的认证（计划中）</li>
               <li><strong>HTTP 认证</strong>: 基于 HTTP 的认证（计划中）</li>
             </ul>
@@ -862,7 +873,21 @@ make install</code></pre>
 
             <h4>可用命令</h4>
 
-            <h5>1. 健康检查</h5>
+            <h5>1. 认证管理</h5>
+            <p>管理认证凭据：</p>
+            <pre><code># 匿名登录
+mcpx-cli login --method anonymous
+
+# GitHub OAuth 登录（计划中）
+mcpx-cli login --method github-oauth
+
+# GitHub OIDC 登录（计划中）
+mcpx-cli login --method github-oidc
+
+# 登出
+mcpx-cli logout</code></pre>
+
+            <h5>2. 健康检查</h5>
             <p>验证 API 连接状态和服务健康：</p>
             <pre><code>mcpx-cli health</code></pre>
             <p>输出示例：</p>
@@ -871,7 +896,7 @@ Status Code: 200
 Status: ok
 GitHub Client ID: your-github-client-id</code></pre>
 
-            <h5>2. 列出服务器</h5>
+            <h5>3. 列出服务器</h5>
             <p>浏览可用的 MCP 服务器：</p>
             <pre><code># 基本列表
 mcpx-cli servers
@@ -885,15 +910,15 @@ mcpx-cli servers --json
 # 详细信息（包括包和远程配置）
 mcpx-cli servers --json --detailed</code></pre>
 
-            <h5>3. 获取服务器详情</h5>
+            <h5>4. 获取服务器详情</h5>
             <p>获取特定服务器的完整信息：</p>
             <pre><code># 人类可读格式
-mcpx-cli server &lt;server-id&gt;
+mcpx-cli server &lt;server-name&gt;
 
 # JSON 格式
-mcpx-cli server &lt;server-id&gt; --json</code></pre>
+mcpx-cli server &lt;server-name&gt; --json</code></pre>
 
-            <h5>4. 发布服务器</h5>
+            <h5>5. 发布服务器</h5>
             <p>将新的 MCP 服务器发布到注册表：</p>
             <pre><code># 从文件发布
 mcpx-cli publish server.json
@@ -917,30 +942,30 @@ mcpx-cli publish --interactive --token &lt;github-token&gt;
 # - mcpb: MCPB 二进制模板
 # - gerrit: Gerrit 仓库模板</code></pre>
 
-            <h5>5. 更新服务器</h5>
+            <h5>6. 更新服务器</h5>
             <p>更新现有服务器的信息：</p>
             <pre><code># 基本更新
-mcpx-cli update &lt;server-id&gt; server.json
+mcpx-cli update &lt;server-name&gt; server.json
 
 # GitHub 服务器更新（需要认证）
-mcpx-cli update &lt;server-id&gt; server.json --token &lt;github-token&gt;
+mcpx-cli update &lt;server-name&gt; server.json --token &lt;github-token&gt;
 
 # JSON 输出
-mcpx-cli update &lt;server-id&gt; server.json --json</code></pre>
+mcpx-cli update &lt;server-name&gt; server.json --json</code></pre>
 
-            <h5>6. 删除服务器版本</h5>
-            <p>从注册表中删除服务器版本（使用版本 ID）：</p>
-            <pre><code># 基本删除（使用版本 ID）
-mcpx-cli delete &lt;version-id&gt;
+            <h5>7. 删除服务器版本</h5>
+            <p>从注册表中删除服务器版本：</p>
+            <pre><code># 基本删除
+mcpx-cli delete &lt;server-name&gt; &lt;version&gt;
 
 # 带认证删除
-mcpx-cli delete &lt;version-id&gt; --token &lt;token&gt;
+mcpx-cli delete &lt;server-name&gt; &lt;version&gt; --token &lt;token&gt;
 
 # JSON 输出
-mcpx-cli delete &lt;version-id&gt; --json
+mcpx-cli delete &lt;server-name&gt; &lt;version&gt; --json
 
-# 获取版本 ID 的方法
-mcpx-cli servers  # 查看服务器列表，获取版本 ID</code></pre>
+# 获取服务器名称和版本的方法
+mcpx-cli servers  # 查看服务器列表</code></pre>
 
             <h3>服务器 JSON 文件格式</h3>
             <p>服务器配置使用标准化的 JSON 格式。mcpx-cli 支持完整的 ServerJSON 格式：</p>
@@ -1067,6 +1092,19 @@ mcpx-cli servers  # 查看服务器列表，获取版本 ID</code></pre>
               <li><code>source</code>: 必须为 "gerrit"</li>
               <li><code>id</code>: Gerrit 项目标识符</li>
             </ul>
+
+            <h4>交互式模板</h4>
+            <p>mcpx-cli 提供了多种交互式模板，帮助快速创建服务器配置：</p>
+            <ul>
+              <li><strong>Node.js 模板</strong>：基于 npm 包的 Node.js 服务器</li>
+              <li><strong>Python PyPI 模板</strong>：基于 PyPI 包的 Python 服务器</li>
+              <li><strong>Python Wheel 模板</strong>：基于 wheel 文件的 Python 服务器</li>
+              <li><strong>Binary 模板</strong>：直接二进制文件分发</li>
+              <li><strong>Docker 模板</strong>：Docker 容器镜像</li>
+              <li><strong>OCI 模板</strong>：OCI 容器镜像</li>
+              <li><strong>MCPB 模板</strong>：MCP 专用二进制格式</li>
+              <li><strong>Gerrit 模板</strong>：基于 Gerrit 仓库的服务器</li>
+            </ul>
           </section>
 
           <section id="publishing" class="docs-section">
@@ -1181,12 +1219,13 @@ mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
             <el-collapse>
               <el-collapse-item title="什么是 MCP？" name="1">
                 <p>Model Context Protocol (MCP) 是一种标准化协议，用于在 AI 模型和上下文提供者之间进行通信。它允许模型访问外部工具、数据源和服务，从而增强其功能。MCP 支持本地和远程服务器，通过标准化的接口提供一致的集成体验。</p>
+                <p>MCP Registry 已于 2025年9月8日发布预览版，为 MCP 生态系统提供了集中式的服务器发现和管理平台。</p>
               </el-collapse-item>
 
               <el-collapse-item title="支持哪些代码仓库源？" name="2">
                 <p>MCP Registry 支持以下代码仓库源：</p>
                 <ul>
-                  <li><strong>GitHub</strong>: 支持 github.com 上的公开和私有仓库</li>
+                  <li><strong>GitHub</strong>: 支持 github.com 上的公开和私有仓库，需要 GitHub 认证</li>
                   <li><strong>GitLab</strong>: 支持 GitLab.com 和自托管 GitLab 实例</li>
                   <li><strong>Gerrit</strong>: 支持企业级 Gerrit 代码审查系统，包括多种 URL 格式</li>
                 </ul>
@@ -1196,8 +1235,8 @@ mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
               <el-collapse-item title="支持哪些包注册表？" name="3">
                 <p>MCP Registry 目前支持以下包注册表：</p>
                 <ul>
-                  <li><strong>npm</strong>: Node.js 包管理器</li>
-                  <li><strong>PyPI</strong>: Python 包索引</li>
+                  <li><strong>npm</strong>: Node.js 包管理器，推荐使用 npx 运行时</li>
+                  <li><strong>PyPI</strong>: Python 包索引，推荐使用 uvx 运行时</li>
                   <li><strong>wheel</strong>: Python wheel 文件</li>
                   <li><strong>binary</strong>: 直接二进制文件分发</li>
                   <li><strong>oci</strong>: OCI 容器注册表</li>
@@ -1211,33 +1250,37 @@ mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
               <el-collapse-item title="如何贡献到 MCP Registry 项目？" name="4">
                 <p>您可以通过以下方式贡献：</p>
                 <ul>
-                  <li>在 GitHub Issues 提交问题和功能请求</li>
+                  <li>在 <a href="https://github.com/modelcontextprotocol/registry/discussions" target="_blank">GitHub Discussions</a> 参与产品讨论</li>
+                  <li>在 <a href="https://github.com/modelcontextprotocol/registry/issues" target="_blank">GitHub Issues</a> 提交问题和功能请求</li>
                   <li>提交代码改进的拉取请求</li>
                   <li>改进文档和示例</li>
                   <li>分享和推广项目</li>
                   <li>贡献新的 MCP 服务器实现</li>
+                  <li>在 <a href="https://discord.com/channels/1358869848138059966/1369487942862504016" target="_blank">Discord #registry-dev</a> 参与实时讨论</li>
                 </ul>
               </el-collapse-item>
 
               <el-collapse-item title="如何报告问题？" name="5">
                 <p>如果您发现了问题或有改进建议，请通过以下渠道联系：</p>
                 <ul>
-                  <li>GitHub Issues 页面提交技术问题</li>
-                  <li>GitHub Discussions 参与产品讨论</li>
+                  <li><a href="https://github.com/modelcontextprotocol/registry/issues" target="_blank">GitHub Issues</a> 页面提交技术问题</li>
+                  <li><a href="https://github.com/modelcontextprotocol/registry/discussions" target="_blank">GitHub Discussions</a> 参与产品讨论</li>
+                  <li><a href="https://discord.com/channels/1358869848138059966/1369487942862504016" target="_blank">Discord #registry-dev</a> 实时交流</li>
                   <li>查看项目文档和 FAQ</li>
                 </ul>
               </el-collapse-item>
 
               <el-collapse-item title="注册表是否存储源代码？" name="6">
                 <p>不存储。MCP Registry 是一个<strong>元注册表</strong>，它只存储关于 MCP 服务器的元数据，而不托管实际的源代码或包。实际的代码托管在各自的包注册表中（如 npm、PyPI、Docker Hub 等）。</p>
+                <p>这种设计确保了代码的安全性和可维护性，同时提供了统一的发现和管理界面。</p>
               </el-collapse-item>
 
               <el-collapse-item title="支持哪些认证方式？" name="7">
                 <p>MCP Registry 支持多种认证方式：</p>
                 <ul>
-                  <li><strong>GitHub OAuth</strong>: 标准的 GitHub OAuth 流程，适用于 GitHub 托管的项目</li>
-                  <li><strong>GitHub OIDC</strong>: GitHub OpenID Connect，适用于企业环境和 CI/CD 工作流</li>
                   <li><strong>匿名访问</strong>: 无需认证的访问方式，适用于公共命名空间</li>
+                  <li><strong>GitHub OAuth</strong>: 标准的 GitHub OAuth 流程，适用于 GitHub 托管的项目（计划中）</li>
+                  <li><strong>GitHub OIDC</strong>: GitHub OpenID Connect，适用于企业环境和 CI/CD 工作流（计划中）</li>
                   <li><strong>DNS 验证</strong>: 基于域名验证的认证方式（计划中）</li>
                   <li><strong>HTTP 验证</strong>: 基于 HTTP 的认证方式（计划中）</li>
                 </ul>
@@ -1254,6 +1297,31 @@ mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
                   <li><strong>权限控制</strong>: 只有服务器所有者可以删除版本</li>
                 </ul>
                 <p>这种设计允许更精细的版本管理，支持回滚和版本清理操作。</p>
+              </el-collapse-item>
+
+              <el-collapse-item title="如何使用 Playground？" name="9">
+                <p>MCP Registry Playground 是一个交互式工具，允许您在浏览器中测试 MCP 服务器：</p>
+                <ul>
+                  <li>从左侧面板选择要测试的服务器</li>
+                  <li>点击"Start Server"建立连接</li>
+                  <li>查看可用的工具列表</li>
+                  <li>点击"Execute"按钮执行工具</li>
+                  <li>在日志面板查看结果</li>
+                  <li>点击"Stop Server"断开连接</li>
+                </ul>
+                <p>目前 Playground 使用模拟服务器进行演示，提供完整的 MCP 协议实现。</p>
+              </el-collapse-item>
+
+              <el-collapse-item title="如何快速开始？" name="10">
+                <p>要快速开始使用 MCP Registry：</p>
+                <ol>
+                  <li>访问 <a href="https://registry.modelcontextprotocol.io" target="_blank">registry.modelcontextprotocol.io</a></li>
+                  <li>浏览可用的 MCP 服务器</li>
+                  <li>使用 Playground 测试服务器</li>
+                  <li>安装 mcpx-cli 工具</li>
+                  <li>使用交互式模式发布您的服务器</li>
+                </ol>
+                <p>详细的快速开始指南请参考 <a href="https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md" target="_blank">发布服务器指南</a>。</p>
               </el-collapse-item>
             </el-collapse>
           </section>

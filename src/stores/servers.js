@@ -44,17 +44,17 @@ export const useServersStore = defineStore('servers', {
       }
     },
 
-    async fetchServerDetail(id, version = null) {
+    async fetchServerDetail(serverName, version = null) {
       this.loading = true
       this.error = null
 
       try {
-        const response = await api.getServerDetail(id, version)
+        const response = await api.getServerDetail(serverName, version)
         this.currentServer = response.data || response
         return this.currentServer
       } catch (error) {
         this.error = error.message || '获取服务器详情失败'
-        console.error(`Error fetching server ${id}:`, error)
+        console.error(`Error fetching server ${serverName}:`, error)
         throw error
       } finally {
         this.loading = false
@@ -78,7 +78,7 @@ export const useServersStore = defineStore('servers', {
     },
 
     // 更新服务器
-    async updateServer(id, serverData) {
+    async updateServer(serverName, version, serverData) {
       this.loading = true
       this.error = null
 
@@ -88,16 +88,16 @@ export const useServersStore = defineStore('servers', {
           throw new Error('需要认证令牌才能更新服务器')
         }
 
-        const response = await api.updateServer(id, serverData, authStore.token)
+        const response = await api.updateServer(serverName, version, serverData, authStore.token)
         const updatedServer = response.data
 
         // 更新本地状态
-        if (this.currentServer && this.currentServer.id === id) {
+        if (this.currentServer && this.currentServer.name === serverName) {
           this.currentServer = updatedServer
         }
 
         // 更新服务器列表中的项目
-        const index = this.servers.findIndex(server => server.id === id)
+        const index = this.servers.findIndex(server => server.name === serverName)
         if (index !== -1) {
           this.servers[index] = updatedServer
         }
@@ -105,7 +105,7 @@ export const useServersStore = defineStore('servers', {
         return updatedServer
       } catch (error) {
         this.error = error.response?.data?.message || error.message || '更新服务器失败'
-        console.error(`Error updating server ${id}:`, error)
+        console.error(`Error updating server ${serverName}:`, error)
         throw error
       } finally {
         this.loading = false
@@ -140,7 +140,7 @@ export const useServersStore = defineStore('servers', {
     },
 
     // 软删除服务器版本 (设置状态为 deleted)
-    async deleteServerVersion(versionId) {
+    async deleteServerVersion(serverName, version) {
       this.loading = true
       this.error = null
 
@@ -150,15 +150,15 @@ export const useServersStore = defineStore('servers', {
           throw new Error('需要认证令牌才能删除服务器版本')
         }
 
-        const response = await api.deleteServerVersion(versionId, authStore.token)
+        const response = await api.deleteServerVersion(serverName, version, authStore.token)
 
         // 更新本地状态 - 从列表中移除已删除的服务器版本
-        if (this.currentServer && this.currentServer.versionId === versionId) {
+        if (this.currentServer && this.currentServer.name === serverName && this.currentServer.version === version) {
           this.currentServer = null
         }
 
         // 从服务器列表中移除匹配的版本
-        const index = this.servers.findIndex(server => server.versionId === versionId)
+        const index = this.servers.findIndex(server => server.name === serverName && server.version === version)
         if (index !== -1) {
           this.servers.splice(index, 1)
         }
@@ -166,7 +166,7 @@ export const useServersStore = defineStore('servers', {
         return response.data
       } catch (error) {
         this.error = error.response?.data?.message || error.message || '删除服务器版本失败'
-        console.error(`Error deleting server version ${versionId}:`, error)
+        console.error(`Error deleting server version ${serverName}/${version}:`, error)
         throw error
       } finally {
         this.loading = false

@@ -239,7 +239,7 @@ const formData = reactive({
   description: '',
   status: 'active',
   version: '1.0.0',
-  version_detail: {
+  versionDetail: {
     version: '1.0.0'
   },
   repository: {
@@ -298,13 +298,13 @@ const initForm = () => {
 
   if (props.isEdit && props.server) {
     // 编辑模式：填充现有数据
-    const version = props.server.version || props.server.version_detail?.version || '1.0.0'
+    const version = props.server.version || props.server.versionDetail?.version || '1.0.0'
     Object.assign(formData, {
       name: props.server.name || '',
       description: props.server.description || '',
       status: props.server.status || 'active',
       version: version,
-      version_detail: {
+      versionDetail: {
         version: version
       },
       repository: {
@@ -314,11 +314,11 @@ const initForm = () => {
       },
       packages: props.server.packages?.length > 0 ?
         props.server.packages.map(pkg => ({
-          registryType: pkg.registryType || pkg.registry_type || 'npm',
-          registryBaseUrl: pkg.registryBaseUrl || pkg.registry_base_url || 'https://registry.npmjs.org',
+          registryType: pkg.registryType || 'npm',
+          registryBaseUrl: pkg.registryBaseUrl || 'https://registry.npmjs.org',
           identifier: pkg.identifier || '',
-          runtimeHint: pkg.runtimeHint || pkg.runtime_hint || 'npx',
-          transport: pkg.transport || { type: pkg.transport_type || 'stdio' }
+          runtimeHint: pkg.runtimeHint || 'npx',
+          transport: pkg.transport || { type: 'stdio' }
         })) :
         [{
           registryType: 'npm',
@@ -335,7 +335,7 @@ const initForm = () => {
       description: '',
       status: 'active',
       version: '1.0.0',
-      version_detail: {
+      versionDetail: {
         version: '1.0.0'
       },
       repository: {
@@ -344,10 +344,10 @@ const initForm = () => {
         id: ''
       },
       packages: [{
-        registry_type: 'npm',
-        registry_base_url: 'https://registry.npmjs.org',
+        registryType: 'npm',
+        registryBaseUrl: 'https://registry.npmjs.org',
         identifier: '',
-        runtime_hint: 'npx',
+        runtimeHint: 'npx',
         transport: { type: 'stdio' }
       }]
     })
@@ -389,7 +389,7 @@ const handleSubmit = async () => {
 
     // 提交数据
     if (props.isEdit) {
-      await serversStore.updateServer(props.server.id, formData)
+      await serversStore.updateServer(props.server.name, props.server.version, formData)
       ElMessage.success('服务器更新成功')
     } else {
       await serversStore.publishServer(formData)

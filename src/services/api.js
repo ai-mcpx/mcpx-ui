@@ -28,7 +28,7 @@ apiClient.interceptors.response.use((response) => {
 
 // Transform the new API format to the format expected by the UI
 function transformServerResponse(serverResponse) {
-  // Check if this is already the new format with _meta
+  // Check if this is the new format with _meta
   if (serverResponse._meta && serverResponse._meta['io.modelcontextprotocol.registry/official']) {
     const registry = serverResponse._meta['io.modelcontextprotocol.registry/official']
 
@@ -39,18 +39,18 @@ function transformServerResponse(serverResponse) {
       description: serverResponse.description,
       status: serverResponse.status,
       repository: serverResponse.repository,
-      version: serverResponse.version || serverResponse.version_detail?.version,
-      version_detail: {
-        version: serverResponse.version || serverResponse.version_detail?.version,
-        release_date: registry.publishedAt || serverResponse.version_detail?.release_date,
-        is_latest: registry.isLatest !== undefined ? registry.isLatest : serverResponse.version_detail?.is_latest
+      version: serverResponse.version || serverResponse.versionDetail?.version,
+      versionDetail: {
+        version: serverResponse.version || serverResponse.versionDetail?.version,
+        releaseDate: registry.publishedAt || serverResponse.versionDetail?.releaseDate,
+        isLatest: registry.isLatest !== undefined ? registry.isLatest : serverResponse.versionDetail?.isLatest
       },
       packages: serverResponse.packages || [],
       remotes: serverResponse.remotes || [],
       // Add registry metadata
-      published_at: registry.publishedAt,
-      updated_at: registry.updatedAt,
-      is_latest: registry.isLatest
+      publishedAt: registry.publishedAt,
+      updatedAt: registry.updatedAt,
+      isLatest: registry.isLatest
     }
   }
 
@@ -65,17 +65,36 @@ function transformServerResponse(serverResponse) {
       description: server.description,
       status: server.status,
       repository: server.repository,
-      version_detail: {
-        ...server.version_detail,
-        release_date: registry.release_date || server.version_detail?.release_date,
-        is_latest: registry.is_latest !== undefined ? registry.is_latest : server.version_detail?.is_latest
+      versionDetail: {
+        ...server.versionDetail,
+        releaseDate: registry.releaseDate || server.versionDetail?.releaseDate,
+        isLatest: registry.isLatest !== undefined ? registry.isLatest : server.versionDetail?.isLatest
       },
       packages: server.packages || [],
       remotes: server.remotes || [],
       // Add registry metadata
-      published_at: registry.published_at,
-      updated_at: registry.updated_at,
-      is_latest: registry.is_latest
+      publishedAt: registry.publishedAt,
+      updatedAt: registry.updatedAt,
+      isLatest: registry.isLatest
+    }
+  }
+
+  // Handle direct server response (new API format)
+  if (serverResponse.name && serverResponse.version) {
+    return {
+      id: serverResponse.id || serverResponse.name, // Use name as ID if no ID provided
+      name: serverResponse.name,
+      description: serverResponse.description,
+      status: serverResponse.status,
+      repository: serverResponse.repository,
+      version: serverResponse.version,
+      versionDetail: {
+        version: serverResponse.version,
+        releaseDate: serverResponse.versionDetail?.releaseDate,
+        isLatest: serverResponse.versionDetail?.isLatest
+      },
+      packages: serverResponse.packages || [],
+      remotes: serverResponse.remotes || []
     }
   }
 
@@ -86,30 +105,35 @@ function transformServerResponse(serverResponse) {
 export default {
   // 获取服务器列表
   getServers(params = {}) {
-    return apiClient.get('/servers', { params })
+    return apiClient.get('/v0/servers', { params })
   },
 
   // 获取服务器详情
-  getServerDetail(id, version = null) {
-    const params = version ? { version } : {}
-    return apiClient.get(`/servers/${id}`, { params })
+  getServerDetail(serverName, version = null) {
+    if (version) {
+      // Get specific version: /v0/servers/{serverName}/versions/{version}
+      return apiClient.get(`/v0/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}`)
+    } else {
+      // Get latest version: /v0/servers/{serverName}
+      return apiClient.get(`/v0/servers/${encodeURIComponent(serverName)}`)
+    }
   },
 
   // 搜索服务器
   searchServers(query, limit = 50, cursor = null) {
     const params = {
-      q: query,
+      search: query,
       limit
     }
     if (cursor) {
       params.cursor = cursor
     }
-    return apiClient.get('/servers', { params })
+    return apiClient.get('/v0/servers', { params })
   },
 
   // 更新服务器 (需要认证)
-  updateServer(id, serverData, token) {
-    return apiClient.put(`/servers/${id}`, serverData, {
+  updateServer(serverName, version, serverData, token) {
+    return apiClient.put(`/v0/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}`, serverData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -118,7 +142,7 @@ export default {
 
   // 发布新服务器 (需要认证)
   publishServer(serverData, token) {
-    return apiClient.post('/publish', serverData, {
+    return apiClient.post('/v0/publish', serverData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -126,69 +150,49 @@ export default {
   },
 
   // 删除服务器版本 (使用 PUT 端点进行软删除)
-  deleteServerVersion(versionId, token) {
-    // First get all servers to find the one with matching version ID
-    return apiClient.get('/servers').then(response => {
-      const servers = response.data.servers || []
-      const targetServer = servers.find(server => {
-        if (server._meta && server._meta['io.modelcontextprotocol.registry/official']) {
-          return server._meta['io.modelcontextprotocol.registry/official'].versionId === versionId
-        }
-        return false
-      })
+  deleteServerVersion(serverName, version, token) {
+    // Use PUT endpoint to soft delete by setting status to deleted
+    const endpoint = `/v0/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}?status=deleted`
+    const editRequest = {
+      name: serverName,
+      description: 'Server marked for deletion',
+      repository: {
+        url: 'https://example.com/deleted',
+        source: 'github',
+        id: 'deleted/deleted'
+      },
+      version: version
+    }
 
-      if (!targetServer) {
-        throw new Error(`Version not found: ${versionId}`)
+    return apiClient.put(endpoint, editRequest, {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
-
-      const registry = targetServer._meta['io.modelcontextprotocol.registry/official']
-      const serverId = registry.serverId
-      const version = targetServer.version
-
-      // Use PUT endpoint to soft delete by setting status to deleted
-      const endpoint = `/servers/${serverId}?version=${version}`
-      const editRequest = {
-        name: targetServer.name,
-        description: targetServer.description,
-        status: 'deleted', // Set status to deleted
-        repository: {
-          url: targetServer.repository.url,
-          source: targetServer.repository.source,
-          id: targetServer.repository.id
-        },
-        version: targetServer.version
-      }
-
-      return apiClient.put(endpoint, editRequest, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
     })
   },
 
   // GitHub OAuth 认证 - 交换访问令牌为注册表 JWT
   exchangeGitHubToken(githubToken) {
-    return apiClient.post('/auth/github-at', {
+    return apiClient.post('/v0/auth/github-at', {
       github_token: githubToken
     })
   },
 
   // GitHub OIDC 认证 - 交换 OIDC 令牌为注册表 JWT
   exchangeGitHubOIDCToken(oidcToken) {
-    return apiClient.post('/auth/github-oidc', {
+    return apiClient.post('/v0/auth/github-oidc', {
       oidc_token: oidcToken
     })
   },
 
   // 获取匿名令牌
   getAnonymousToken() {
-    return apiClient.post('/auth/none')
+    return apiClient.post('/v0/auth/none')
   },
 
   // DNS 认证
   exchangeDNSToken(domain, timestamp, signedTimestamp) {
-    return apiClient.post('/auth/dns', {
+    return apiClient.post('/v0/auth/dns', {
       domain,
       timestamp,
       signed_timestamp: signedTimestamp
@@ -197,7 +201,7 @@ export default {
 
   // HTTP 认证
   exchangeHTTPToken(domain, timestamp, signedTimestamp) {
-    return apiClient.post('/auth/http', {
+    return apiClient.post('/v0/auth/http', {
       domain,
       timestamp,
       signed_timestamp: signedTimestamp
