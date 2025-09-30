@@ -8,6 +8,24 @@ const apiClient = axios.create({
   timeout: 10000
 })
 
+// Add request interceptor to conditionally add auth headers
+apiClient.interceptors.request.use((config) => {
+  // Only add auth headers for endpoints that require authentication
+  const authRequiredEndpoints = ['/publish', '/servers/*/versions/*', '/auth/']
+  const needsAuth = authRequiredEndpoints.some(endpoint =>
+    config.url.includes(endpoint.replace('*', ''))
+  )
+
+  if (needsAuth) {
+    const token = localStorage.getItem('mcp_registry_token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+  }
+
+  return config
+})
+
 // Response interceptor to transform the new API format
 apiClient.interceptors.response.use((response) => {
   // Handle the new wrapper format for server responses

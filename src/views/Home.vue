@@ -169,15 +169,20 @@ const handlePageChange = (page) => {
 
 onMounted(async () => {
   try {
-    // Auto-authenticate with anonymous auth if not already authenticated
-    if (!authStore.isAuthenticated) {
-      console.log('Auto-authenticating with anonymous auth...')
-      await authStore.getAnonymousAuth()
-    }
-
+    // Try to fetch servers directly first (servers endpoint is public)
     await fetchServers()
   } catch (error) {
     console.error('Failed to load servers:', error)
+    // If that fails, try with authentication as fallback
+    try {
+      if (!authStore.isAuthenticated) {
+        console.log('Auto-authenticating with anonymous auth...')
+        await authStore.getAnonymousAuth()
+      }
+      await fetchServers()
+    } catch (authError) {
+      console.error('Failed to load servers with auth:', authError)
+    }
   }
 })
 </script>
