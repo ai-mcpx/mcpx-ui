@@ -13,10 +13,6 @@
             <el-tag size="small" type="info">{{ server.version || server.versionDetail?.version || 'Unknown' }}</el-tag>
             <span v-if="server.versionDetail?.isLatest" class="latest-tag">最新</span>
           </div>
-          <div class="server-ids" v-if="server.id || server.versionId">
-            <span v-if="server.id" class="server-id">ID: {{ server.id }}</span>
-            <span v-if="server.versionId" class="version-id">版本: {{ server.versionId }}</span>
-          </div>
         </div>
       </div>
 
@@ -190,26 +186,6 @@ const getSourceTagType = (source) => {
   }
 }
 
-.server-ids {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: 4px;
-  font-size: 0.7rem;
-  color: #909399;
-
-  .server-id, .version-id {
-    font-family: monospace;
-    background: #f5f7fa;
-    padding: 1px 4px;
-    border-radius: 2px;
-    display: inline-block;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
 
 .server-description {
   flex: 1;

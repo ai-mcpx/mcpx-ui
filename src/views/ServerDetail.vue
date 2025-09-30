@@ -32,14 +32,6 @@
             <span v-if="server.versionDetail?.isLatest" class="latest-tag">最新版本</span>
             <span v-if="server.versionDetail?.releaseDate && formatDate(server.versionDetail.releaseDate)" class="release-date">发布于 {{ formatDate(server.versionDetail.releaseDate) }}</span>
           </div>
-          <div class="server-ids" v-if="server.id || server.versionId">
-            <div v-if="server.id" class="server-id">
-              <strong>服务器ID:</strong> {{ server.id }}
-            </div>
-            <div v-if="server.versionId" class="version-id">
-              <strong>版本ID:</strong> {{ server.versionId }}
-            </div>
-          </div>
 
           <div class="repository-link" v-if="server.repository">
             <el-button
@@ -482,24 +474,6 @@ watch(() => route.params.id, (newId) => {
   }
 }
 
-.server-ids {
-  margin-bottom: 0.75rem;
-  font-size: 0.85rem;
-  color: #606266;
-
-  .server-id, .version-id {
-    margin-bottom: 4px;
-    font-family: monospace;
-    background: #f5f7fa;
-    padding: 4px 8px;
-    border-radius: 4px;
-    display: inline-block;
-    max-width: 400px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
 
 .repository-link {
   margin-top: 0.5rem;
