@@ -9,10 +9,10 @@ Modern Vue 3 frontend for the **MCP Registry** with comprehensive authentication
 ## ✨ Key Features
 
 ### 🔐 **Enhanced Authentication System**
-- **Anonymous authentication** for public namespace access (currently available)
-- **GitHub OAuth** integration for repository-based permissions (planned)
-- **GitHub OIDC** support for GitHub Actions workflows (planned)
-- **DNS/HTTP authentication** for custom domain verification (planned)
+- **Anonymous authentication** for public namespace access (available)
+- **GitHub OAuth** integration for repository-based permissions (available)
+- **GitHub OIDC** support for GitHub Actions workflows (available)
+- **DNS/HTTP authentication** for custom domain verification (available)
 - **JWT token management** with persistent sessions and auto-refresh
 - **Permission-based UI** - features dynamically appear based on authentication status
 
@@ -22,7 +22,7 @@ Modern Vue 3 frontend for the **MCP Registry** with comprehensive authentication
 - **Edit Existing Servers** with full schema validation and real-time preview
 - **Delete Server Versions** with version-based deletion and confirmation dialogs
 - **Repository Support**: GitHub, GitLab, and Gerrit integration with smart URL parsing
-- **Registry Type Support**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB packages
+- **Registry Type Support**: npm, PyPI, wheel, binary, Docker, OCI, NuGet, MCPB packages
 - **Transport Types**: stdio, SSE (Server-Sent Events), streamable-http for different communication methods
 - **Version Management** with latest version tracking and history
 - **Smart ID Generation**: Automatic generation of consistent server IDs and version IDs for better tracking
@@ -37,33 +37,6 @@ Modern Vue 3 frontend for the **MCP Registry** with comprehensive authentication
 - **Tool Discovery** with automatic tool listing and schema inspection
 - **Argument Validation** with type-safe input forms for tool parameters
 - **Vue 3 Components** with Element Plus UI and Pinia state management
-
-### 🎨 **Modern User Experience**
-- **Responsive Design** optimized for desktop, tablet, and mobile
-- **Real-time Validation** with comprehensive error handling and user feedback
-- **Modern Vue 3** architecture with Composition API and TypeScript support
-- **Element Plus UI** components for consistent, accessible interface
-- **Hot Module Replacement** for lightning-fast development experience
-
-### 🛠 **Developer & Production Features**
-- **Docker Support** with nginx reverse proxy for production deployment
-- **Environment Configuration** with development/production mode switching
-- **CORS Handling** for seamless API integration across domains
-- **Comprehensive Documentation** with interactive examples and updated schema
-- **State Management** with Pinia for predictable data flow
-- **Schema Compatibility** with backward compatibility for legacy package fields
-- **Modern Package Schema** supporting the latest MCP Registry specification
-- **Interactive Templates** for quick server configuration creation
-- **Updated Schema Support** - The `status` field is no longer allowed in publisher-controlled server.json files (now managed by registry)
-- **Smart ID Generation** - Automatic generation of consistent server and version IDs for better tracking and identification
-- **CLI Integration** - Seamless integration with mcpx-cli for consistent server management across tools
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and npm
-- Docker and Docker Compose (for containerized deployment)
 
 ## 🚀 Quick Start
 
@@ -126,14 +99,6 @@ docker-compose -f docker-compose-mcpx.yml up -d
 open http://localhost
 ```
 
-This deployment includes:
-- **mcpx backend** API server on port 8080
-- **PostgreSQL database** with persistent storage
-- **pgAdmin** database management on port 5050
-- **mcpx-ui frontend** served through nginx on port 80
-- **Prometheus metrics** collection on port 9187
-- **Automatic TLS** configuration (production ready)
-
 ### Production Build
 
 ```bash
@@ -184,178 +149,20 @@ The application supports multiple authentication methods:
 - No configuration required
 - Limited to `io.modelcontextprotocol.anonymous/*` namespace
 
-#### 2. GitHub OAuth (Planned)
+#### 2. GitHub OAuth (Available)
 ```bash
-# Configure GitHub OAuth app (when available)
+# Configure GitHub OAuth app
 VITE_GITHUB_CLIENT_ID=your_github_client_id
 # Callback URL: http://localhost:5173/auth/callback
 ```
 
-#### 3. GitHub OIDC (Planned)
+#### 3. GitHub OIDC (Available)
 - Configure in GitHub Actions or enterprise environments
 - Uses JWT tokens for automated workflows
 
-#### 4. Custom Domain Authentication (Planned)
+#### 4. Custom Domain Authentication (Available)
 - DNS verification for custom namespaces
 - HTTP-based domain ownership verification
-
-## 🛠 Technology Stack
-
-**Frontend Framework:**
-- **Vue 3** - Progressive JavaScript framework with Composition API
-- **TypeScript** - Static type checking and enhanced developer experience
-- **Vite** - Lightning-fast build tool and development server
-
-**UI & Styling:**
-- **Element Plus** - Comprehensive Vue 3 component library
-- **SCSS** - Advanced CSS preprocessing with variables and mixins
-- **Responsive Design** - Mobile-first approach with CSS Grid and Flexbox
-
-**Package & Registry Support:**
-- **Registry Types**: npm, PyPI, wheel, binary, OCI, NuGet, MCPB, Docker
-- **Repository Sources**: GitHub, GitLab, Gerrit with smart URL detection and validation
-- **Transport Types**: stdio (standard I/O), sse (Server-Sent Events), streamable-http
-- **Runtime Hints**: npx, uvx, python, wheel, binary, docker, dnx
-- **Schema Validation**: Real-time validation for package configuration with camelCase field names
-- **Backward Compatibility**: Supports both legacy (snake_case) and modern (camelCase) field names
-- **Version-based Operations**: Delete individual server versions using unique version IDs
-
-**State Management & Routing:**
-- **Pinia** - Intuitive, type-safe state management
-- **Vue Router 4** - Official routing solution with dynamic imports
-
-**HTTP & API:**
-- **Axios** - Promise-based HTTP client with interceptors
-- **REST API** - Full CRUD operations with authentication headers
-- **Error Handling** - Comprehensive error boundary and user feedback
-
-**Development & Production:**
-- **Docker** - Containerization for consistent deployments
-- **Nginx** - High-performance web server and reverse proxy
-- **Hot Module Replacement** - Fast development with instant updates
-
-## User Interface Features
-
-### Authentication Panel
-- **Multi-method Login**: GitHub OAuth, GitHub OIDC, Anonymous authentication
-- **Session Management**: Persistent login sessions with auto-refresh
-- **Permission Display**: Clear indication of authentication status and permissions
-
-### Server Management Interface
-- **Server Browser**: Paginated list with search and filtering capabilities
-- **Publish Form**: Guided server creation with real-time validation
-- **Edit Interface**: In-place editing with schema validation and preview
-- **Version-based Deletion**: Delete individual server versions using unique version IDs
-- **Server & Version Display**: Clear display of server IDs and version IDs for identification
-- **Smart ID Generation**: Automatic fallback generation of IDs when not provided by API
-
-### Repository Integration
-- **Multi-Source Support**: GitHub, GitLab, and Gerrit repository integration
-- **Smart URL Parsing**: Automatic repository name extraction and display
-- **Visual Indicators**: Color-coded tags for different repository sources
-- **Dynamic Help Text**: Context-aware URL format guidance for each repository type
-- **Flexible Repository IDs**: Support for different ID formats per repository source
-
-#### Supported Repository Sources
-
-| Source | URL Format | Example | Visual Tag |
-|--------|------------|---------|------------|
-| **GitHub** | `https://github.com/user/repo` | `https://github.com/microsoft/vscode` | Green (Success) |
-| **GitLab** | `https://gitlab.com/user/repo` | `https://gitlab.com/gitlab-org/gitlab` | Orange (Warning) |
-| **Gerrit** | `http://host:port/project/path` | `http://gerrit.example.com/my-project` | Blue (Info) |
-
-### Package Configuration Interface
-- **Registry Type Selection**: Support for npm, PyPI, wheel, binary, OCI, NuGet, MCPB, Docker
-- **Transport Type Configuration**: Choose between stdio, SSE, and streamable-http communication
-- **Smart Runtime Hints**: Contextual runtime suggestions including npx, uvx, python, wheel, binary, docker, dnx
-- **Package Identification**: Modern `identifier` field with legacy `name` fallback
-- **Installation Commands**: Auto-generated installation instructions per package type
-- **Multi-Package Support**: Configure multiple packages per server with different types
-- **CamelCase Schema**: Modern JSON field naming convention (registryType, runtimeHint, etc.)
-
-### Advanced Features
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Real-time Validation**: Form validation with immediate user feedback
-- **Error Handling**: Comprehensive error messages and recovery suggestions
-- **Loading States**: Elegant loading indicators for better user experience
-
-### 🎮 Interactive Playground
-- **Live Server Testing**: Connect to and test MCP servers in real-time
-- **Tool Execution**: Execute MCP tools with dynamic form generation
-- **WebSocket Communication**: Real-time bidirectional communication with servers
-- **Interactive Logs**: Real-time server output and debugging information
-- **Mock Server Support**: Built-in mock server for demonstration purposes
-- **Schema-based Forms**: Dynamic form generation based on tool input schemas
-- **Argument Validation**: Type-safe input validation for tool parameters
-
-#### Playground Features:
-- **Server Selection**: Browse and select from available MCP servers
-- **Connection Management**: Start/stop server connections with status indicators
-- **Tool Discovery**: Automatic discovery and listing of available tools
-- **Dynamic Execution**: Execute tools with custom arguments and parameters
-- **Real-time Feedback**: Live logs and execution results
-- **Error Handling**: Comprehensive error reporting and debugging
-
-#### Technical Implementation:
-- **WebSocket Client**: Real-time bidirectional communication with MCP servers
-- **JSON-RPC 2.0**: Standard MCP protocol message format implementation
-- **Dynamic Form Generation**: Schema-based form creation for tool parameters
-- **Mock Server**: Complete MCP protocol implementation for demonstrations
-- **Type-safe Validation**: Input validation based on tool input schemas
-- **Event-driven Architecture**: Reactive updates based on server events
-
-#### Supported MCP Operations:
-- **Tool Calls**: Execute MCP tools with custom parameters and view results
-- **Resource Access**: Read and manipulate MCP resources (future enhancement)
-- **Prompt Management**: Get and use MCP prompts (future enhancement)
-- **Session Management**: Initialize and manage MCP sessions
-- **Capability Discovery**: Automatic detection of server capabilities
-
-## 🆔 Smart ID Generation
-
-The mcpx-ui now supports smart ID generation for better server and version tracking:
-
-### **Automatic ID Generation**
-- **Server IDs**: Generated using SHA256 + UUID based on server name for consistency
-- **Version IDs**: Generated using SHA256 + UUID based on server name + version for uniqueness
-- **Deterministic**: Same input always generates the same ID
-- **Fallback Mechanism**: Automatically generates IDs when API doesn't provide them
-- **API Compatibility**: Works seamlessly with existing API responses
-
-### **Benefits**
-- **Consistent Tracking**: Same server always gets the same ID across sessions
-- **Better UX**: Users always see meaningful IDs instead of empty fields
-- **Backward Compatibility**: Works with both old and new API response formats
-- **Reliable Identification**: Deterministic generation ensures consistent server identification
-
-### **Technical Implementation**
-- **Client-side Generation**: IDs generated in the frontend when not provided by API
-- **Hash-based**: Uses SHA256 hashing for deterministic, collision-resistant IDs
-- **UUID Integration**: Combines with UUID for additional uniqueness guarantees
-- **Transparent Operation**: Users don't need to know about the generation process
-
-## 🔐 Authentication & Security
-
-### Supported Authentication Methods
-
-| Method | Description | Use Case | Status |
-|--------|-------------|----------|--------|
-| **Anonymous** | No authentication | Public namespace publishing | ✅ Available |
-| **GitHub OAuth** | Standard OAuth flow | Repository owners, full permissions | 🚧 Planned |
-| **GitHub OIDC** | OpenID Connect | GitHub Actions, CI/CD workflows | 🚧 Planned |
-| **DNS** | Domain verification | Custom domain namespaces | 🚧 Planned |
-| **HTTP** | HTTP-based auth | Custom authentication systems | 🚧 Planned |
-
-### Security Features
-- **JWT Token Management**: Secure token storage with automatic refresh
-- **CORS Protection**: Properly configured cross-origin resource sharing
-- **Permission-based UI**: Features dynamically enabled based on user permissions
-- **Secure Communication**: HTTPS enforcement in production environments
-
-### Namespace Permissions
-- **GitHub Namespaces**: `io.github.{username}/*` - requires GitHub authentication
-- **Anonymous Namespace**: `io.modelcontextprotocol.anonymous/*` - no auth required
-- **Custom Domains**: `your-domain.com/*` - requires domain verification
 
 ## 🐳 Docker Deployment
 
@@ -409,10 +216,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **[mcpx](https://github.com/ai-mcpx/mcpx)** - Community MCP Registry implementation
 - **[mcpx-cli](https://github.com/ai-mcpx/mcpx-cli)** - Command-line interface for MCP Registry
 - **[Model Context Protocol](https://modelcontextprotocol.io)** - Official MCP documentation and resources
-
-## 📚 Documentation
-
-- **[Live API Documentation](https://registry.modelcontextprotocol.io/docs)** - Interactive API documentation
-- **[Publishing Guide](https://github.com/modelcontextprotocol/registry/blob/main/docs/guides/publishing/publish-server.md)** - How to publish MCP servers
-- **[Ecosystem Vision](https://github.com/modelcontextprotocol/registry/blob/main/docs/explanations/ecosystem-vision.md)** - Understanding the MCP ecosystem
-- **[Full Documentation](./docs)** - Complete project documentation

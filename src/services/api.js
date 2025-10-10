@@ -279,14 +279,14 @@ export default {
 
   // GitHub OAuth 认证 - 交换访问令牌为注册表 JWT
   exchangeGitHubToken(githubToken) {
-    return apiClient.post('/auth/github-at', {
+    return apiClient.post('/auth/github/oauth', {
       github_token: githubToken
     })
   },
 
   // GitHub OIDC 认证 - 交换 OIDC 令牌为注册表 JWT
   exchangeGitHubOIDCToken(oidcToken) {
-    return apiClient.post('/auth/github-oidc', {
+    return apiClient.post('/auth/github/oidc', {
       oidc_token: oidcToken
     })
   },

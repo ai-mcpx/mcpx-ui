@@ -44,6 +44,26 @@
             />
           </el-form-item>
 
+          <el-form-item label="标题" prop="title">
+            <el-input
+              v-model="formData.title"
+              placeholder="例如: My Awesome MCP Server"
+            />
+            <div class="form-help">
+              <span>可选的服务器标题，用于更好的展示</span>
+            </div>
+          </el-form-item>
+
+          <el-form-item label="网站 URL" prop="websiteUrl">
+            <el-input
+              v-model="formData.websiteUrl"
+              placeholder="例如: https://example.com/my-server 或 http://gerrit.example.com/project"
+            />
+            <div class="form-help">
+              <span>可选的网站URL，用于提供更多信息</span>
+            </div>
+          </el-form-item>
+
 
           <!-- 版本信息 -->
           <el-form-item label="版本" prop="version">
@@ -224,8 +244,11 @@ const loading = computed(() => serversStore.loading)
 
 // 表单数据
 const formData = reactive({
+  schema: 'https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json',
   name: '',
+  title: '',
   description: '',
+  websiteUrl: '',
   version: '1.0.0',
   versionDetail: {
     version: '1.0.0'

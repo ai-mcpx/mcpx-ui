@@ -66,7 +66,7 @@
               <li><strong>环境配置</strong>：支持各种环境配置和运行时参数</li>
               <li><strong>数据库支持</strong>：PostgreSQL 和内存数据库支持</li>
               <li><strong>分页支持</strong>：基于游标的高性能分页</li>
-              <li><strong>认证系统</strong>：GitHub OAuth、GitHub OIDC、匿名访问、DNS 验证、HTTP 验证</li>
+              <li><strong>认证系统</strong>：GitHub OAuth、GitHub OIDC、匿名访问、DNS 验证、HTTP 验证（全部可用）</li>
               <li><strong>命名空间管理</strong>：基于域名的权限控制和所有权验证</li>
               <li><strong>版本管理</strong>：支持服务器 ID 和版本 ID 的独立管理</li>
               <li><strong>软删除</strong>：版本级别的软删除功能</li>
@@ -81,7 +81,6 @@
             <h3>当前维护者</h3>
             <ul>
               <li><strong>Adam Jones</strong> (Anthropic) - <a href="https://github.com/domdomegg" target="_blank">@domdomegg</a></li>
-              <li><strong>Tadas Antanavicius</strong> (PulseMCP) - <a href="https://github.com/tadasant" target="_blank">@tadasant</a></li>
               <li><strong>Toby Padilla</strong> (GitHub) - <a href="https://github.com/toby" target="_blank">@toby</a></li>
             </ul>
           </section>
@@ -773,14 +772,6 @@
               <li><code>environmentVariables</code>: 环境变量（推荐）</li>
             </ul>
 
-            <h4>开发特性</h4>
-            <ul>
-              <li>支持 localhost URL 用于开发和测试</li>
-              <li>移除了 file_sha256 要求，简化了包发布流程</li>
-              <li>移除了 HTTP 可访问性验证，加快了开发速度</li>
-              <li>支持所有新的注册表类型（docker、binary、wheel 等）</li>
-            </ul>
-
             <h3>支持的传输类型</h3>
             <p>MCP Registry 支持多种传输类型，用于不同的通信方式：</p>
 
@@ -859,11 +850,11 @@ sudo cp mcpx-cli /usr/local/bin/</code></pre>
             <h3>认证方式</h3>
             <p>mcpx-cli 支持多种认证方法：</p>
             <ul>
-              <li><strong>匿名访问</strong>: 基本访问，无需 GitHub 认证</li>
-              <li><strong>GitHub OAuth</strong>: 完整的 GitHub OAuth 流程（计划中）</li>
-              <li><strong>GitHub OIDC</strong>: 企业环境的 GitHub OpenID Connect（计划中）</li>
-              <li><strong>DNS 认证</strong>: 基于域名的认证（计划中）</li>
-              <li><strong>HTTP 认证</strong>: 基于 HTTP 的认证（计划中）</li>
+              <li><strong>匿名访问</strong>: 基本访问，无需 GitHub 认证（可用）</li>
+              <li><strong>GitHub OAuth</strong>: 完整的 GitHub OAuth 流程（可用）</li>
+              <li><strong>GitHub OIDC</strong>: 企业环境的 GitHub OpenID Connect（可用）</li>
+              <li><strong>DNS 认证</strong>: 基于域名的认证（可用）</li>
+              <li><strong>HTTP 认证</strong>: 基于 HTTP 的认证（可用）</li>
             </ul>
 
             <h3>基本用法</h3>
@@ -883,11 +874,17 @@ sudo cp mcpx-cli /usr/local/bin/</code></pre>
             <pre><code># 匿名登录
 mcpx-cli login --method anonymous
 
-# GitHub OAuth 登录（计划中）
+# GitHub OAuth 登录
 mcpx-cli login --method github-oauth
 
-# GitHub OIDC 登录（计划中）
+# GitHub OIDC 登录
 mcpx-cli login --method github-oidc
+
+# DNS 认证登录
+mcpx-cli login --method dns
+
+# HTTP 认证登录
+mcpx-cli login --method http
 
 # 登出
 mcpx-cli logout</code></pre>
@@ -978,8 +975,11 @@ mcpx-cli servers  # 查看服务器列表</code></pre>
             <h4>ServerJSON 格式</h4>
             <p>这是当前使用的标准格式，直接对应 API 的服务器对象：</p>
             <pre><code>{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.example/test-server-node",
+  "title": "Test MCP Server",
   "description": "A test MCP server in Node.js",
+  "websiteUrl": "https://example.github.io/test-server-node",
   "repository": {
     "url": "https://github.com/example/test-server-node",
     "source": "github",
@@ -1041,8 +1041,11 @@ mcpx-cli servers  # 查看服务器列表</code></pre>
 
             <h4>字段说明</h4>
             <ul>
+              <li><code>$schema</code>: JSON Schema 验证文件（推荐）</li>
               <li><code>name</code>: 服务器唯一标识符，GitHub 服务器使用 io.github.* 格式</li>
+              <li><code>title</code>: 服务器标题，用于更好的展示（可选）</li>
               <li><code>description</code>: 服务器的简短描述</li>
+              <li><code>websiteUrl</code>: 服务器网站 URL，提供更多信息（可选）</li>
               <li><code>repository</code>: 源代码仓库信息，支持多种仓库源</li>
               <li><code>version</code>: 服务器版本（推荐使用）</li>
               <li><code>version_detail</code>: 版本信息（向后兼容）</li>
@@ -1282,11 +1285,11 @@ mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
               <el-collapse-item title="支持哪些认证方式？" name="7">
                 <p>MCP Registry 支持多种认证方式：</p>
                 <ul>
-                  <li><strong>匿名访问</strong>: 无需认证的访问方式，适用于公共命名空间</li>
-                  <li><strong>GitHub OAuth</strong>: 标准的 GitHub OAuth 流程，适用于 GitHub 托管的项目（计划中）</li>
-                  <li><strong>GitHub OIDC</strong>: GitHub OpenID Connect，适用于企业环境和 CI/CD 工作流（计划中）</li>
-                  <li><strong>DNS 验证</strong>: 基于域名验证的认证方式（计划中）</li>
-                  <li><strong>HTTP 验证</strong>: 基于 HTTP 的认证方式（计划中）</li>
+                  <li><strong>匿名访问</strong>: 无需认证的访问方式，适用于公共命名空间（可用）</li>
+                  <li><strong>GitHub OAuth</strong>: 标准的 GitHub OAuth 流程，适用于 GitHub 托管的项目（可用）</li>
+                  <li><strong>GitHub OIDC</strong>: GitHub OpenID Connect，适用于企业环境和 CI/CD 工作流（可用）</li>
+                  <li><strong>DNS 验证</strong>: 基于域名验证的认证方式（可用）</li>
+                  <li><strong>HTTP 验证</strong>: 基于 HTTP 的认证方式（可用）</li>
                 </ul>
                 <p>不同的命名空间可能需要不同的认证方式，GitHub 命名空间通常需要 GitHub 认证，而匿名命名空间可以使用匿名访问。</p>
               </el-collapse-item>
@@ -1339,7 +1342,7 @@ mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const activeSection = ref('overview')
-const sections = ['overview', 'api', 'server-json', 'cli', 'publishing', 'faq']
+const sections = ['overview', 'playground', 'api', 'server-json', 'cli', 'publishing', 'faq']
 
 const listServersParams = [
   {
