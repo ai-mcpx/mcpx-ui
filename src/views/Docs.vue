@@ -394,26 +394,27 @@
     "source": "github",
     "id": "example/filesystem-server"
   },
-  "version_detail": {
-    "version": "1.1.0"
-  },
+  "version": "1.1.0",
   "packages": [
     {
-      "registry_type": "npm",
+      "registryType": "npm",
       "identifier": "@example/filesystem-server",
       "version": "1.1.0",
-      "runtime_hint": "npx",
-      "runtime_arguments": [
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeArguments": [
         {
           "type": "positional",
-          "name": "target_dir",
-          "value_hint": "target_dir",
+          "valueHint": "target_dir",
           "description": "Path to access",
+          "format": "filepath",
           "default": "/Users/username/Desktop",
-          "is_required": true
+          "isRequired": true
         }
       ],
-      "environment_variables": [
+      "environmentVariables": [
         {
           "name": "LOG_LEVEL",
           "description": "Logging level (debug, info, warn, error)",
@@ -423,18 +424,22 @@
       ]
     },
     {
-      "registry_type": "binary",
+      "registryType": "binary",
       "identifier": "filesystem-server",
       "version": "1.1.0",
-      "registry_base_url": "https://github.com/example/filesystem-server/releases",
-      "runtime_hint": "binary",
-      "runtime_arguments": [
+      "registryBaseUrl": "https://github.com/example/filesystem-server/releases",
+      "runtimeHint": "binary",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeArguments": [
         {
           "type": "named",
           "name": "--path",
           "description": "Root path for filesystem access",
-          "is_required": true,
-          "value_hint": "directory_path"
+          "format": "filepath",
+          "isRequired": true,
+          "valueHint": "directory_path"
         }
       ]
     }
@@ -512,70 +517,71 @@
 
               <h4>请求体示例</h4>
               <pre><code>{
-  "server": {
-    "name": "io.modelcontextprotocol/filesystem",
-    "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
-    "repository": {
-      "url": "https://github.com/modelcontextprotocol/servers",
-      "source": "github"
-    },
-    "version_detail": {
-      "version": "1.0.0"
-    },
-    "packages": [
-      {
-        "registry_type": "npm",
-        "identifier": "@modelcontextprotocol/server-filesystem",
-        "version": "1.0.0",
-        "package_arguments": [
-          {
-            "type": "positional",
-            "value_hint": "target_dir",
-            "description": "Path to access",
-            "default": "/Users/username/Desktop",
-            "is_required": true
-          }
-        ],
-        "environment_variables": [
-          {
-            "name": "LOG_LEVEL",
-            "description": "Logging level (debug, info, warn, error)",
-            "default": "info"
-          }
-        ]
-      },
-      {
-        "registry_type": "binary",
-        "identifier": "filesystem-server",
-        "version": "1.0.0",
-        "binary_url": "https://github.com/example/mcp-filesystem/releases/download/v1.0.0/filesystem-linux-x64",
-        "runtime_hint": "binary",
-        "runtime_arguments": [
-          {
-            "type": "named",
-            "name": "--path",
-            "description": "Root path for filesystem access",
-            "is_required": true,
-            "value_hint": "directory_path"
-          }
-        ],
-        "environment_variables": [
-          {
-            "name": "LOG_LEVEL",
-            "description": "Logging level",
-            "default": "info"
-          }
-        ]
-      }
-    ]
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.modelcontextprotocol/filesystem",
+  "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
+  "repository": {
+    "url": "https://github.com/modelcontextprotocol/servers",
+    "source": "github"
   },
-  "x-publisher": {
-    "tool": "mcp-publisher",
-    "version": "1.0.0",
-    "build_info": {
-      "timestamp": "2025-08-25T12:00:00Z"
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@modelcontextprotocol/server-filesystem",
+      "version": "1.0.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "positional",
+          "valueHint": "target_dir",
+          "description": "Path to access",
+          "format": "filepath",
+          "default": "/Users/username/Desktop",
+          "isRequired": true
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "LOG_LEVEL",
+          "description": "Logging level (debug, info, warn, error)",
+          "format": "string",
+          "default": "info"
+        }
+      ]
+    },
+    {
+      "registryType": "binary",
+      "identifier": "filesystem-server",
+      "version": "1.0.0",
+      "registryBaseUrl": "https://github.com/example/mcp-filesystem/releases",
+      "runtimeHint": "binary",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeArguments": [
+        {
+          "type": "named",
+          "name": "--path",
+          "description": "Root path for filesystem access",
+          "format": "filepath",
+          "isRequired": true,
+          "valueHint": "directory_path"
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "LOG_LEVEL",
+          "description": "Logging level",
+          "format": "string",
+          "default": "info"
+        }
+      ]
     }
-  }
+  ]
 }</code></pre>
             </el-card>
           </section>
@@ -979,11 +985,11 @@ mcpx-cli servers --json  # 查看服务器列表</code></pre>
       "runtimeArguments": [
         {
           "type": "positional",
-          "name": "config_path",
           "valueHint": "config_path",
           "description": "Path to configuration file",
+          "format": "filepath",
           "default": "./config.json",
-          "is_required": true
+          "isRequired": true
         }
       ],
         "environmentVariables": [
