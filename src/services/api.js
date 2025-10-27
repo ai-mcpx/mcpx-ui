@@ -34,6 +34,10 @@ apiClient.interceptors.request.use((config) => {
 
 // Response interceptor to transform the new API format
 apiClient.interceptors.response.use((response) => {
+  // Allow callers to opt out of transformation and receive raw data
+  if (response.config?.headers && response.config.headers['X-Raw-Response'] === 'true') {
+    return response
+  }
   console.log('API response received:', response.status, response.config.url)
   console.log('Response data before transformation:', response.data)
 
@@ -225,6 +229,16 @@ export default {
     }
   },
 
+  // 获取原始服务器详情（不进行响应转换）
+  getServerDetailRaw(serverName, version = null) {
+    const headers = { 'X-Raw-Response': 'true' }
+    if (version) {
+      return apiClient.get(`/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}`, { headers })
+    } else {
+      return apiClient.get(`/servers/${encodeURIComponent(serverName)}`, { headers })
+    }
+  },
+
   // 搜索服务器
   searchServers(query, limit = 50, cursor = null) {
     const params = {
@@ -255,22 +269,10 @@ export default {
     })
   },
 
-  // 删除服务器版本 (使用 PUT 端点进行软删除)
-  deleteServerVersion(serverName, version, token) {
-    // Use PUT endpoint to soft delete by setting status to deleted
-    const endpoint = `/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}?status=deleted`
-    const editRequest = {
-      name: serverName,
-      description: 'Server marked for deletion',
-      repository: {
-        url: 'https://example.com/deleted',
-        source: 'github',
-        id: 'deleted/deleted'
-      },
-      version: version
-    }
-
-    return apiClient.put(endpoint, editRequest, {
+  // 更新服务器状态（例如将状态设置为 deleted 进行软删除）
+  updateServerStatus(serverName, version, serverData, status, token) {
+    const endpoint = `/servers/${encodeURIComponent(serverName)}/versions/${encodeURIComponent(version)}${status ? `?status=${encodeURIComponent(status)}` : ''}`
+    return apiClient.put(endpoint, serverData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

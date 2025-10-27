@@ -215,7 +215,16 @@ export const useServersStore = defineStore('servers', {
           throw new Error('需要认证令牌才能删除服务器版本')
         }
 
-        const response = await api.deleteServerVersion(serverName, version, authStore.token)
+        // 获取原始服务器 JSON 作为更新请求体，确保包含 $schema、name、version 等必需字段
+        const rawResp = await api.getServerDetailRaw(serverName, version)
+        // Huma API wraps the response under body; otherwise expect ServerResponse shape
+        const rawBody = rawResp.data?.body || rawResp.data
+        const serverJSON = rawBody?.server || rawBody
+        if (!serverJSON || !serverJSON.$schema) {
+          throw new Error('无法获取服务器原始配置用于删除操作')
+        }
+
+        const response = await api.updateServerStatus(serverName, version, serverJSON, 'deleted', authStore.token)
 
         // 更新本地状态 - 从列表中移除已删除的服务器版本
         if (this.currentServer && this.currentServer.name === serverName && this.currentServer.version === version) {

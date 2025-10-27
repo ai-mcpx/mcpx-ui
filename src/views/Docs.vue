@@ -66,9 +66,9 @@
               <li><strong>环境配置</strong>：支持各种环境配置和运行时参数</li>
               <li><strong>数据库支持</strong>：PostgreSQL 和内存数据库支持</li>
               <li><strong>分页支持</strong>：基于游标的高性能分页</li>
-              <li><strong>认证系统</strong>：GitHub OAuth、GitHub OIDC、匿名访问、DNS 验证、HTTP 验证（全部可用）</li>
+              <li><strong>认证系统</strong>：匿名访问（可用）；GitHub OAuth/OIDC、DNS 验证、HTTP 验证（规划中或依赖后端部署）</li>
               <li><strong>命名空间管理</strong>：基于域名的权限控制和所有权验证</li>
-              <li><strong>版本管理</strong>：支持服务器 ID 和版本 ID 的独立管理</li>
+              <li><strong>版本管理</strong>：支持获取最新版本与指定版本，支持版本级软删除</li>
               <li><strong>软删除</strong>：版本级别的软删除功能</li>
               <li><strong>现代格式</strong>：camelCase JSON 格式和现代化的字段命名约定</li>
               <li><strong>传输类型</strong>：支持 stdio、SSE 和 streamable-http 传输类型</li>
@@ -232,7 +232,7 @@
               <li><code>version_detail</code>: 版本信息（向后兼容）</li>
               <li><code>packages</code>: 包配置数组（使用 camelCase 字段名）</li>
               <li><code>remotes</code>: 远程连接配置数组</li>
-              <li><code>_meta</code>: 注册表元数据，包含 serverId、versionId、发布时间等</li>
+              <li><code>_meta</code>: 注册表元数据，包含 status、publishedAt、updatedAt、isLatest 等</li>
             </ul>
 
             <h3>分页</h3>
@@ -306,8 +306,9 @@
             <h3>获取服务器详情</h3>
             <el-card class="api-card">
               <div class="api-method">GET</div>
-              <div class="api-path">/v0/servers/{id}</div>
-              <p>返回特定 MCP 服务器的详细信息。</p>
+              <div class="api-path">/v0/servers/{serverName}</div>
+              <div class="api-path">/v0/servers/{serverName}/versions/{version}</div>
+              <p>返回特定 MCP 服务器的详细信息。未指定版本时返回最新版本；如需特定版本，请使用带版本的端点。</p>
 
               <h4>参数</h4>
               <el-table :data="getServerParams" style="width: 100%">
@@ -374,8 +375,8 @@
             <h3>更新服务器</h3>
             <el-card class="api-card">
               <div class="api-method put">PUT</div>
-              <div class="api-path">/v0/servers/{id}</div>
-              <p>更新已注册的 MCP 服务器的详细信息。此端点允许更新服务器的元数据，包括版本信息。当更新版本时，新版本必须大于现有版本以保持版本排序。</p>
+              <div class="api-path">/v0/servers/{serverName}/versions/{version}</div>
+              <p>更新指定服务器版本的 ServerJSON（需要 Authorization: Bearer &lt;token&gt;）。请求体必须是完整的 ServerJSON，且 <code>name</code> 不可变更，<code>version</code> 必须与路径中的版本一致。可通过查询参数 <code>?status=active|deprecated|deleted</code> 更改状态（deleted 后不可恢复）。</p>
 
               <h4>路径参数</h4>
               <el-table :data="updateServerParams" style="width: 100%">
@@ -458,8 +459,8 @@
             <h3>删除服务器版本</h3>
             <el-card class="api-card">
               <div class="api-method put">PUT</div>
-              <div class="api-path">/v0/servers/{serverId}?version={version}</div>
-              <p>软删除指定的 MCP 服务器版本。此操作将服务器状态设置为 "deleted"，但保留服务器元数据。使用版本 ID 进行精确删除。</p>
+              <div class="api-path">/v0/servers/{serverName}/versions/{version}?status=deleted</div>
+              <p>软删除指定的 MCP 服务器版本。此操作将服务器状态设置为 "deleted"，但保留服务器元数据。请求体需为该版本当前的完整 ServerJSON。</p>
 
               <h4>路径参数</h4>
               <el-table :data="deleteServerParams" style="width: 100%">
@@ -468,7 +469,7 @@
                 <el-table-column prop="description" label="描述" />
               </el-table>
 
-              <h4>请求体示例</h4>
+              <h4>请求体示例（完整 ServerJSON，版本与路径一致）</h4>
               <pre><code>{
   "name": "io.github.example/test-server",
   "description": "A test MCP server",
@@ -480,27 +481,26 @@
   "version": "1.0.0"
 }</code></pre>
 
-              <h4>响应示例</h4>
-              <h5>成功响应 (200 OK)</h5>
+              <h4>响应示例（节选）</h4>
               <pre><code>{
-  "message": "Version deleted successfully",
-  "versionId": "b6f9c8e1-d5e5-5b2e-c23g-3907b34g5d5g2"
+  "server": { "name": "io.github.example/test-server", "version": "1.0.0", ... },
+  "_meta": { "io.modelcontextprotocol.registry/official": { "status": "deleted", "publishedAt": "...", "updatedAt": "...", "isLatest": false } }
 }</code></pre>
 
               <h4>错误响应</h4>
               <ul>
-                <li><strong>400 Bad Request</strong> - 请求数据无效或版本 ID 格式无效</li>
+                <li><strong>400 Bad Request</strong> - 请求数据无效或版本不匹配</li>
                 <li><strong>403 Forbidden</strong> - 没有删除此版本的权限</li>
-                <li><strong>404 Not Found</strong> - 指定的版本 ID 不存在</li>
+                <li><strong>404 Not Found</strong> - 指定的服务器或版本不存在</li>
                 <li><strong>500 Internal Server Error</strong> - 服务器内部错误，删除失败</li>
               </ul>
 
               <h4>注意事项</h4>
               <ul>
-                <li>🔄 <strong>软删除</strong>：此操作将状态设置为 "deleted"，但保留元数据</li>
-                <li>🔒 <strong>权限要求</strong>：删除操作需要适当的授权（通常是服务器所有者）</li>
-                <li>📋 <strong>版本精确性</strong>：使用版本 ID 进行精确删除，避免误删其他版本</li>
-                <li>💾 <strong>数据保留</strong>：删除的版本元数据会被保留，但状态标记为已删除</li>
+                <li>🔄 <strong>软删除</strong>：将状态设置为 "deleted"，元数据保留</li>
+                <li>🔒 <strong>权限要求</strong>：需要有效的注册表 JWT（Authorization 头）</li>
+                <li>📋 <strong>版本精确性</strong>：使用 <code>{serverName}/versions/{version}</code> 精确定位</li>
+                <li>💾 <strong>数据保留</strong>：删除后无法“恢复到 active”，请谨慎操作</li>
               </ul>
             </el-card>
 
@@ -802,17 +802,17 @@
 
           <section id="cli" class="docs-section">
             <h2>CLI 工具 (mcpx-cli)</h2>
-            <p>mcpx-cli 是一个功能强大的命令行工具，用于与 mcpx 注册表 API 进行交互。它提供了管理 MCP 服务器的完整功能，包括查看、发布、更新和删除服务器，并支持多种认证方式。</p>
+            <p>mcpx-cli 是一个功能强大的命令行工具，用于与 mcpx 注册表 API 进行交互。它提供了管理 MCP 服务器的完整功能，包括查看、发布、更新和删除服务器。当前默认支持匿名认证。</p>
 
             <h3>主要特性</h3>
             <ul>
-              <li><strong>多种认证方式</strong>: 支持 GitHub OAuth、GitHub OIDC 和匿名访问</li>
+              <li><strong>认证方式</strong>: 当前支持匿名访问</li>
               <li><strong>自动令牌管理</strong>: 安全的凭据存储和自动令牌刷新</li>
               <li><strong>智能 ID 生成</strong>: 自动生成一致的服务器 ID 和版本 ID，确保更好的跟踪和识别</li>
               <li><strong>健康检查</strong>: 验证 API 连接状态</li>
               <li><strong>服务器管理</strong>: 完整的 CRUD 操作支持</li>
-              <li><strong>版本管理</strong>: 支持服务器 ID 和版本 ID 的独立管理</li>
-              <li><strong>版本删除</strong>: 使用版本 ID 进行精确的版本删除</li>
+              <li><strong>版本管理</strong>: 支持查看最新/指定版本</li>
+              <li><strong>版本删除</strong>: 软删除指定的服务器版本</li>
               <li><strong>交互式模式</strong>: 提供 Node.js、Python、Binary、Docker、OCI、MCPB 和 Gerrit 模板的交互式创建</li>
               <li><strong>JSON 输出</strong>: 所有响应支持结构化输出</li>
               <li><strong>分页支持</strong>: 支持基于游标的分页浏览</li>
@@ -848,13 +848,9 @@ go build -o mcpx-cli .
 sudo cp mcpx-cli /usr/local/bin/</code></pre>
 
             <h3>认证方式</h3>
-            <p>mcpx-cli 支持多种认证方法：</p>
+            <p>当前 CLI 支持匿名认证：</p>
             <ul>
               <li><strong>匿名访问</strong>: 基本访问，无需 GitHub 认证（可用）</li>
-              <li><strong>GitHub OAuth</strong>: 完整的 GitHub OAuth 流程（可用）</li>
-              <li><strong>GitHub OIDC</strong>: 企业环境的 GitHub OpenID Connect（可用）</li>
-              <li><strong>DNS 认证</strong>: 基于域名的认证（可用）</li>
-              <li><strong>HTTP 认证</strong>: 基于 HTTP 的认证（可用）</li>
             </ul>
 
             <h3>基本用法</h3>
@@ -873,18 +869,6 @@ sudo cp mcpx-cli /usr/local/bin/</code></pre>
             <p>管理认证凭据：</p>
             <pre><code># 匿名登录
 mcpx-cli login --method anonymous
-
-# GitHub OAuth 登录
-mcpx-cli login --method github-oauth
-
-# GitHub OIDC 登录
-mcpx-cli login --method github-oidc
-
-# DNS 认证登录
-mcpx-cli login --method dns
-
-# HTTP 认证登录
-mcpx-cli login --method http
 
 # 登出
 mcpx-cli logout</code></pre>
@@ -957,17 +941,14 @@ mcpx-cli update &lt;server-name&gt; server.json --json</code></pre>
 
             <h5>7. 删除服务器版本</h5>
             <p>从注册表中删除服务器版本：</p>
-            <pre><code># 基本删除
+            <pre><code># 基本删除（软删除）
 mcpx-cli delete &lt;server-name&gt; &lt;version&gt;
-
-# 带认证删除
-mcpx-cli delete &lt;server-name&gt; &lt;version&gt; --token &lt;token&gt;
 
 # JSON 输出
 mcpx-cli delete &lt;server-name&gt; &lt;version&gt; --json
 
-# 获取服务器名称和版本的方法
-mcpx-cli servers  # 查看服务器列表</code></pre>
+# 获取服务器名称与版本
+mcpx-cli servers --json  # 查看服务器列表</code></pre>
 
             <h3>服务器 JSON 文件格式</h3>
             <p>服务器配置使用标准化的 JSON 格式。mcpx-cli 支持完整的 ServerJSON 格式：</p>
@@ -975,7 +956,7 @@ mcpx-cli servers  # 查看服务器列表</code></pre>
             <h4>ServerJSON 格式</h4>
             <p>这是当前使用的标准格式，直接对应 API 的服务器对象：</p>
             <pre><code>{
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
   "name": "io.github.example/test-server-node",
   "title": "Test MCP Server",
   "description": "A test MCP server in Node.js",
@@ -1129,12 +1110,12 @@ mcpx-cli servers  # 查看服务器列表</code></pre>
               <li>使用命令：<code>mcpx-cli publish server.json</code></li>
             </ul>
 
-            <h4>GitHub 认证发布</h4>
+            <h4>GitHub 认证发布（取决于后端部署）</h4>
             <ul>
               <li>适用于命名空间：<code>io.github.username/*</code></li>
-              <li>需要 GitHub OAuth 或 OIDC 认证</li>
+              <li>需要 GitHub OAuth 或 OIDC 认证（若后端已启用）</li>
               <li>只有仓库拥有者可以发布和更新</li>
-              <li>使用命令：<code>mcpx-cli publish server.json --token &lt;github-token&gt;</code></li>
+              <li>命令示例取决于后端支持，详见 CLI 仓库文档</li>
             </ul>
 
             <h4>GitLab/Gerrit 仓库发布</h4>
@@ -1146,13 +1127,12 @@ mcpx-cli servers  # 查看服务器列表</code></pre>
               <li>使用命令：<code>mcpx-cli publish server.json</code></li>
             </ul>
 
-            <h4>企业认证发布</h4>
+            <h4>企业认证发布（规划/可选）</h4>
             <ul>
               <li>适用于企业环境和 CI/CD 工作流</li>
-              <li>支持 GitHub OIDC 认证</li>
-              <li>支持 DNS 和 HTTP 验证（计划中）</li>
+              <li>可能包含 GitHub OIDC、DNS、HTTP 等验证方式（视后端而定）</li>
               <li>适用于自动化发布流程</li>
-              <li>使用命令：<code>mcpx-cli publish server.json --token &lt;oidc-token&gt;</code></li>
+              <li>具体命令以后端启用能力为准</li>
             </ul>
 
             <h3>发布步骤</h3>
@@ -1359,30 +1339,40 @@ const listServersParams = [
 
 const getServerParams = [
   {
-    name: 'id',
+    name: 'serverName',
     type: '字符串',
-    description: '服务器的唯一 ID'
+    description: '服务器名称（如 io.github.example/test-server）'
   },
   {
     name: 'version',
     type: '字符串',
-    description: '所需的 MCP 服务器版本（可选）'
+    description: '所需的 MCP 服务器版本（可选）。也可使用 GET /v0/servers/{serverName}/versions/{version}'
   }
 ]
 
 const updateServerParams = [
   {
-    name: 'id',
+    name: 'serverName',
     type: '字符串',
-    description: '要更新的服务器的唯一 UUID'
+    description: '要更新的服务器名称'
+  },
+  {
+    name: 'version',
+    type: '字符串',
+    description: '要更新的服务器版本，必须与请求体中的 version 一致'
   }
 ]
 
 const deleteServerParams = [
   {
-    name: 'id',
+    name: 'serverName',
     type: '字符串',
-    description: '要删除的服务器的唯一 UUID'
+    description: '要删除的服务器名称'
+  },
+  {
+    name: 'version',
+    type: '字符串',
+    description: '要删除的服务器版本'
   }
 ]
 

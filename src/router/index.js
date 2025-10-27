@@ -7,7 +7,7 @@ const routes = [
     component: () => import('../views/Home.vue')
   },
   {
-    path: '/server/:id',
+    path: '/server/:name',
     name: 'ServerDetail',
     component: () => import('../views/ServerDetail.vue'),
     props: true

@@ -191,7 +191,7 @@
     <el-result
       icon="info"
       title="未找到服务器"
-      sub-title="请检查服务器ID是否正确"
+      sub-title="请检查服务器名称是否正确"
     >
       <template #extra>
         <el-button type="primary" @click="$router.push('/')">返回首页</el-button>
@@ -221,7 +221,7 @@ const route = useRoute()
 const store = useServersStore()
 const authStore = useAuthStore()
 
-const serverId = computed(() => route.params.id)
+const serverId = computed(() => route.params.name)
 const loading = computed(() => store.loading)
 const error = computed(() => store.error)
 const server = computed(() => store.currentServer)
@@ -416,7 +416,7 @@ const copyToClipboard = (text) => {
 
 onMounted(fetchServerData)
 
-watch(() => route.params.id, (newId) => {
+watch(() => route.params.name, (newId) => {
   if (newId) {
     fetchServerData()
   }

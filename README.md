@@ -1,6 +1,6 @@
 # mcpx-ui
 
-Modern Vue 3 frontend for the **MCP Registry** with comprehensive authentication, CRUD operations, and enhanced user experience. This application provides an intuitive interface for managing Model Context Protocol (MCP) servers with full integration to the [mcpx backend](https://github.com/ai-mcpx/mcpx).
+Modern Vue 3 frontend for the **MCP Registry** with browse, publish, edit, and soft-delete operations. By default the UI supports anonymous authentication; additional auth methods can be enabled when supported by your backend deployment. This application provides an intuitive interface for managing Model Context Protocol (MCP) servers and integrates with the [mcpx backend](https://github.com/ai-mcpx/mcpx).
 
 > **🎉 Preview Release**: MCP Registry has launched in preview! While the system is now more stable, this is still a preview release and breaking changes or data resets may occur. We'd love your feedback in [GitHub discussions](https://github.com/modelcontextprotocol/registry/discussions) or in the [#registry-dev Discord](https://discord.com/channels/1358869848138059966/1369487942862504016).
 
@@ -8,25 +8,20 @@ Modern Vue 3 frontend for the **MCP Registry** with comprehensive authentication
 
 ## ✨ Key Features
 
-### 🔐 **Enhanced Authentication System**
-- **Anonymous authentication** for public namespace access (available)
-- **GitHub OAuth** integration for repository-based permissions (available)
-- **GitHub OIDC** support for GitHub Actions workflows (available)
-- **DNS/HTTP authentication** for custom domain verification (available)
-- **JWT token management** with persistent sessions and auto-refresh
-- **Permission-based UI** - features dynamically appear based on authentication status
+### 🔐 **Authentication**
+- **Anonymous authentication** for public namespace access (available by default)
+- **GitHub OAuth / GitHub OIDC / DNS / HTTP** authentication can be exposed when the backend enables these endpoints (hidden by default in the UI)
+- **JWT token usage** when authenticated; features like publish/edit/delete require a valid registry JWT
 
 ### 📦 **Comprehensive Server Management**
 - **Browse & Search** servers with advanced filtering and pagination
 - **Publish New Servers** with guided form interface and validation
 - **Edit Existing Servers** with full schema validation and real-time preview
-- **Delete Server Versions** with version-based deletion and confirmation dialogs
+- **Delete Server Versions** via soft delete (PUT status=deleted) with confirmation dialogs
 - **Repository Support**: GitHub, GitLab, and Gerrit integration with smart URL parsing
 - **Registry Type Support**: npm, PyPI, wheel, binary, Docker, OCI, NuGet, MCPB packages
 - **Transport Types**: stdio, SSE (Server-Sent Events), streamable-http for different communication methods
-- **Version Management** with latest version tracking and history
-- **Smart ID Generation**: Automatic generation of consistent server IDs and version IDs for better tracking
-- **Server & Version IDs**: Display of unique server and version identifiers with fallback generation
+- **Version Management** with latest/specific version retrieval and version history
 - **Package Identification**: Modern schema with `identifier` field for package naming
 
 ### 🎮 **Interactive Playground**
@@ -42,7 +37,7 @@ Modern Vue 3 frontend for the **MCP Registry** with comprehensive authentication
 
 ### Prerequisites
 
-- **Node.js 18+** and npm/yarn
+- **Node.js 18+** and npm
 - **Docker & Docker Compose** (for full stack deployment)
 - **mcpx backend** running (see [mcpx repository](https://github.com/ai-mcpx/mcpx))
 
@@ -55,12 +50,11 @@ cd mcpx-ui
 npm install
 ```
 
-2. **Configure environment:**
+2. (Optional) **Configure environment:**
 ```bash
 cp .env.example .env
-# Edit .env with your configuration:
-# VITE_API_BASE_URL=http://localhost:8080
-# VITE_GITHUB_CLIENT_ID=your_github_client_id
+# Note: The UI uses a fixed "/api" base path which is proxied to the backend's /v0 endpoints via nginx.
+# Most features work without changing .env. You can keep defaults or add feature flags if you wire them in.
 ```
 
 3. **Start development server:**
@@ -89,7 +83,7 @@ The MCP Registry includes an interactive playground for testing MCP servers:
 
 ### Full Stack Deployment
 
-For a complete production setup with backend, database, and UI:
+For a complete production setup with backend, database, and UI (nginx proxies /api -> backend /v0):
 
 ```bash
 # Deploy the full mcpx stack
@@ -113,56 +107,28 @@ npm run preview
 
 ### Environment Variables
 
-Configure the application using `.env` file:
+You can optionally provide a `.env` file for future feature flags. By default, the API base is fixed to "/api" and proxied to the backend's /v0; most deployments do not require environment changes.
 
+Example (optional):
 ```bash
-# API Configuration
-VITE_API_BASE_URL=http://localhost:8080
-VITE_BACKEND_URL=http://localhost:8080
-
-# Authentication Configuration
-VITE_GITHUB_CLIENT_ID=your_github_oauth_client_id
+# Authentication (optional; backend-dependent)
+VITE_GITHUB_CLIENT_ID=
 VITE_AUTH_REDIRECT_URI=http://localhost:5173/auth/callback
 
-# Feature Flags
-VITE_ENABLE_AUTH=true
+# Feature flags (optional; if you wire them in the UI)
 VITE_ENABLE_PUBLISH=true
 VITE_ENABLE_EDIT=true
 VITE_ENABLE_DELETE=true
 
-# Repository Configuration
-VITE_ENABLE_GITHUB=true
-VITE_ENABLE_GITLAB=true
-VITE_ENABLE_GERRIT=true
-
-# Development Settings
+# Debug (optional)
 VITE_DEBUG_MODE=false
 VITE_LOG_LEVEL=info
 ```
 
-### Authentication Setup
+### Authentication
 
-The application supports multiple authentication methods:
-
-#### 1. Anonymous Authentication (Currently Available)
-- Automatically enabled for public namespace access
-- No configuration required
-- Limited to `io.modelcontextprotocol.anonymous/*` namespace
-
-#### 2. GitHub OAuth (Available)
-```bash
-# Configure GitHub OAuth app
-VITE_GITHUB_CLIENT_ID=your_github_client_id
-# Callback URL: http://localhost:5173/auth/callback
-```
-
-#### 3. GitHub OIDC (Available)
-- Configure in GitHub Actions or enterprise environments
-- Uses JWT tokens for automated workflows
-
-#### 4. Custom Domain Authentication (Available)
-- DNS verification for custom namespaces
-- HTTP-based domain ownership verification
+- Anonymous authentication is available by default and sufficient for the `io.modelcontextprotocol.anonymous/*` namespace.
+- GitHub OAuth/OIDC, DNS, and HTTP auth can be exposed only if your backend supports these endpoints; the UI hides them by default.
 
 ## 🐳 Docker Deployment
 
@@ -181,6 +147,8 @@ docker-compose -f docker-compose-mcpx.yml up -d
 # UI only deployment
 docker build -t mcpx-ui:latest .
 docker run -p 80:80 mcpx-ui:latest
+
+# nginx in this image proxies /api to your backend /v0 as configured in nginx.conf
 ```
 
 ## 🤝 Contributing

@@ -16,32 +16,7 @@
         />
 
         <el-tabs v-model="authMethod" class="auth-tabs">
-          <!-- GitHub OAuth 认证 -->
-          <el-tab-pane label="GitHub OAuth" name="github">
-            <div class="auth-form">
-              <p class="auth-description">
-                使用 GitHub 个人访问令牌进行认证。需要 repo 权限来管理 io.github.* 命名空间的服务器。
-              </p>
-              <el-input
-                v-model="githubToken"
-                placeholder="请输入 GitHub 个人访问令牌"
-                type="password"
-                show-password
-                clearable
-              />
-              <el-button
-                type="primary"
-                @click="authenticateGitHub"
-                :loading="loading"
-                :disabled="!githubToken.trim()"
-                class="auth-button"
-              >
-                使用 GitHub 令牌认证
-              </el-button>
-            </div>
-          </el-tab-pane>
-
-          <!-- 匿名认证 -->
+          <!-- 匿名认证（当前支持） -->
           <el-tab-pane label="匿名认证" name="anonymous">
             <div class="auth-form">
               <p class="auth-description">
@@ -54,76 +29,6 @@
                 class="auth-button"
               >
                 获取匿名令牌
-              </el-button>
-            </div>
-          </el-tab-pane>
-
-          <!-- DNS 认证 -->
-          <el-tab-pane label="DNS 认证" name="dns">
-            <div class="auth-form">
-              <p class="auth-description">
-                使用 DNS TXT 记录的公钥签名进行认证。
-              </p>
-              <el-input
-                v-model="domain"
-                placeholder="域名 (例如: example.com)"
-                clearable
-              />
-              <el-input
-                v-model="timestamp"
-                placeholder="时间戳"
-                clearable
-              />
-              <el-input
-                v-model="signedTimestamp"
-                placeholder="签名的时间戳"
-                type="textarea"
-                :rows="3"
-                clearable
-              />
-              <el-button
-                type="primary"
-                @click="authenticateDNS"
-                :loading="loading"
-                :disabled="!domain.trim() || !timestamp.trim() || !signedTimestamp.trim()"
-                class="auth-button"
-              >
-                DNS 认证
-              </el-button>
-            </div>
-          </el-tab-pane>
-
-          <!-- HTTP 认证 -->
-          <el-tab-pane label="HTTP 认证" name="http">
-            <div class="auth-form">
-              <p class="auth-description">
-                使用 HTTP 托管的公钥签名进行认证。
-              </p>
-              <el-input
-                v-model="domain"
-                placeholder="域名 (例如: example.com)"
-                clearable
-              />
-              <el-input
-                v-model="timestamp"
-                placeholder="时间戳"
-                clearable
-              />
-              <el-input
-                v-model="signedTimestamp"
-                placeholder="签名的时间戳"
-                type="textarea"
-                :rows="3"
-                clearable
-              />
-              <el-button
-                type="primary"
-                @click="authenticateHTTP"
-                :loading="loading"
-                :disabled="!domain.trim() || !timestamp.trim() || !signedTimestamp.trim()"
-                class="auth-button"
-              >
-                HTTP 认证
               </el-button>
             </div>
           </el-tab-pane>
@@ -176,7 +81,7 @@ const authStore = useAuthStore()
 
 // 响应式状态
 const dialogVisible = ref(false)
-const authMethod = ref('github')
+const authMethod = ref('anonymous')
 const githubToken = ref('')
 const domain = ref('')
 const timestamp = ref('')
@@ -205,20 +110,7 @@ const handleClose = () => {
   authStore.error = null
 }
 
-// GitHub 认证
-const authenticateGitHub = async () => {
-  try {
-    const result = await authStore.authenticateWithGitHub(githubToken.value)
-    if (result.success) {
-      ElMessage.success('GitHub 认证成功')
-      handleClose()
-    } else {
-      ElMessage.error(result.error)
-    }
-  } catch (error) {
-    ElMessage.error('GitHub 认证失败')
-  }
-}
+// 仅启用匿名认证；其他认证方式暂不可用
 
 // 匿名认证
 const authenticateAnonymous = async () => {
@@ -235,35 +127,7 @@ const authenticateAnonymous = async () => {
   }
 }
 
-// DNS 认证
-const authenticateDNS = async () => {
-  try {
-    const result = await authStore.authenticateWithDNS(domain.value, timestamp.value, signedTimestamp.value)
-    if (result.success) {
-      ElMessage.success('DNS 认证成功')
-      handleClose()
-    } else {
-      ElMessage.error(result.error)
-    }
-  } catch (error) {
-    ElMessage.error('DNS 认证失败')
-  }
-}
-
-// HTTP 认证
-const authenticateHTTP = async () => {
-  try {
-    const result = await authStore.authenticateWithHTTP(domain.value, timestamp.value, signedTimestamp.value)
-    if (result.success) {
-      ElMessage.success('HTTP 认证成功')
-      handleClose()
-    } else {
-      ElMessage.error(result.error)
-    }
-  } catch (error) {
-    ElMessage.error('HTTP 认证失败')
-  }
-}
+// 其他认证方式（GitHub/DNS/HTTP）已隐藏
 
 // 退出登录
 const logout = () => {
