@@ -61,7 +61,7 @@
             <ul>
               <li><strong>RESTful API</strong>：用于管理 MCP 注册表条目的完整 API（列表、获取、创建、更新、版本删除）</li>
               <li><strong>健康检查</strong>：服务监控的健康检查端点</li>
-              <li><strong>多包类型支持</strong>：npm、PyPI、wheel、binary、OCI、docker、NuGet、MCPB 等</li>
+              <li><strong>多包类型支持</strong>：npm、PyPI、wheel、binary、OCI、docker、NuGet、MCPB（支持自定义注册表）</li>
               <li><strong>多仓库源支持</strong>：GitHub、GitLab、Gerrit 代码仓库</li>
               <li><strong>环境配置</strong>：支持各种环境配置和运行时参数</li>
               <li><strong>数据库支持</strong>：PostgreSQL 和内存数据库支持</li>
@@ -376,7 +376,9 @@
             <el-card class="api-card">
               <div class="api-method put">PUT</div>
               <div class="api-path">/v0/servers/{serverName}/versions/{version}</div>
+              <div class="api-path">/v0/publish (替代端点)</div>
               <p>更新指定服务器版本的 ServerJSON（需要 Authorization: Bearer &lt;token&gt;）。请求体必须是完整的 ServerJSON，且 <code>name</code> 不可变更，<code>version</code> 必须与路径中的版本一致。可通过查询参数 <code>?status=active|deprecated|deleted</code> 更改状态（deleted 后不可恢复）。</p>
+              <p><strong>注意</strong>：除了版本化的端点 <code>/v0/servers/{serverName}/versions/{version}</code>，还支持 <code>PUT /v0/publish</code> 作为替代更新端点。两种方式都支持服务器更新操作。</p>
 
               <h4>路径参数</h4>
               <el-table :data="updateServerParams" style="width: 100%">
@@ -613,8 +615,10 @@
             <ul>
               <li><code>source</code>: "gerrit"</li>
               <li><code>url</code>: Gerrit 实例 URL（支持多种 URL 格式）</li>
+              <li>支持 HTTP 和 HTTPS URL 格式（如 <code>http://gerrit.example.com:8080/project</code> 或 <code>https://gerrit.example.com/project</code>）</li>
               <li>支持企业级代码审查工作流</li>
               <li>灵活的 URL 格式支持，包括 Gitiles 和其他 Gerrit 前端</li>
+              <li>支持自托管 Gerrit 实例，适应企业环境</li>
             </ul>
 
             <h3>Server</h3>
@@ -701,8 +705,9 @@
               <li><code>registry_type</code>: "wheel"</li>
               <li><code>identifier</code>: wheel 文件名</li>
               <li><code>runtime_hint</code>: "python" 或 "wheel"</li>
-              <li><code>registry_base_url</code>: wheel 文件下载地址</li>
+              <li><code>registry_base_url</code>: wheel 文件下载地址（可选，支持自定义下载服务器）</li>
               <li>下载并安装：<code>curl -O wheel_url && pip install *.whl</code></li>
+              <li>支持自定义注册表和私有下载服务器</li>
             </ul>
 
             <h4>二进制包 (Binary)</h4>
@@ -710,9 +715,10 @@
               <li><code>registry_type</code>: "binary"</li>
               <li><code>identifier</code>: 二进制文件名</li>
               <li><code>runtime_hint</code>: "binary"</li>
-              <li><code>registry_base_url</code>: 二进制文件下载地址</li>
+              <li><code>registry_base_url</code>: 二进制文件下载地址（可选，支持自定义下载服务器）</li>
               <li>下载并执行：<code>curl -L -o binary_name binary_url && chmod +x binary_name</code></li>
               <li>支持跨平台二进制文件分发</li>
+              <li>支持自定义注册表和私有下载服务器</li>
             </ul>
 
             <h4>OCI 容器</h4>
@@ -727,9 +733,11 @@
             <ul>
               <li><code>registry_type</code>: "docker"</li>
               <li><code>identifier</code>: 镜像名称</li>
+              <li><code>registry_base_url</code>: Docker 注册表基础 URL（可选，默认为 https://registry-1.docker.io）</li>
               <li><code>runtime_hint</code>: "docker"</li>
+              <li>支持自定义 Docker 注册表（如私有注册表）</li>
               <li>通过 docker 运行：<code>docker pull image_name:version && docker run image_name:version</code></li>
-              <li>与 OCI 类型类似，但专门用于 Docker 容器</li>
+              <li>与 OCI 类型类似，但专门用于 Docker 容器，支持更灵活的镜像标识符</li>
             </ul>
 
             <h4>.NET 包 (NuGet)</h4>
@@ -1231,9 +1239,9 @@ mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
                   <li><strong>npm</strong>: Node.js 包管理器，推荐使用 npx 运行时</li>
                   <li><strong>PyPI</strong>: Python 包索引，推荐使用 uvx 运行时</li>
                   <li><strong>wheel</strong>: Python wheel 文件</li>
-                  <li><strong>binary</strong>: 直接二进制文件分发</li>
+                  <li><strong>binary</strong>: 直接二进制文件分发（支持自定义下载 URL）</li>
                   <li><strong>oci</strong>: OCI 容器注册表</li>
-                  <li><strong>docker</strong>: Docker 容器注册表</li>
+                  <li><strong>docker</strong>: Docker 容器注册表（支持自定义注册表，默认 https://registry-1.docker.io）</li>
                   <li><strong>nuget</strong>: .NET 包管理器</li>
                   <li><strong>mcpb</strong>: 专用的 MCP 二进制格式</li>
                 </ul>

@@ -15,11 +15,16 @@ Modern Vue 3 frontend for the **MCP Registry** with browse, publish, edit, and s
 
 ### 📦 **Comprehensive Server Management**
 - **Browse & Search** servers with advanced filtering and pagination
-- **Publish New Servers** with guided form interface and validation
-- **Edit Existing Servers** with full schema validation and real-time preview
+- **Publish New Servers** with guided form interface and validation (supports POST /v0/publish)
+- **Edit Existing Servers** with full schema validation and real-time preview (supports PUT /v0/publish and PUT /v0/servers/{name}/versions/{version})
 - **Delete Server Versions** via soft delete (PUT status=deleted) with confirmation dialogs
-- **Repository Support**: GitHub, GitLab, and Gerrit integration with smart URL parsing
+- **Repository Support**: GitHub, GitLab, and Gerrit integration with smart URL parsing and validation
+  - **GitHub**: Standard GitHub.com repositories with OAuth/OIDC authentication
+  - **GitLab**: GitLab.com and self-hosted GitLab instances
+  - **Gerrit**: Enterprise Gerrit installations with flexible URL format support
 - **Registry Type Support**: npm, PyPI, wheel, binary, Docker, OCI, NuGet, MCPB packages
+  - Supports custom registry base URLs for Docker and other registries
+  - Default registry URLs: npmjs.org, pypi.org, registry-1.docker.io, api.nuget.org
 - **Transport Types**: stdio, SSE (Server-Sent Events), streamable-http for different communication methods
 - **Version Management** with latest/specific version retrieval and version history
 - **Package Identification**: Modern schema with `identifier` field for package naming

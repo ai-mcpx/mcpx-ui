@@ -144,7 +144,7 @@
                     <el-select v-model="pkg.registryBaseUrl" placeholder="选择注册表">
                       <el-option label="https://registry.npmjs.org" value="https://registry.npmjs.org" />
                       <el-option label="https://pypi.org" value="https://pypi.org" />
-                      <el-option label="https://docker.io" value="https://docker.io" />
+                      <el-option label="https://registry-1.docker.io" value="https://registry-1.docker.io" />
                       <el-option label="https://api.nuget.org" value="https://api.nuget.org" />
                       <el-option label="https://github.com" value="https://github.com" />
                       <el-option label="https://gitlab.com" value="https://gitlab.com" />
