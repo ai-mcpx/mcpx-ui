@@ -228,8 +228,7 @@
               <li><code>name</code>: 服务器名称（如 "io.github.example/test-server"）</li>
               <li><code>description</code>: 服务器描述</li>
               <li><code>repository</code>: 源代码仓库信息（支持 GitHub、GitLab、Gerrit）</li>
-              <li><code>version</code>: 服务器版本（推荐使用）</li>
-              <li><code>version_detail</code>: 版本信息（向后兼容）</li>
+              <li><code>version</code>: 服务器版本</li>
               <li><code>packages</code>: 包配置数组（使用 camelCase 字段名）</li>
               <li><code>remotes</code>: 远程连接配置数组</li>
               <li><code>_meta</code>: 注册表元数据，包含 status、publishedAt、updatedAt、isLatest 等</li>
@@ -327,9 +326,7 @@
       "source": "github",
       "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
     },
-    "version_detail": {
-      "version": "1.0.2"
-    },
+    "version": "1.0.2",
     "packages": [
       {
         "registry_type": "npm",
@@ -632,11 +629,7 @@
     "source": "github",
     "id": "b94b5f7e-c7c6-d760-2c78-a5e9b8a5b8c9"
   },
-  "version_detail": {
-    "version": "1.0.2",
-    "release_date": "2023-06-15T10:30:00Z",
-    "is_latest": true
-  }
+  "version": "1.0.2"
 }</code></pre>
 
             <h4>仓库源示例</h4>
@@ -765,9 +758,8 @@
 
             <h4>版本字段</h4>
             <ul>
-              <li><code>version</code>: 新的顶级版本字段（推荐）</li>
-              <li><code>version_detail.version</code>: 传统版本字段（向后兼容）</li>
-              <li>系统会优先使用 <code>version</code> 字段，如果不存在则回退到 <code>version_detail.version</code></li>
+              <li><code>version</code>: 服务器版本字段</li>
+              <li><strong>注意</strong>：<code>versionDetail</code> 字段已不再支持，请使用 <code>version</code> 字段</li>
             </ul>
 
             <h4>传输类型字段</h4>
@@ -981,9 +973,6 @@ mcpx-cli servers --json  # 查看服务器列表</code></pre>
     "id": "example/test-server-node"
   },
   "version": "1.0.0",
-  "version_detail": {
-    "version": "1.0.0"
-  },
   "packages": [
     {
       "registryType": "npm",
@@ -1042,8 +1031,7 @@ mcpx-cli servers --json  # 查看服务器列表</code></pre>
               <li><code>description</code>: 服务器的简短描述</li>
               <li><code>websiteUrl</code>: 服务器网站 URL，提供更多信息（可选）</li>
               <li><code>repository</code>: 源代码仓库信息，支持多种仓库源</li>
-              <li><code>version</code>: 服务器版本（推荐使用）</li>
-              <li><code>version_detail</code>: 版本信息（向后兼容）</li>
+              <li><code>version</code>: 服务器版本</li>
               <li><code>packages</code>: 服务器的包分发信息，支持多个包类型</li>
               <li><code>runtimeArguments</code>: 运行时参数配置（camelCase 格式）</li>
               <li><code>environmentVariables</code>: 环境变量设置（camelCase 格式）</li>
