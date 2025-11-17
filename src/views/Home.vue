@@ -267,6 +267,8 @@ onMounted(async () => {
   border-radius: 12px;
   padding: 8px 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  margin-top: 2rem;
+  transition: all 0.3s ease;
 
   .el-pager li {
     background: transparent;
@@ -316,22 +318,33 @@ onMounted(async () => {
     &.btn-next {
       background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
       border: 1px solid #30363d;
+      color: #e8eaed;
+      transition: all 0.3s ease;
 
       &:hover:not(:disabled) {
         background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
         border-color: #8ab4f8;
         color: #8ab4f8;
+        box-shadow: 0 4px 12px rgba(138, 180, 248, 0.2);
+        transform: translateY(-1px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(138, 180, 248, 0.15);
       }
 
       &:disabled {
         background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
         opacity: 0.6;
+        cursor: not-allowed;
       }
 
       // 箭头图标样式
       .el-icon {
         font-size: 14px;
         font-weight: bold;
+        transition: color 0.2s ease;
       }
     }
   }
