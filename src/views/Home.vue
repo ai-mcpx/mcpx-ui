@@ -310,6 +310,30 @@ onMounted(async () => {
       border-color: #21262d;
       cursor: not-allowed;
     }
+
+    // 左右箭头按钮特殊样式
+    &.btn-prev,
+    &.btn-next {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+      border: 1px solid #30363d;
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+        border-color: #8ab4f8;
+        color: #8ab4f8;
+      }
+
+      &:disabled {
+        background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+        opacity: 0.6;
+      }
+
+      // 箭头图标样式
+      .el-icon {
+        font-size: 14px;
+        font-weight: bold;
+      }
+    }
   }
 
   .el-pagination__total {
