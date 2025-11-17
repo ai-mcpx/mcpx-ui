@@ -591,6 +591,40 @@ watch(() => route.params.name, (newId) => {
   }
 }
 
+.package-runtime-args :deep(.el-table),
+.package-env-vars :deep(.el-table) {
+  background: transparent;
+  color: #e8eaed;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+
+  th {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%) !important;
+    color: #8ab4f8 !important;
+    border-bottom: 1px solid #30363d !important;
+    font-weight: 600;
+    padding: 8px 12px !important;
+  }
+
+  td {
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%) !important;
+    color: #e8eaed !important;
+    border-bottom: 1px solid #30363d !important;
+    padding: 8px 12px !important;
+  }
+
+  tr:hover td {
+    background: linear-gradient(135deg, #1f2937 0%, #21262d 100%) !important;
+  }
+}
+
+.package-runtime-args :deep(.el-table .el-table__row--striped td),
+.package-env-vars :deep(.el-table .el-table__row--striped td) {
+  background: linear-gradient(135deg, #181f2a 0%, #20252c 100%) !important;
+}
+
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -667,6 +701,32 @@ watch(() => route.params.name, (newId) => {
     border-radius: 0 0 12px 12px;
     padding: 2rem;
   }
+}
+
+.package-install :deep(.el-textarea__inner) {
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  color: #e8eaed;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  caret-color: #8ab4f8;
+}
+
+.package-install :deep(.el-textarea__inner::placeholder) {
+  color: #9aa0a6;
+}
+
+.package-install :deep(.el-textarea__inner:focus) {
+  border-color: #8ab4f8;
+  box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.15);
+}
+
+.package-install :deep(.el-input-group__append) {
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  border-color: #30363d;
+}
+
+.package-install :deep(.el-input-group__append .el-button) {
+  color: #e8eaed;
 }
 
 .deleted-notice {
