@@ -4,7 +4,7 @@ Modern Vue 3 frontend for the **MCP Registry** with browse, publish, edit, and s
 
 > **🎉 Preview Release**: MCP Registry has launched in preview! While the system is now more stable, this is still a preview release and breaking changes or data resets may occur. We'd love your feedback in [GitHub discussions](https://github.com/modelcontextprotocol/registry/discussions) or in the [#registry-dev Discord](https://discord.com/channels/1358869848138059966/1369487942862504016).
 
-<img width="1246" alt="mcpx-ui interface" src="images/01.png" />
+<img width="1246" alt="mcpx-ui interface" src="images/home.png" />
 
 ## ✨ Key Features
 
