@@ -144,7 +144,7 @@ const getSourceTagType = (source) => {
   display: block;
   margin-bottom: var(--spacing-lg);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   &:hover {
     transform: translateY(-2px);
   }
@@ -160,7 +160,7 @@ const getSourceTagType = (source) => {
   background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
   box-shadow: var(--card-shadow);
   overflow: hidden;
-  
+
   &:hover {
     box-shadow: var(--card-hover-shadow);
     border-color: var(--border-hover);
@@ -217,7 +217,7 @@ const getSourceTagType = (source) => {
     border-color: var(--border-light);
     color: var(--text-secondary);
   }
-  
+
   .latest-badge {
     font-size: var(--font-size-xs);
     color: var(--success-color);
@@ -259,7 +259,7 @@ const getSourceTagType = (source) => {
   gap: var(--spacing-xs);
   color: var(--text-secondary);
   min-width: 0;
-  
+
   .repo-icon {
     flex-shrink: 0;
     color: var(--text-secondary);
@@ -290,19 +290,19 @@ const getSourceTagType = (source) => {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   text-transform: capitalize;
-  
+
   &.github {
     background: var(--extension-github);
     border-color: var(--extension-github);
     color: white;
   }
-  
+
   &.gitlab {
     background: var(--extension-gitlab);
     border-color: var(--extension-gitlab);
     color: white;
   }
-  
+
   &.gerrit {
     background: var(--extension-gerrit);
     border-color: var(--border-color);

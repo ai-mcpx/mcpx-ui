@@ -5,20 +5,20 @@
   --primary-hover: #aecbfa;
   --secondary-color: #4285f4;
   --accent-color: #34a853;
-  
+
   // Text colors - dark theme optimized
   --text-color: #e8eaed;
   --text-secondary: #9aa0a6;
   --text-disabled: #5f6368;
   --text-link: #8ab4f8;
-  
+
   // Background colors - dark gradient theme
   --light-bg: #0d1117;
   --background-secondary: #161b22;
   --background-tertiary: #21262d;
   --background-hover: #1f2937;
   --background-active: #1e3a8a;
-  
+
   // Border colors - dark gradient theme
   --border-color: #30363d;
   --border-hover: #484f58;
@@ -41,7 +41,7 @@
   --error-bg: #7f1d1d;
   --info-color: #60a5fa;
   --info-bg: #1e3a8a;
-  
+
   // Extension-specific colors - dark theme optimized
   --extension-github: #161b22;
   --extension-gitlab: #fc6d26;
@@ -83,7 +83,7 @@
   --radius-xl: 16px;
   --radius-2xl: 24px;
   --radius-full: 9999px;
-  
+
   // Z-index scale
   --z-dropdown: 1000;
   --z-sticky: 1020;
@@ -100,39 +100,39 @@
   font-family: var(--font-family);
   transition: all 0.2s ease;
   border: 1px solid transparent;
-  
+
   &.el-button--primary {
     background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
     border-color: #238636;
     color: white;
-    
+
     &:hover {
       background: linear-gradient(135deg, #2ea043 0%, #3fb950 100%);
       border-color: #2ea043;
       box-shadow: var(--elevation-1);
     }
-    
+
     &:active {
       background: linear-gradient(135deg, #19602d 0%, #238636 100%);
       border-color: #19602d;
     }
   }
-  
+
   &.el-button--default {
     background: linear-gradient(135deg, #21262d 0%, #30363d 100%);
     border-color: var(--border-color);
     color: var(--text-color);
-    
+
     &:hover {
       background: linear-gradient(135deg, #30363d 0%, #484f58 100%);
       border-color: var(--border-hover);
     }
   }
-  
+
   &.is-round {
     border-radius: var(--radius-full);
   }
-  
+
   &.is-circle {
     border-radius: var(--radius-full);
   }
@@ -145,40 +145,40 @@
     box-shadow: none;
     background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
     transition: all 0.2s ease;
-    
+
     &:hover {
       border-color: var(--border-hover);
       background: linear-gradient(135deg, #21262d 0%, #30363d 100%);
     }
-    
+
     &.is-focus {
       border-color: var(--border-focus);
       box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.2);
       background: linear-gradient(135deg, #21262d 0%, #30363d 100%);
     }
   }
-  
+
   .el-input__inner {
     font-size: var(--font-size-base);
     font-family: var(--font-family);
     color: var(--text-color);
     font-weight: var(--font-weight-normal);
-    
+
     &::placeholder {
       color: var(--text-secondary);
       font-weight: var(--font-weight-normal);
     }
-    
+
     &:focus {
       color: var(--text-color);
     }
   }
-  
+
   &.el-input--large {
     .el-input__wrapper {
       padding: 8px 16px;
     }
-    
+
     .el-input__inner {
       font-size: var(--font-size-lg);
     }
@@ -192,19 +192,19 @@
   box-shadow: var(--card-shadow);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-  
+
   &:hover {
     box-shadow: var(--card-hover-shadow);
     transform: translateY(-1px);
     background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
   }
-  
+
   .el-card__header {
     border-bottom: 1px solid var(--border-light);
     padding: var(--spacing-lg);
     background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
   }
-  
+
   .el-card__body {
     padding: var(--spacing-lg);
   }
@@ -216,25 +216,25 @@
   font-family: var(--font-family);
   font-size: var(--font-size-xs);
   border: 1px solid transparent;
-  
+
   &.el-tag--success {
     background-color: var(--success-bg);
     border-color: var(--success-bg);
     color: var(--success-color);
   }
-  
+
   &.el-tag--warning {
     background-color: var(--warning-bg);
     border-color: var(--warning-bg);
     color: #b7840f;
   }
-  
+
   &.el-tag--info {
     background-color: var(--info-bg);
     border-color: var(--info-bg);
     color: var(--info-color);
   }
-  
+
   &.el-tag--primary {
     background-color: var(--info-bg);
     border-color: var(--info-bg);
@@ -244,7 +244,7 @@
 
 :deep(.el-pagination) {
   font-family: var(--font-family);
-  
+
   .btn-prev, .btn-next, .el-pager li {
     background: var(--light-bg);
     border: 1px solid var(--border-color);
@@ -252,27 +252,27 @@
     color: var(--text-secondary);
     font-weight: var(--font-weight-medium);
     transition: all 0.2s ease;
-    
+
     &:hover {
       color: var(--primary-color);
       border-color: var(--primary-color);
       background-color: var(--background-active);
     }
-    
+
     &.active {
       background-color: var(--primary-color);
       border-color: var(--primary-color);
       color: white;
       font-weight: var(--font-weight-bold);
     }
-    
+
     &.disabled {
       color: var(--text-disabled);
       background-color: var(--background-tertiary);
       border-color: var(--border-light);
     }
   }
-  
+
   .el-pagination__total, .el-pagination__sizes, .el-pagination__jump {
     color: var(--text-secondary);
     font-weight: var(--font-weight-normal);

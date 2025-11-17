@@ -1456,7 +1456,7 @@ onUnmounted(() => {
   border-bottom: 2px solid #8ab4f8;
   display: flex;
   align-items: center;
-  
+
   &::before {
     content: "⚙️";
     margin-right: 0.75rem;
@@ -1467,7 +1467,7 @@ onUnmounted(() => {
 // Response example sections
 .response-example {
   margin: 1.5rem 0;
-  
+
   h4 {
     color: #8ab4f8;
     font-size: 1.1rem;
@@ -1475,7 +1475,7 @@ onUnmounted(() => {
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    
+
     &::before {
       content: "📤";
       margin-right: 0.5rem;
@@ -1488,7 +1488,7 @@ h4 {
   color: #8ab4f8;
   font-weight: 600;
   margin: 1.5rem 0 1rem;
-  
+
   &:not(.parameter-section h4) {
     border-bottom: 1px solid #30363d;
     padding-bottom: 0.5rem;
@@ -1501,7 +1501,7 @@ pre {
   border: 1px solid #30363d;
   border-radius: 8px;
   color: #e8eaed;
-  
+
   code {
     color: #e8eaed;
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
@@ -1546,18 +1546,18 @@ code {
 .docs-menu {
   border-right: none;
   background: transparent;
-  
+
   :deep(.el-menu-item) {
     color: #e8eaed;
     background: transparent;
     border-radius: 8px;
     margin: 4px 0;
-    
+
     &:hover {
       background: rgba(138, 180, 248, 0.1);
       color: #8ab4f8;
     }
-    
+
     &.is-active {
       background: rgba(138, 180, 248, 0.2);
       color: #8ab4f8;
@@ -1807,13 +1807,13 @@ code {
   background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
   border: 1px solid #30363d;
   border-radius: 16px;
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  
+
   // Subtle gradient border effect
   &::before {
     content: '';
@@ -1824,15 +1824,15 @@ code {
     height: 1px;
     background: linear-gradient(90deg, transparent, #8ab4f8, transparent);
   }
-  
+
   &:hover {
     border-color: #8ab4f8;
-    box-shadow: 
+    box-shadow:
       0 12px 32px rgba(138, 180, 248, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
   }
-  
+
   h4 {
     color: #8ab4f8;
     font-size: 1.3rem;
@@ -1844,7 +1844,7 @@ code {
     align-items: center;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    
+
     &::before {
       content: "⚙️";
       margin-right: 0.75rem;
@@ -1852,7 +1852,7 @@ code {
       filter: drop-shadow(0 0 4px rgba(138, 180, 248, 0.5));
     }
   }
-  
+
   h5 {
     color: #ffffff;
     font-size: 1.1rem;
@@ -1864,31 +1864,31 @@ code {
     border-left: 4px solid #8ab4f8;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
-  
+
   p {
     color: #e8eaed;
     line-height: 1.7;
     margin-bottom: 1.25rem;
     font-size: 1rem;
-    
+
     &:last-child {
       margin-bottom: 0;
     }
   }
-  
+
   strong {
     color: #8ab4f8;
     font-weight: 600;
     text-shadow: 0 0 8px rgba(138, 180, 248, 0.3);
   }
-  
+
   // Enhanced table styling within parameter sections
   .parameter-table {
     margin-top: 1.5rem;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    
+
     th {
       background: linear-gradient(135deg, #0d1117 0%, #161b22 100%) !important;
       color: #8ab4f8 !important;
@@ -1899,7 +1899,7 @@ code {
       padding: 1.25rem !important;
       border-bottom: 2px solid #8ab4f8 !important;
       position: relative;
-      
+
       &::after {
         content: '';
         position: absolute;
@@ -1910,13 +1910,13 @@ code {
         background: linear-gradient(90deg, transparent, #8ab4f8, transparent);
       }
     }
-    
+
     td {
       color: #e8eaed !important;
       padding: 1.25rem !important;
       border-bottom: 1px solid #30363d !important;
       transition: all 0.2s ease;
-      
+
       &:first-child {
         color: #ffffff !important;
         font-weight: 500;
@@ -1924,17 +1924,17 @@ code {
         background: rgba(138, 180, 248, 0.08);
         border-right: 1px solid #30363d;
       }
-      
+
       &:hover {
         background: rgba(138, 180, 248, 0.12) !important;
         transform: translateX(2px);
       }
     }
-    
+
     tr:last-child td {
       border-bottom: none !important;
     }
-    
+
     tr:hover {
       background: rgba(138, 180, 248, 0.05);
     }
@@ -1956,7 +1956,7 @@ code {
 // Enhanced response example styling
 .response-example {
   margin: 2rem 0;
-  
+
   h4 {
     color: #8ab4f8;
     font-size: 1.2rem;
@@ -1964,14 +1964,14 @@ code {
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    
+
     &::before {
       content: "📤";
       margin-right: 0.5rem;
       font-size: 1rem;
     }
   }
-  
+
   pre {
     background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
     border: 1px solid #30363d;
@@ -1979,7 +1979,7 @@ code {
     padding: 1.5rem;
     margin: 0;
     overflow-x: auto;
-    
+
     code {
       color: #e8eaed;
       font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
@@ -2081,22 +2081,22 @@ code {
   background: transparent;
   border: 1px solid #30363d;
   border-radius: 8px;
-  
+
   .el-collapse-item__header {
     background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
     color: #ffffff;
     border-bottom: 1px solid #30363d;
-    
+
     &:hover {
       background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
     }
   }
-  
+
   .el-collapse-item__wrap {
     background: transparent;
     border-bottom: none;
   }
-  
+
   .el-collapse-item__content {
     background: transparent;
     color: #e8eaed;
@@ -2108,13 +2108,13 @@ code {
   background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
   border: 1px solid #30363d;
   color: #e8eaed;
-  
+
   .el-card__header {
     background: transparent;
     border-bottom: 1px solid #30363d;
     color: #ffffff;
   }
-  
+
   .el-card__body {
     background: transparent;
     color: #e8eaed;

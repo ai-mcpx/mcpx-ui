@@ -278,7 +278,7 @@ onMounted(async () => {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   transition: all 0.2s ease;
-  
+
   &:hover {
     box-shadow: var(--elevation-1);
     transform: translateY(-1px);
@@ -297,23 +297,23 @@ onMounted(async () => {
   .hero-section {
     padding: var(--spacing-2xl) var(--spacing-lg);
     margin-bottom: var(--spacing-2xl);
-    
+
     h1 {
       font-size: var(--font-size-2xl);
     }
-    
+
     p {
       font-size: var(--font-size-lg);
     }
   }
-  
+
   .servers-section .section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-md);
     margin-bottom: var(--spacing-lg);
   }
-  
+
   .extension-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-md);

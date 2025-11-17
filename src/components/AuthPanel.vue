@@ -229,11 +229,11 @@ authStore.initAuth()
   font-family: var(--font-family);
   font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
-  
+
   &.is-active {
     color: var(--primary-color);
   }
-  
+
   &:hover {
     color: var(--primary-hover);
   }

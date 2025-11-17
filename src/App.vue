@@ -212,11 +212,11 @@ body {
   .header-content {
     padding: var(--spacing-sm) var(--spacing-md);
   }
-  
+
   .app-main {
     padding: var(--spacing-xl) var(--spacing-md);
   }
-  
+
   .version-info {
     gap: var(--spacing-sm);
   }
@@ -234,30 +234,30 @@ body {
     box-shadow: none;
     background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
     transition: all 0.2s ease;
-    
+
     &:hover {
       border-color: var(--border-hover);
       background: linear-gradient(135deg, #21262d 0%, #30363d 100%);
     }
-    
+
     &.is-focus {
       border-color: var(--border-focus);
       box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.2);
       background: linear-gradient(135deg, #21262d 0%, #30363d 100%);
     }
   }
-  
+
   .el-input__inner {
     font-size: var(--font-size-base);
     color: var(--text-color);
     font-family: var(--font-family);
     font-weight: var(--font-weight-normal);
-    
+
     &::placeholder {
       color: var(--text-secondary);
     }
   }
-  
+
   .el-input__prefix {
     color: var(--text-secondary);
   }
