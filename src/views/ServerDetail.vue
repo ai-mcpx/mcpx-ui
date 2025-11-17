@@ -159,19 +159,28 @@
 
         <el-tab-pane label="远程连接">
           <div class="remotes-info">
-            <h3>远程连接端点</h3>
+            <h3 style="color: #ffffff; margin-bottom: 20px;">
+              <el-icon style="color: #8ab4f8; margin-right: 8px;"><Link /></el-icon>
+              远程连接端点
+            </h3>
             <div v-if="server.remotes && server.remotes.length > 0">
               <el-card v-for="(remote, index) in server.remotes" :key="index" class="remote-card">
                 <div class="remote-header">
-                  <h4>{{ remote.type || 'Unknown' }}</h4>
+                  <h4 style="color: #8ab4f8; margin: 0; font-size: 16px;">
+                    <el-icon style="margin-right: 6px;"><Link /></el-icon>
+                    {{ remote.type || 'Unknown' }}
+                  </h4>
                 </div>
 
-                <div class="remote-url">
-                  <strong>URL:</strong> {{ remote.url }}
+                <div class="remote-url" style="margin: 15px 0; color: #e8eaed;">
+                  <strong style="color: #8ab4f8;">URL:</strong> {{ remote.url }}
                 </div>
 
                 <div v-if="remote.headers && remote.headers.length > 0" class="remote-headers">
-                  <h5>请求头:</h5>
+                  <h5 style="color: #8ab4f8; margin: 15px 0 10px 0; font-size: 14px;">
+                    <el-icon style="margin-right: 6px;"><Document /></el-icon>
+                    请求头:
+                  </h5>
                   <el-table :data="remote.headers" stripe style="width: 100%">
                     <el-table-column prop="name" label="名称" width="180" />
                     <el-table-column prop="description" label="描述" />
@@ -213,7 +222,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useServersStore } from '../stores/servers'
 import { useAuthStore } from '../stores/auth'
-import { Link, ArrowDown, DocumentCopy, Edit, Delete } from '@element-plus/icons-vue'
+import { Link, ArrowDown, DocumentCopy, Edit, Delete, Document } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ServerEditor from '../components/ServerEditor.vue'
 
@@ -488,6 +497,17 @@ watch(() => route.params.name, (newId) => {
 .package-card,
 .remote-card {
   margin-bottom: 1rem;
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #8ab4f8;
+    box-shadow: 0 8px 24px rgba(138, 180, 248, 0.2);
+    transform: translateY(-2px);
+  }
 }
 
 .package-header,
@@ -500,11 +520,12 @@ watch(() => route.params.name, (newId) => {
   h4 {
     margin: 0;
     font-size: 1.1rem;
+    color: #ffffff;
   }
 
   .package-name {
     font-weight: 500;
-    color: #606266;
+    color: #e8eaed;
   }
 }
 
@@ -513,6 +534,7 @@ watch(() => route.params.name, (newId) => {
 .package-transport,
 .remote-url {
   margin-bottom: 0.75rem;
+  color: #e8eaed;
 }
 
 .package-env-vars,
@@ -520,10 +542,16 @@ watch(() => route.params.name, (newId) => {
 .package-install,
 .remote-headers {
   margin-top: 1rem;
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #30363d;
 
   h5 {
     margin-bottom: 0.5rem;
     font-size: 1rem;
+    color: #8ab4f8;
+    font-weight: 600;
   }
 }
 
@@ -534,13 +562,196 @@ watch(() => route.params.name, (newId) => {
   gap: 12px;
 }
 
+// Dark gradient table styling for remote headers
+.remote-headers :deep(.el-table) {
+  background: transparent;
+  color: #e8eaed;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+
+  th {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%) !important;
+    color: #8ab4f8 !important;
+    border-bottom: 1px solid #30363d !important;
+    font-weight: 600;
+    padding: 8px 12px !important;
+  }
+
+  td {
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%) !important;
+    color: #e8eaed !important;
+    border-bottom: 1px solid #30363d !important;
+    padding: 8px 12px !important;
+  }
+
+  tr:hover td {
+    background: linear-gradient(135deg, #1f2937 0%, #21262d 100%) !important;
+  }
+}
+
 .action-buttons {
   display: flex;
   gap: 8px;
 }
 
+// Dark gradient styling for remote cards
+.remote-card {
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+
+  &:hover {
+    border-color: #8ab4f8;
+    box-shadow: 0 8px 24px rgba(138, 180, 248, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+// Dark gradient styling for empty states
+.remotes-info :deep(.el-empty) {
+  .el-empty__description {
+    color: #e8eaed;
+  }
+
+  .el-empty__image {
+    opacity: 0.6;
+  }
+}
+
+// Dark gradient tabs styling
+:deep(.el-tabs) {
+  .el-tabs__header {
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+    border: 1px solid #30363d;
+    border-radius: 12px 12px 0 0;
+    margin: 0;
+  }
+
+  .el-tabs__nav-wrap {
+    padding: 0 1rem;
+  }
+
+  .el-tabs__item {
+    color: #e8eaed;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: #ffffff;
+      background: rgba(138, 180, 248, 0.1);
+      border-radius: 6px;
+    }
+
+    &.is-active {
+      color: #8ab4f8;
+      background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+      border-radius: 6px;
+    }
+  }
+
+  .el-tabs__active-bar {
+    background: linear-gradient(90deg, #8ab4f8, #a8c7ff);
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  .el-tabs__content {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+    border: 1px solid #30363d;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    padding: 2rem;
+  }
+}
+
 .deleted-notice {
   font-size: 14px;
   color: #f56c6c;
+}
+
+// Dark gradient section headers
+.installation-info h3,
+.remotes-info h3 {
+  color: #8ab4f8;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #8ab4f8;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.installation-info h3::before {
+  content: "📦";
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+
+.remotes-info h3::before {
+  content: "🔗";
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+
+// Dark gradient input fields and form elements
+:deep(.el-input) {
+  .el-input__wrapper {
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    box-shadow: none;
+
+    &:hover {
+      border-color: #8ab4f8;
+    }
+
+    &.is-focus {
+      border-color: #8ab4f8;
+      box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.2);
+    }
+  }
+
+  .el-input__inner {
+    color: #e8eaed;
+    background: transparent;
+
+    &::placeholder {
+      color: #8b949e;
+    }
+  }
+}
+
+:deep(.el-button) {
+  &.el-button--primary {
+    background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+    border: 1px solid #8ab4f8;
+    color: #8ab4f8;
+
+    &:hover {
+      background: linear-gradient(135deg, #21262d 0%, #2d3748 100%);
+      border-color: #a8c7ff;
+      color: #ffffff;
+    }
+  }
+
+  &.el-button--default {
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+    border: 1px solid #30363d;
+    color: #e8eaed;
+
+    &:hover {
+      background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+      border-color: #8ab4f8;
+      color: #ffffff;
+    }
+  }
 }
 </style>

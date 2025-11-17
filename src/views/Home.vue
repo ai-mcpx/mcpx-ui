@@ -260,6 +260,64 @@ onMounted(async () => {
   justify-content: center;
 }
 
+// Dark gradient pagination styling
+:deep(.el-pagination) {
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 8px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  .el-pager li {
+    background: transparent;
+    color: #e8eaed;
+    border: 1px solid #30363d;
+    margin: 0 4px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+
+    &:hover {
+      background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+      border-color: #8ab4f8;
+      color: #ffffff;
+    }
+
+    &.active {
+      background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+      border-color: #8ab4f8;
+      color: #8ab4f8;
+      font-weight: 600;
+    }
+  }
+
+  .el-pagination button {
+    background: transparent;
+    color: #e8eaed;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+      border-color: #8ab4f8;
+      color: #ffffff;
+    }
+
+    &:disabled {
+      background: rgba(48, 54, 61, 0.5);
+      color: #8b949e;
+      border-color: #21262d;
+      cursor: not-allowed;
+    }
+  }
+
+  .el-pagination__total {
+    color: #e8eaed;
+    font-weight: 500;
+  }
+}
+
 :deep(.el-row) {
   margin-left: calc(var(--spacing-md) * -1) !important;
   margin-right: calc(var(--spacing-md) * -1) !important;
