@@ -1,26 +1,28 @@
 <template>
-  <router-link :to="`/server/${encodeURIComponent(server.name)}`" class="server-card-link">
-    <el-card class="server-card" shadow="hover">
-      <div class="server-header">
-        <div class="server-icon">
-          <el-avatar :size="40" :src="getServerIcon(server)">
+  <router-link :to="`/server/${encodeURIComponent(server.name)}`" class="extension-card-link">
+    <el-card class="extension-card" shadow="hover">
+      <div class="extension-header">
+        <div class="extension-icon">
+          <el-avatar :size="48" :src="getServerIcon(server)" class="extension-avatar">
             {{ getServerInitial(server.name) }}
           </el-avatar>
         </div>
-        <div class="server-title">
-          <h3>{{ formatServerName(server.name) }}</h3>
-          <div class="server-meta">
-            <el-tag size="small" type="info">{{ server.version || server.versionDetail?.version || 'Unknown' }}</el-tag>
-            <span v-if="server.versionDetail?.isLatest" class="latest-tag">最新</span>
+        <div class="extension-title">
+          <h3 class="extension-name">{{ formatServerName(server.name) }}</h3>
+          <div class="extension-meta">
+            <el-tag size="small" type="info" class="version-tag">
+              {{ server.version || server.versionDetail?.version || 'Unknown' }}
+            </el-tag>
+            <span v-if="server.versionDetail?.isLatest" class="latest-badge">最新</span>
           </div>
         </div>
       </div>
 
-      <p class="server-description">{{ truncateDescription(server.description) }}</p>
+      <p class="extension-description">{{ truncateDescription(server.description) }}</p>
 
-      <div class="server-footer">
+      <div class="extension-footer">
         <div class="repository-info" v-if="server.repository">
-          <el-icon><link /></el-icon>
+          <el-icon class="repo-icon"><link /></el-icon>
           <a
             :href="server.repository.url"
             target="_blank"
@@ -30,11 +32,12 @@
             {{ getRepositoryName(server.repository) }}
           </a>
         </div>
-        <div class="server-tags">
+        <div class="extension-tags">
           <el-tag
             v-if="server.repository && server.repository.source"
             size="small"
             :type="getSourceTagType(server.repository.source)"
+            :class="['source-tag', server.repository.source]"
           >
             {{ server.repository.source }}
           </el-tag>
@@ -124,7 +127,7 @@ const getRepositoryName = (repository) => {
 
 const getSourceTagType = (source) => {
   const types = {
-    'github': 'success',
+    'github': 'primary',
     'gitlab': 'warning',
     'gerrit': 'info',
     'default': 'info'
@@ -135,92 +138,187 @@ const getSourceTagType = (source) => {
 </script>
 
 <style lang="scss" scoped>
-.server-card-link {
+.extension-card-link {
   text-decoration: none;
   color: inherit;
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
 }
 
-.server-card {
+.extension-card {
   height: 100%;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s;
-
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  
   &:hover {
-    transform: translateY(-5px);
+    box-shadow: var(--card-hover-shadow);
+    border-color: var(--border-hover);
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
   }
 }
 
-.server-header {
+.extension-header {
   display: flex;
-  align-items: center;
-  margin-bottom: 12px;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-md);
 }
 
-.server-icon {
-  margin-right: 12px;
+.extension-icon {
+  flex-shrink: 0;
 }
 
-.server-title {
+.extension-avatar {
+  border: 1px solid var(--border-light);
+  background: var(--background-secondary);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+}
+
+.extension-title {
   flex: 1;
+  min-width: 0;
 
-  h3 {
-    margin: 0 0 4px 0;
-    font-size: 1.1rem;
-    font-weight: 600;
+  .extension-name {
+    margin: 0 0 var(--spacing-xs) 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
     color: var(--text-color);
+    letter-spacing: -0.01em;
+    font-family: var(--font-family);
+    line-height: var(--line-height-tight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
-.server-meta {
+.extension-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
 
-  .latest-tag {
-    font-size: 0.75rem;
-    color: #67c23a;
-    font-weight: 500;
+  .version-tag {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    background: var(--background-tertiary);
+    border-color: var(--border-light);
+    color: var(--text-secondary);
+  }
+  
+  .latest-badge {
+    font-size: var(--font-size-xs);
+    color: var(--success-color);
+    font-weight: var(--font-weight-medium);
+    background: var(--success-bg);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--success-bg);
   }
 }
 
-
-.server-description {
+.extension-description {
   flex: 1;
-  margin-bottom: 16px;
-  color: #606266;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-family: var(--font-family);
 }
 
-.server-footer {
+.extension-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
-  font-size: 0.85rem;
+  font-size: var(--font-size-xs);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-light);
+  gap: var(--spacing-sm);
 }
 
 .repository-info {
   display: flex;
   align-items: center;
-  gap: 4px;
-  color: #909399;
+  gap: var(--spacing-xs);
+  color: var(--text-secondary);
+  min-width: 0;
+  
+  .repo-icon {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+  }
 
   .repo-link {
-    color: #409eff;
+    color: var(--text-link);
     text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &:hover {
       text-decoration: underline;
+      color: var(--primary-hover);
     }
   }
 }
 
-.server-tags {
+.extension-tags {
   display: flex;
-  gap: 4px;
+  gap: var(--spacing-xs);
+  flex-shrink: 0;
+}
+
+.source-tag {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: capitalize;
+  
+  &.github {
+    background: var(--extension-github);
+    border-color: var(--extension-github);
+    color: white;
+  }
+  
+  &.gitlab {
+    background: var(--extension-gitlab);
+    border-color: var(--extension-gitlab);
+    color: white;
+  }
+  
+  &.gerrit {
+    background: var(--extension-gerrit);
+    border-color: var(--border-color);
+    color: var(--text-color);
+  }
+}
+
+:deep(.el-card__body) {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+:deep(.el-avatar) {
+  background: var(--background-secondary);
+  color: var(--text-secondary);
 }
 </style>

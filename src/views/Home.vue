@@ -15,8 +15,9 @@
           <el-button
             v-if="authStore.isAuthenticated"
             type="primary"
-            size="small"
+            size="default"
             @click="showPublishDialog"
+            class="publish-button"
           >
             <el-icon><plus /></el-icon>
             发布服务器
@@ -39,7 +40,7 @@
 
         <!-- Show message when no servers are loaded -->
         <el-col v-if="!loading && servers.length === 0" :span="24">
-          <div style="text-align: center; padding: 2rem; color: #666;">
+          <div style="text-align: center; padding: 2rem; color: #e8eaed;">
             <p>暂无可用的 MCP 服务器</p>
           </div>
         </el-col>
@@ -193,22 +194,31 @@ onMounted(async () => {
 }
 
 .hero-section {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
-  padding: 4rem 2rem;
+  background: linear-gradient(135deg, var(--background-secondary) 0%, var(--info-bg) 100%);
+  color: #ffffff;
+  padding: var(--spacing-3xl) var(--spacing-2xl);
   text-align: center;
-  border-radius: 8px;
-  margin-bottom: 2rem;
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--spacing-3xl);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--elevation-1);
 
   h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    font-family: var(--font-family);
   }
 
   p {
-    font-size: 1.2rem;
-    max-width: 800px;
+    font-size: var(--font-size-xl);
+    max-width: 600px;
     margin: 0 auto;
+    color: #e8eaed;
+    line-height: var(--line-height-relaxed);
+    font-family: var(--font-family);
   }
 }
 
@@ -217,29 +227,96 @@ onMounted(async () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-light);
 
     h2 {
-      font-size: 1.8rem;
-      font-weight: 600;
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-medium);
+      color: #ffffff;
+      letter-spacing: -0.01em;
+      font-family: var(--font-family);
     }
 
     .section-actions {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: var(--spacing-md);
 
       span {
-        color: #666;
-        font-size: 1rem;
+        color: #e8eaed;
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-medium);
+        font-family: var(--font-family);
       }
     }
   }
 }
 
 .pagination-container {
-  margin-top: 2rem;
+  margin-top: var(--spacing-3xl);
   display: flex;
   justify-content: center;
+}
+
+:deep(.el-row) {
+  margin-left: calc(var(--spacing-md) * -1) !important;
+  margin-right: calc(var(--spacing-md) * -1) !important;
+}
+
+:deep(.el-col) {
+  padding-left: var(--spacing-md) !important;
+  padding-right: var(--spacing-md) !important;
+  margin-bottom: var(--spacing-lg);
+}
+
+:deep(.publish-button) {
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-medium);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: var(--elevation-1);
+    transform: translateY(-1px);
+  }
+}
+
+// Extension card grid styling similar to Gemini CLI
+.extension-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+    
+    h1 {
+      font-size: var(--font-size-2xl);
+    }
+    
+    p {
+      font-size: var(--font-size-lg);
+    }
+  }
+  
+  .servers-section .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .extension-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
 }
 </style>

@@ -614,6 +614,9 @@ onUnmounted(() => {
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  color: #ffffff;
+  min-height: calc(100vh - 200px);
 }
 
 .playground-header {
@@ -623,12 +626,12 @@ onUnmounted(() => {
   h1 {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
-    color: var(--primary-color);
+    color: #ffffff;
   }
 
   p {
     font-size: 1.2rem;
-    color: #666;
+    color: #e8eaed;
   }
 }
 
@@ -641,6 +644,7 @@ onUnmounted(() => {
     h3 {
       margin: 0;
       font-size: 1.2rem;
+      color: #ffffff;
     }
   }
 }
@@ -651,11 +655,21 @@ onUnmounted(() => {
   max-height: 600px;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border: 1px solid #30363d;
+
+  :deep(.el-card__header) {
+    background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+    border-bottom: 1px solid #30363d;
+    color: #ffffff;
+  }
 
   :deep(.el-card__body) {
     display: flex;
     flex-direction: column;
     height: 100%;
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+    color: #e8eaed;
   }
 
   .server-search {
@@ -670,33 +684,34 @@ onUnmounted(() => {
 
     .server-item {
       padding: 1rem;
-      border: 1px solid #e4e7ed;
+      border: 1px solid #30363d;
       border-radius: 8px;
       margin-bottom: 0.5rem;
       cursor: pointer;
       transition: all 0.3s;
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
 
       &:hover {
-        border-color: var(--primary-color);
-        background-color: #f5f7fa;
+        border-color: #8ab4f8;
+        background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
       }
 
       &.active {
-        border-color: var(--primary-color);
-        background-color: #ecf5ff;
+        border-color: #8ab4f8;
+        background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
       }
 
       .server-info {
         h4 {
           margin: 0 0 0.5rem 0;
           font-size: 1rem;
-          color: var(--text-color);
+          color: #ffffff;
         }
 
         .server-description {
           margin: 0 0 0.5rem 0;
           font-size: 0.9rem;
-          color: #666;
+          color: #e8eaed;
           line-height: 1.4;
         }
 
@@ -710,12 +725,21 @@ onUnmounted(() => {
     .no-servers {
       text-align: center;
       padding: 2rem;
-      color: #999;
+      color: #e8eaed;
     }
   }
 }
 
 .playground-area {
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border: 1px solid #30363d;
+
+  :deep(.el-card__header) {
+    background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+    border-bottom: 1px solid #30363d;
+    color: #ffffff;
+  }
+
   // Use fixed height with inner scrolling for better control
   :deep(.el-card__body) {
     padding: 1rem;
@@ -723,6 +747,8 @@ onUnmounted(() => {
     min-height: 500px;
     display: flex;
     flex-direction: column;
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+    color: #e8eaed;
   }
 
   .no-selection {
@@ -743,19 +769,20 @@ onUnmounted(() => {
   .server-details {
     flex-shrink: 0;
     padding: 0.5rem 0.75rem;
-    background-color: #f5f7fa;
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
     border-radius: 6px;
     margin-bottom: 0.5rem;
+    border: 1px solid #30363d;
 
     h4 {
       margin: 0 0 0.25rem 0;
-      color: var(--text-color);
+      color: #ffffff;
       font-size: 0.9rem;
     }
 
     p {
       margin: 0 0 0.25rem 0;
-      color: #666;
+      color: #e8eaed;
       font-size: 0.85rem;
       line-height: 1.2;
       display: -webkit-box;
@@ -780,14 +807,15 @@ onUnmounted(() => {
     max-height: 150px;
     overflow-y: auto;
     padding: 0.5rem;
-    background-color: #fafbfc;
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
     border-radius: 6px;
-    border: 1px solid #e4e7ed;
+    border: 1px solid #30363d;
     margin-bottom: 0.5rem;
 
     h4 {
       margin: 0 0 0.5rem 0;
       font-size: 0.9rem;
+      color: #ffffff;
     }
 
     .tools-list {
@@ -800,15 +828,15 @@ onUnmounted(() => {
         justify-content: space-between;
         align-items: center;
         padding: 0.5rem;
-        border: 1px solid #e4e7ed;
+        border: 1px solid #30363d;
         border-radius: 4px;
         cursor: pointer;
         transition: all 0.3s;
-        background-color: white;
+        background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
 
         &:hover {
-          border-color: var(--primary-color);
-          background-color: #f5f7fa;
+          border-color: #8ab4f8;
+          background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
         }
 
         .tool-info {
@@ -818,13 +846,13 @@ onUnmounted(() => {
           h5 {
             margin: 0 0 0.15rem 0;
             font-size: 0.85rem;
-            color: var(--text-color);
+            color: #ffffff;
           }
 
           p {
             margin: 0;
             font-size: 0.75rem;
-            color: #666;
+            color: #e8eaed;
             line-height: 1.2;
             display: -webkit-box;
             -webkit-line-clamp: 1;
@@ -841,13 +869,13 @@ onUnmounted(() => {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    background-color: #e6f7ff;
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
     padding: 0.5rem;
     border-radius: 6px;
-    border: 3px solid #409eff;
+    border: 3px solid #8ab4f8;
     min-height: 250px !important; // Force minimum height
     overflow: hidden;
-    box-shadow: 0 0 10px rgba(64, 158, 255, 0.3);
+    box-shadow: 0 0 10px rgba(138, 180, 248, 0.3);
 
     .logs-header {
       flex-shrink: 0;
@@ -856,14 +884,14 @@ onUnmounted(() => {
       align-items: center;
       margin-bottom: 0.5rem;
       padding: 0.5rem;
-      background-color: #409eff;
+      background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
       border-radius: 4px;
       color: white;
 
       h4 {
         margin: 0;
         font-size: 1rem;
-        color: white;
+        color: #ffffff;
         font-weight: 700;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
       }
@@ -877,8 +905,8 @@ onUnmounted(() => {
 
     .logs-container {
       flex: 1;
-      background-color: #1e1e1e;
-      color: #d4d4d4;
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+      color: #e8eaed;
       padding: 0.75rem;
       border-radius: 4px;
       font-family: 'Courier New', monospace;
@@ -891,21 +919,21 @@ onUnmounted(() => {
         flex-direction: column;
         margin-bottom: 0.5rem;
         padding: 0.25rem 0;
-        border-bottom: 1px solid #333;
+        border-bottom: 1px solid #30363d;
 
         &:last-child {
           border-bottom: none;
         }
 
         .log-time {
-          color: #888;
+          color: #8b949e;
           font-size: 0.75rem;
           margin-right: 0.5rem;
           min-width: 80px;
         }
 
         .log-level {
-          color: #666;
+          color: #8b949e;
           font-size: 0.75rem;
           margin-right: 0.5rem;
           min-width: 60px;
@@ -922,18 +950,18 @@ onUnmounted(() => {
           margin-top: 0.25rem;
 
           pre {
-            background-color: #2d2d2d;
+            background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
             padding: 0.5rem;
             border-radius: 4px;
             font-size: 0.8rem;
-            color: #e0e0e0;
+            color: #e8eaed;
             overflow-x: auto;
             margin: 0;
           }
         }
 
         &.info .log-level {
-          color: #4fc3f7;
+          color: #8ab4f8;
         }
 
         &.success .log-level {
@@ -956,7 +984,7 @@ onUnmounted(() => {
       .no-logs {
         text-align: center;
         padding: 2rem;
-        color: #666;
+        color: #e8eaed;
         font-style: italic;
       }
     }
@@ -972,9 +1000,10 @@ onUnmounted(() => {
   .tool-description {
     margin-bottom: 1rem;
     padding: 0.75rem;
-    background-color: #f5f7fa;
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
     border-radius: 6px;
-    color: #666;
+    color: #e8eaed;
+    border: 1px solid #30363d;
   }
 
   .tool-form {
@@ -986,7 +1015,7 @@ onUnmounted(() => {
   .no-schema {
     text-align: center;
     padding: 2rem;
-    color: #999;
+    color: #e8eaed;
   }
 }
 
@@ -1049,14 +1078,14 @@ onUnmounted(() => {
     }
 
     .logs-section {
-      // Ensure logs section is prominent - green for medium screens
+      // Ensure logs section is prominent - blue for medium screens
       border-width: 4px !important;
-      border-color: #67c23a !important;
-      background-color: #f0f9ff !important;
+      border-color: #8ab4f8 !important;
+      background: linear-gradient(135deg, #161b22 0%, #1f2937 100%) !important;
       min-height: 200px !important;
 
       .logs-header {
-        background-color: #67c23a !important;
+        background: linear-gradient(135deg, #1f2937 0%, #21262d 100%) !important;
       }
     }
   }
@@ -1121,18 +1150,18 @@ onUnmounted(() => {
     }
 
     .logs-section {
-      // Make logs section EXTREMELY prominent on small screens - RED ALERT
+      // Make logs section EXTREMELY prominent on small screens - BLUE ACCENT
       border-width: 4px !important;
-      border-color: #f56c6c !important;
-      background-color: #fff0f0 !important;
+      border-color: #8ab4f8 !important;
+      background: linear-gradient(135deg, #161b22 0%, #1f2937 100%) !important;
       min-height: 180px !important;
-      box-shadow: 0 0 15px rgba(245, 108, 108, 0.5) !important;
+      box-shadow: 0 0 15px rgba(138, 180, 248, 0.5) !important;
 
       .logs-header {
-        background-color: #f56c6c !important;
+        background: linear-gradient(135deg, #1f2937 0%, #21262d 100%) !important;
 
         h4 {
-          color: white !important;
+          color: #ffffff !important;
         }
       }
     }

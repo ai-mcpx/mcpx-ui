@@ -12,6 +12,7 @@
             prefix-icon="el-icon-search"
             clearable
             @input="handleSearch"
+            class="search-input"
           >
             <template #prefix>
               <el-icon><search /></el-icon>
@@ -71,14 +72,7 @@ const handleSearch = () => {
 </script>
 
 <style lang="scss">
-:root {
-  --primary-color: #3a7bd5;
-  --secondary-color: #00d2ff;
-  --text-color: #333;
-  --light-bg: #f8f9fa;
-  --border-color: #e0e0e0;
-}
-
+// Base styles matching exact Gemini CLI design
 * {
   box-sizing: border-box;
   margin: 0;
@@ -86,32 +80,37 @@ const handleSearch = () => {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-family);
   color: var(--text-color);
-  line-height: 1.6;
+  line-height: var(--line-height-normal);
   background-color: var(--light-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: var(--font-weight-normal);
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%);
 }
 
 .app-header {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
-  padding: 1rem 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(90deg, #0d1117 0%, #161b22 100%);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: var(--z-sticky);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--elevation-1);
 }
 
 .header-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: var(--spacing-md) var(--spacing-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -119,92 +118,148 @@ body {
 
 .logo {
   text-decoration: none;
-  color: white;
-  font-weight: bold;
-  font-size: 1.2rem;
+  color: #ffffff;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-2xl);
   display: flex;
   align-items: center;
+  letter-spacing: -0.02em;
+  font-family: var(--font-family);
 
   h1 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-medium);
+    color: #ffffff;
   }
 }
 
 .search-container {
   flex: 1;
   max-width: 500px;
-  margin: 0 2rem;
+  margin: 0 var(--spacing-xl);
 }
 
 .main-nav {
   display: flex;
-  gap: 1.5rem;
+  gap: var(--spacing-lg);
 
   a {
-    color: white;
+    color: #e8eaed;
     text-decoration: none;
-    font-weight: 500;
-    transition: opacity 0.2s;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-sm) 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    font-family: var(--font-family);
 
     &:hover {
-      opacity: 0.8;
+      color: #8ab4f8;
     }
 
     &.router-link-active {
-      font-weight: 700;
-      border-bottom: 2px solid white;
+      color: #8ab4f8;
+      border-bottom-color: #8ab4f8;
+      font-weight: var(--font-weight-bold);
     }
   }
 }
 
 .app-main {
   flex: 1;
-  padding: 2rem 1rem;
+  padding: var(--spacing-2xl) var(--spacing-lg);
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
 }
 
 .app-footer {
-  background-color: #2c3e50;
-  color: white;
-  padding: 2rem 0;
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  color: #e8eaed;
+  padding: var(--spacing-2xl) 0;
   margin-top: auto;
+  border-top: 1px solid var(--border-color);
 }
 
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 var(--spacing-lg);
   text-align: center;
 }
 
 .version-info {
-  margin: 1rem 0;
+  margin: var(--spacing-lg) 0;
   display: flex;
   justify-content: center;
-  gap: 2rem;
+  gap: var(--spacing-md);
   flex-wrap: wrap;
 }
 
 .version-item {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.3rem 0.8rem;
-  border-radius: 15px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid var(--border-color);
+  color: #e8eaed;
+  font-family: var(--font-family);
 }
 
 @media (max-width: 768px) {
+  .header-content {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .app-main {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+  
   .version-info {
-    gap: 1rem;
+    gap: var(--spacing-sm);
   }
 
   .version-item {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.6rem;
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}
+
+:deep(.search-input) {
+  .el-input__wrapper {
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+    background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: var(--border-hover);
+      background: linear-gradient(135deg, #21262d 0%, #30363d 100%);
+    }
+    
+    &.is-focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.2);
+      background: linear-gradient(135deg, #21262d 0%, #30363d 100%);
+    }
+  }
+  
+  .el-input__inner {
+    font-size: var(--font-size-base);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-normal);
+    
+    &::placeholder {
+      color: var(--text-secondary);
+    }
+  }
+  
+  .el-input__prefix {
+    color: var(--text-secondary);
   }
 }
 </style>

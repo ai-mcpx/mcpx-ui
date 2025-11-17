@@ -249,14 +249,17 @@
               <div class="api-path">/v0/servers</div>
               <p>返回所有注册的 MCP 服务器列表。</p>
 
-              <h4>参数</h4>
-              <el-table :data="listServersParams" style="width: 100%">
-                <el-table-column prop="name" label="名称" width="120" />
-                <el-table-column prop="type" label="类型" width="120" />
-                <el-table-column prop="description" label="描述" />
-              </el-table>
+              <div class="parameter-section">
+                <h4>📋 参数</h4>
+                <el-table :data="listServersParams" style="width: 100%" class="parameter-table">
+                  <el-table-column prop="name" label="名称" width="120" />
+                  <el-table-column prop="type" label="类型" width="120" />
+                  <el-table-column prop="description" label="描述" />
+                </el-table>
+              </div>
 
-              <h4>响应示例</h4>
+              <div class="response-example">
+                <h4>📤 响应示例</h4>
               <pre><code>{
   "servers": [
     {
@@ -299,7 +302,9 @@
     "count": 1,
     "next_cursor": null
   }
-}</code></pre>
+}
+</code></pre>
+              </div>
             </el-card>
 
             <h3>获取服务器详情</h3>
@@ -309,14 +314,17 @@
               <div class="api-path">/v0/servers/{serverName}/versions/{version}</div>
               <p>返回特定 MCP 服务器的详细信息。未指定版本时返回最新版本；如需特定版本，请使用带版本的端点。</p>
 
-              <h4>参数</h4>
-              <el-table :data="getServerParams" style="width: 100%">
-                <el-table-column prop="name" label="名称" width="120" />
-                <el-table-column prop="type" label="类型" width="120" />
-                <el-table-column prop="description" label="描述" />
-              </el-table>
+              <div class="parameter-section">
+                <h4>📋 参数</h4>
+                <el-table :data="getServerParams" style="width: 100%" class="parameter-table">
+                  <el-table-column prop="name" label="名称" width="120" />
+                  <el-table-column prop="type" label="类型" width="120" />
+                  <el-table-column prop="description" label="描述" />
+                </el-table>
+              </div>
 
-              <h4>响应示例</h4>
+              <div class="response-example">
+                <h4>📤 响应示例</h4>
               <pre><code>{
   "server": {
     "name": "io.modelcontextprotocol/filesystem",
@@ -367,6 +375,7 @@
     "is_latest": true
   }
 }</code></pre>
+              </div>
             </el-card>
 
             <h3>更新服务器</h3>
@@ -377,12 +386,14 @@
               <p>更新指定服务器版本的 ServerJSON（需要 Authorization: Bearer &lt;token&gt;）。请求体必须是完整的 ServerJSON，且 <code>name</code> 不可变更，<code>version</code> 必须与路径中的版本一致。可通过查询参数 <code>?status=active|deprecated|deleted</code> 更改状态（deleted 后不可恢复）。</p>
               <p><strong>注意</strong>：除了版本化的端点 <code>/v0/servers/{serverName}/versions/{version}</code>，还支持 <code>PUT /v0/publish</code> 作为替代更新端点。两种方式都支持服务器更新操作。</p>
 
-              <h4>路径参数</h4>
-              <el-table :data="updateServerParams" style="width: 100%">
-                <el-table-column prop="name" label="名称" width="120" />
-                <el-table-column prop="type" label="类型" width="120" />
-                <el-table-column prop="description" label="描述" />
-              </el-table>
+              <div class="parameter-section">
+                <h4>路径参数</h4>
+                <el-table :data="updateServerParams" style="width: 100%" class="parameter-table">
+                  <el-table-column prop="name" label="名称" width="120" />
+                  <el-table-column prop="type" label="类型" width="120" />
+                  <el-table-column prop="description" label="描述" />
+                </el-table>
+              </div>
 
               <h4>请求体示例</h4>
               <pre><code>{
@@ -466,12 +477,14 @@
               <div class="api-path">/v0/servers/{serverName}/versions/{version}?status=deleted</div>
               <p>软删除指定的 MCP 服务器版本。此操作将服务器状态设置为 "deleted"，但保留服务器元数据。请求体需为该版本当前的完整 ServerJSON。</p>
 
-              <h4>路径参数</h4>
-              <el-table :data="deleteServerParams" style="width: 100%">
-                <el-table-column prop="name" label="名称" width="120" />
-                <el-table-column prop="type" label="类型" width="120" />
-                <el-table-column prop="description" label="描述" />
-              </el-table>
+              <div class="parameter-section">
+                <h4>路径参数</h4>
+                <el-table :data="deleteServerParams" style="width: 100%" class="parameter-table">
+                  <el-table-column prop="name" label="名称" width="120" />
+                  <el-table-column prop="type" label="类型" width="120" />
+                  <el-table-column prop="description" label="描述" />
+                </el-table>
+              </div>
 
               <h4>请求体示例（完整 ServerJSON，版本与路径一致）</h4>
               <pre><code>{
@@ -1408,9 +1421,107 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
+// Parameter description and metadata styling
+.parameter-description {
+  color: #e8eaed;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  background: rgba(138, 180, 248, 0.05);
+  border-left: 3px solid #8ab4f8;
+  border-radius: 0 8px 8px 0;
+}
+
+// Parameter type badges
+.parameter-type {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+  color: #8ab4f8;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+// Parameter section headers with icons
+.api-section-title {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #8ab4f8;
+  display: flex;
+  align-items: center;
+  
+  &::before {
+    content: "⚙️";
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+  }
+}
+
+// Response example sections
+.response-example {
+  margin: 1.5rem 0;
+  
+  h4 {
+    color: #8ab4f8;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    
+    &::before {
+      content: "📤";
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Parameter headers styling
+h4 {
+  color: #8ab4f8;
+  font-weight: 600;
+  margin: 1.5rem 0 1rem;
+  
+  &:not(.parameter-section h4) {
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 0.5rem;
+  }
+}
+
+// Code example sections
+pre {
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  color: #e8eaed;
+  
+  code {
+    color: #e8eaed;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  }
+}
+
+// Inline code styling
+code {
+  background: rgba(138, 180, 248, 0.1);
+  color: #8ab4f8;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
 .docs-container {
   display: flex;
   min-height: calc(100vh - 200px);
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  color: #ffffff;
 }
 
 .docs-sidebar {
@@ -1418,16 +1529,41 @@ onUnmounted(() => {
   top: 100px;
   height: calc(100vh - 150px);
   padding-right: 1rem;
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem;
 
   h3 {
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #30363d;
+    color: #ffffff;
+    font-weight: 600;
   }
 }
 
 .docs-menu {
   border-right: none;
+  background: transparent;
+  
+  :deep(.el-menu-item) {
+    color: #e8eaed;
+    background: transparent;
+    border-radius: 8px;
+    margin: 4px 0;
+    
+    &:hover {
+      background: rgba(138, 180, 248, 0.1);
+      color: #8ab4f8;
+    }
+    
+    &.is-active {
+      background: rgba(138, 180, 248, 0.2);
+      color: #8ab4f8;
+      border-right: 3px solid #8ab4f8;
+    }
+  }
 }
 
 .external-links {
@@ -1435,6 +1571,7 @@ onUnmounted(() => {
 
   h4 {
     margin-bottom: 0.5rem;
+    color: #ffffff;
   }
 
   ul {
@@ -1445,11 +1582,12 @@ onUnmounted(() => {
       margin-bottom: 0.5rem;
 
       a {
-        color: var(--primary-color);
+        color: #8ab4f8;
         text-decoration: none;
 
         &:hover {
           text-decoration: underline;
+          color: #aecbfa;
         }
       }
     }
@@ -1462,37 +1600,46 @@ onUnmounted(() => {
 
 .docs-section {
   margin-bottom: 3rem;
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid #30363d;
 
   h2 {
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #30363d;
     font-size: 1.75rem;
     font-weight: 600;
+    color: #ffffff;
   }
 
   h3 {
     margin: 1.5rem 0 1rem;
     font-size: 1.4rem;
     font-weight: 600;
+    color: #ffffff;
   }
 
   h4 {
     margin: 1.2rem 0 0.8rem;
     font-size: 1.2rem;
     font-weight: 600;
+    color: #ffffff;
   }
 
   h5 {
     margin: 1rem 0 0.6rem;
     font-size: 1.1rem;
     font-weight: 600;
+    color: #ffffff;
   }
 
   p, ul, ol {
     margin-bottom: 1rem;
     line-height: 1.6;
     font-size: 1rem;
+    color: #e8eaed;
   }
 
   ul, ol {
@@ -1502,26 +1649,30 @@ onUnmounted(() => {
 
 .api-card {
   margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  padding: 1.5rem;
 
   .api-method {
     display: inline-block;
     padding: 0.25rem 0.5rem;
-    background-color: #67c23a;
+    background-color: #238636;
     color: white;
     border-radius: 4px;
     font-weight: bold;
     margin-right: 0.5rem;
 
     &.post {
-      background-color: #409eff;
+      background-color: #1f6feb;
     }
 
     &.put {
-      background-color: #e6a23c;
+      background-color: #f0883e;
     }
 
     &.delete {
-      background-color: #f56c6c;
+      background-color: #da3633;
     }
   }
 
@@ -1530,20 +1681,24 @@ onUnmounted(() => {
     font-family: monospace;
     font-size: 1.1rem;
     margin-bottom: 1rem;
+    color: #e8eaed;
   }
 
   h4 {
     margin: 1rem 0 0.5rem;
+    color: #ffffff;
   }
 
   pre {
-    background-color: #f5f7fa;
+    background-color: #0d1117;
     padding: 1rem;
     border-radius: 4px;
     overflow-x: auto;
+    border: 1px solid #30363d;
 
     code {
       font-family: monospace;
+      color: #e8eaed;
     }
   }
 }
@@ -1557,25 +1712,26 @@ onUnmounted(() => {
 
 .feature-card {
   padding: 1.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: #f8f9fa;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: var(--primary-color);
-    box-shadow: 0 2px 8px rgba(58, 123, 213, 0.1);
+    border-color: #8ab4f8;
+    box-shadow: 0 4px 16px rgba(138, 180, 248, 0.2);
+    transform: translateY(-2px);
   }
 
   h4 {
     margin: 0 0 0.75rem 0;
-    color: var(--primary-color);
+    color: #8ab4f8;
     font-size: 1.1rem;
   }
 
   p {
     margin: 0;
-    color: #666;
+    color: #e8eaed;
     line-height: 1.5;
   }
 }
@@ -1583,49 +1739,49 @@ onUnmounted(() => {
 .info-box {
   margin: 1.5rem 0;
   padding: 1.5rem;
-  background-color: #e3f2fd;
-  border-left: 4px solid var(--primary-color);
-  border-radius: 4px;
+  background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+  border-left: 4px solid #8ab4f8;
+  border-radius: 8px;
 
   h4 {
     margin: 0 0 0.5rem 0;
-    color: var(--primary-color);
+    color: #8ab4f8;
   }
 
   p {
     margin: 0;
-    color: #333;
+    color: #e8eaed;
   }
 }
 
 .warning-box {
   margin: 1.5rem 0;
   padding: 1.5rem;
-  background-color: #fff3cd;
-  border-left: 4px solid #ffc107;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #3d2817 0%, #4d3423 100%);
+  border-left: 4px solid #f0883e;
+  border-radius: 8px;
 
   h4 {
     margin: 0 0 0.5rem 0;
-    color: #856404;
+    color: #f0883e;
   }
 
   p {
     margin: 0;
-    color: #856404;
+    color: #e8eaed;
   }
 }
 
 .troubleshooting {
   margin: 1.5rem 0;
   padding: 1.5rem;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border: 1px solid #30363d;
+  border-radius: 12px;
 
   h4 {
     margin: 0 0 1rem 0;
-    color: var(--text-color);
+    color: #ffffff;
   }
 
   ul {
@@ -1635,11 +1791,333 @@ onUnmounted(() => {
     li {
       margin-bottom: 0.5rem;
       line-height: 1.5;
+      color: #e8eaed;
 
       strong {
-        color: var(--primary-color);
+        color: #8ab4f8;
       }
     }
+  }
+}
+
+// Enhanced parameter section styling for Gemini CLI consistency
+.parameter-section {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  
+  // Subtle gradient border effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #8ab4f8, transparent);
+  }
+  
+  &:hover {
+    border-color: #8ab4f8;
+    box-shadow: 
+      0 12px 32px rgba(138, 180, 248, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+  }
+  
+  h4 {
+    color: #8ab4f8;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #8ab4f8;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    &::before {
+      content: "⚙️";
+      margin-right: 0.75rem;
+      font-size: 1.2rem;
+      filter: drop-shadow(0 0 4px rgba(138, 180, 248, 0.5));
+    }
+  }
+  
+  h5 {
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 1.5rem 0 0.75rem;
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    border-left: 4px solid #8ab4f8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  p {
+    color: #e8eaed;
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  strong {
+    color: #8ab4f8;
+    font-weight: 600;
+    text-shadow: 0 0 8px rgba(138, 180, 248, 0.3);
+  }
+  
+  // Enhanced table styling within parameter sections
+  .parameter-table {
+    margin-top: 1.5rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    
+    th {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%) !important;
+      color: #8ab4f8 !important;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-size: 0.9rem;
+      padding: 1.25rem !important;
+      border-bottom: 2px solid #8ab4f8 !important;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #8ab4f8, transparent);
+      }
+    }
+    
+    td {
+      color: #e8eaed !important;
+      padding: 1.25rem !important;
+      border-bottom: 1px solid #30363d !important;
+      transition: all 0.2s ease;
+      
+      &:first-child {
+        color: #ffffff !important;
+        font-weight: 500;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+        background: rgba(138, 180, 248, 0.08);
+        border-right: 1px solid #30363d;
+      }
+      
+      &:hover {
+        background: rgba(138, 180, 248, 0.12) !important;
+        transform: translateX(2px);
+      }
+    }
+    
+    tr:last-child td {
+      border-bottom: none !important;
+    }
+    
+    tr:hover {
+      background: rgba(138, 180, 248, 0.05);
+    }
+  }
+}
+
+// Additional styling for better Gemini CLI consistency
+.api-endpoint-description {
+  color: #e8eaed;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(138, 180, 248, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid #8ab4f8;
+}
+
+// Enhanced response example styling
+.response-example {
+  margin: 2rem 0;
+  
+  h4 {
+    color: #8ab4f8;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    
+    &::before {
+      content: "📤";
+      margin-right: 0.5rem;
+      font-size: 1rem;
+    }
+  }
+  
+  pre {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 0;
+    overflow-x: auto;
+    
+    code {
+      color: #e8eaed;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+  }
+}
+
+// Element Plus component overrides for dark theme
+:deep(.el-table) {
+  background: transparent;
+  color: #e8eaed;
+
+  // Header wrapper and cells use dark gradient
+  .el-table__header-wrapper {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%) !important;
+    border-bottom: 1px solid #30363d !important;
+  }
+
+  .el-table__header th {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%) !important;
+    color: #8ab4f8 !important;
+    border-bottom: 1px solid #30363d !important;
+    font-weight: 600 !important;
+  }
+
+  .el-table__header th .cell {
+    background: transparent !important;
+    color: #8ab4f8 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  // Body cells
+  .el-table__body-wrapper {
+    background: transparent !important;
+  }
+
+  td {
+    background: transparent;
+    color: #e8eaed;
+    border-bottom: 1px solid #30363d;
+  }
+
+  tr:hover td {
+    background: rgba(138, 180, 248, 0.05);
+  }
+
+  // Parameter table specific styling
+  &.parameter-table {
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    overflow: hidden;
+
+    .el-table__header th {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%) !important;
+      color: #8ab4f8 !important;
+      font-size: 1rem !important;
+      padding: 12px 16px !important;
+    }
+
+    // Cell wrapper and content
+    .el-table__body-wrapper {
+      background: linear-gradient(135deg, #161b22 0%, #1f2937 100%) !important;
+    }
+
+    .el-table__body td {
+      background: linear-gradient(135deg, #161b22 0%, #1f2937 100%) !important;
+      padding: 12px 16px;
+      color: #e8eaed;
+      border-bottom: 1px solid #30363d;
+      transition: all 0.2s ease;
+    }
+
+    .el-table__body td .cell {
+      background: transparent !important;
+      color: #e8eaed !important;
+    }
+
+    .el-table__body td:first-child .cell {
+      color: #ffffff !important;
+      font-weight: 500;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    }
+
+    // Hover effects
+    .el-table__body tr:hover td {
+      background: linear-gradient(135deg, #1f2937 0%, #21262d 100%) !important;
+    }
+
+    .el-table__body tr:hover td .cell {
+      background: transparent !important;
+    }
+  }
+}
+
+:deep(.el-collapse) {
+  background: transparent;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  
+  .el-collapse-item__header {
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+    color: #ffffff;
+    border-bottom: 1px solid #30363d;
+    
+    &:hover {
+      background: linear-gradient(135deg, #1f2937 0%, #21262d 100%);
+    }
+  }
+  
+  .el-collapse-item__wrap {
+    background: transparent;
+    border-bottom: none;
+  }
+  
+  .el-collapse-item__content {
+    background: transparent;
+    color: #e8eaed;
+    padding: 1.5rem;
+  }
+}
+
+:deep(.el-card) {
+  background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+  border: 1px solid #30363d;
+  color: #e8eaed;
+  
+  .el-card__header {
+    background: transparent;
+    border-bottom: 1px solid #30363d;
+    color: #ffffff;
+  }
+  
+  .el-card__body {
+    background: transparent;
+    color: #e8eaed;
   }
 }
 </style>

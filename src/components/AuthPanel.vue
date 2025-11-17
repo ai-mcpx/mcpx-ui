@@ -143,51 +143,104 @@ authStore.initAuth()
 .auth-panel {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-sm);
 }
 
 .auth-content {
-  padding: 16px 0;
+  padding: var(--spacing-lg) 0;
 }
 
 .auth-error {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-md);
 }
 
 .auth-tabs {
-  margin-top: 16px;
+  margin-top: var(--spacing-md);
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
 .auth-description {
-  margin: 0 0 16px 0;
-  color: #666;
-  font-size: 14px;
-  line-height: 1.5;
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  font-family: var(--font-family);
 }
 
 .auth-button {
   width: 100%;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family);
 }
 
 .auth-status {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-xs);
 }
 
 .logout-button {
   padding: 0;
   height: auto;
-  color: #666;
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
 }
 
 .logout-button:hover {
-  color: #409eff;
+  color: var(--primary-color);
+}
+
+:deep(.el-dialog) {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-3);
+}
+
+:deep(.el-dialog__header) {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-light);
+  margin: 0;
+}
+
+:deep(.el-dialog__title) {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color);
+  font-family: var(--font-family);
+}
+
+:deep(.el-dialog__body) {
+  padding: var(--spacing-lg);
+}
+
+:deep(.el-dialog__footer) {
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--border-light);
+}
+
+:deep(.el-tabs__item) {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  
+  &.is-active {
+    color: var(--primary-color);
+  }
+  
+  &:hover {
+    color: var(--primary-hover);
+  }
+}
+
+:deep(.el-alert) {
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
 }
 </style>
