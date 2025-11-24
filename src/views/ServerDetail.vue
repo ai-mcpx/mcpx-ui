@@ -625,6 +625,48 @@ watch(() => route.params.name, (newId) => {
   background: linear-gradient(135deg, #181f2a 0%, #20252c 100%) !important;
 }
 
+// Style el-tag components in table cells to match dark theme
+.package-runtime-args :deep(.el-table),
+.package-env-vars :deep(.el-table) {
+  .el-tag {
+    background: linear-gradient(135deg, #1f2937 0%, #21262d 100%) !important;
+    border-color: #30363d !important;
+    color: #e8eaed !important;
+    font-weight: 500;
+
+    &.el-tag--danger {
+      background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%) !important;
+      border-color: #dc2626 !important;
+      color: #f87171 !important;
+    }
+
+    &.el-tag--info {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+      border-color: #3b82f6 !important;
+      color: #60a5fa !important;
+    }
+  }
+
+  td .el-tag {
+    background: linear-gradient(135deg, #1f2937 0%, #21262d 100%) !important;
+    border-color: #30363d !important;
+    color: #e8eaed !important;
+    font-weight: 500;
+
+    &.el-tag--danger {
+      background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%) !important;
+      border-color: #dc2626 !important;
+      color: #f87171 !important;
+    }
+
+    &.el-tag--info {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
+      border-color: #3b82f6 !important;
+      color: #60a5fa !important;
+    }
+  }
+}
+
 .action-buttons {
   display: flex;
   gap: 8px;
