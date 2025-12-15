@@ -529,7 +529,7 @@
 
               <h4>请求体示例</h4>
               <pre><code>{
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.modelcontextprotocol/filesystem",
   "description": "Node.js server implementing Model Context Protocol (MCP) for filesystem operations.",
   "repository": {
@@ -975,7 +975,7 @@ mcpx-cli servers --json  # 查看服务器列表</code></pre>
             <h4>ServerJSON 格式</h4>
             <p>这是当前使用的标准格式，直接对应 API 的服务器对象：</p>
             <pre><code>{
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.example/test-server-node",
   "title": "Test MCP Server",
   "description": "A test MCP server in Node.js",

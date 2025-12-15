@@ -244,7 +244,7 @@ const loading = computed(() => serversStore.loading)
 
 // 表单数据
 const formData = reactive({
-  schema: 'https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json',
+  schema: 'https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json',
   name: '',
   title: '',
   description: '',
