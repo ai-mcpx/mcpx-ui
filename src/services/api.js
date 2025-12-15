@@ -81,35 +81,44 @@ apiClient.interceptors.response.use((response) => {
 // Transform the new API format to the format expected by the UI
 function transformServerResponse(serverResponse) {
   // Check if this is the new format with server and _meta as separate fields
-  if (serverResponse.server && serverResponse._meta && serverResponse._meta['io.modelcontextprotocol.registry/official']) {
+  if (serverResponse.server && serverResponse._meta) {
     const server = serverResponse.server
-    const registry = serverResponse._meta['io.modelcontextprotocol.registry/official']
+    // Handle both nested _meta structure and direct _meta
+    const registry = serverResponse._meta['io.modelcontextprotocol.registry/official'] || serverResponse._meta
+
+    // Extract IDs from metadata - try multiple possible locations
+    const serverId = registry?.serverId ||
+                     (typeof registry === 'object' && registry !== null ? registry.id : null) ||
+                     server.name
+    const versionId = registry?.versionId ||
+                      (typeof registry === 'object' && registry !== null ? registry.versionId : null) ||
+                      `${server.name}@${server.version}`
 
     return {
-      id: registry.serverId || server.name, // Use serverId from metadata or fallback to name
-      versionId: registry.versionId || `${server.name}@${server.version}`, // Add versionId from metadata or generate
+      id: serverId,
+      versionId: versionId,
       name: server.name,
       description: server.description,
-      status: registry.status || 'active', // Use status from metadata
+      status: (registry?.status || 'active'), // Use status from metadata
       repository: server.repository,
       version: server.version,
       versionDetail: {
         version: server.version,
-        releaseDate: registry.publishedAt,
-        isLatest: registry.isLatest !== undefined ? registry.isLatest : true
+        releaseDate: registry?.publishedAt || registry?.releaseDate,
+        isLatest: registry?.isLatest !== undefined ? registry.isLatest : true
       },
       packages: server.packages || [],
       remotes: server.remotes || [],
       // Add registry metadata
-      publishedAt: registry.publishedAt,
-      updatedAt: registry.updatedAt,
-      isLatest: registry.isLatest
+      publishedAt: registry?.publishedAt,
+      updatedAt: registry?.updatedAt,
+      isLatest: registry?.isLatest !== undefined ? registry.isLatest : true
     }
   }
 
-  // Check if this is the old format with _meta at top level
-  if (serverResponse._meta && serverResponse._meta['io.modelcontextprotocol.registry/official']) {
-    const registry = serverResponse._meta['io.modelcontextprotocol.registry/official']
+  // Check if this is the old format with _meta at top level (server data at root with _meta)
+  if (serverResponse._meta && !serverResponse.server && (serverResponse._meta['io.modelcontextprotocol.registry/official'] || serverResponse.name)) {
+    const registry = serverResponse._meta['io.modelcontextprotocol.registry/official'] || serverResponse._meta
 
     return {
       id: registry.serverId, // Use serverId from metadata
