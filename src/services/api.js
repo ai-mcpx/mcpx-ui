@@ -337,3 +337,6 @@ export default {
     })
   }
 }
+
+// Export apiClient for use in other services (named export to avoid conflict)
+export { apiClient }

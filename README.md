@@ -80,6 +80,16 @@ The MCP Registry includes an interactive playground for testing MCP servers:
 5. **View Results**: Monitor real-time logs and execution results
 6. **Stop Server**: Disconnect when finished testing
 
+#### SSH Remote Node Mode (Playground)
+- **Enable**: Set `VITE_ENABLE_SSH_REMOTE_NODE=true` in `.env`
+- **Configure**: In Playground, choose **SSH Remote Node** and click **Configure SSH** to set host, port, user, key path/password, working directory, timeout, and strict host key checking
+- **Backend requirement**: UI expects backend endpoints:
+  - `POST /api/playground/ssh/connect`
+  - `POST /api/playground/ssh/session/{sessionId}/request`
+  - `POST /api/playground/ssh/session/{sessionId}/notification`
+  - `POST /api/playground/ssh/session/{sessionId}/disconnect`
+- **Security**: Prefer SSH key auth, enable strict host key checking in production, and never commit real credentials to version control
+
 **Playground Features:**
 - **Mock Server Support**: Built-in mock server for demonstration and testing
 - **Dynamic Forms**: Auto-generated input forms based on tool schemas
@@ -133,6 +143,19 @@ VITE_ENABLE_DELETE=true
 # Debug (optional)
 VITE_DEBUG_MODE=false
 VITE_LOG_LEVEL=info
+
+# Playground SSH remote node (optional; for running MCP servers on a remote Ubuntu node)
+VITE_ENABLE_SSH_REMOTE_NODE=false
+VITE_SSH_REMOTE_HOST=
+VITE_SSH_REMOTE_PORT=22
+VITE_SSH_REMOTE_USER=
+VITE_SSH_REMOTE_KEY_PATH=
+VITE_SSH_REMOTE_PASSWORD=
+VITE_SSH_REMOTE_WORK_DIR=~/mcp-servers
+VITE_SSH_REMOTE_CMD_PREFIX=
+VITE_SSH_REMOTE_TIMEOUT=30
+VITE_SSH_REMOTE_STRICT_HOST_KEY_CHECK=false
+VITE_SSH_REMOTE_KNOWN_HOSTS_PATH=
 ```
 
 ### Authentication

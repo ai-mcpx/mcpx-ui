@@ -120,6 +120,103 @@
             </div>
 
             <div v-else class="server-playground-area">
+              <!-- Connection Mode Selection -->
+              <div class="connection-mode">
+                <el-radio-group v-model="connectionMode" size="small">
+                  <el-radio-button label="local">Local/Mock</el-radio-button>
+                  <el-radio-button
+                    label="ssh"
+                    :disabled="!sshEnabled"
+                  >
+                    SSH Remote Node
+                  </el-radio-button>
+                </el-radio-group>
+                <el-button
+                  v-if="connectionMode === 'ssh'"
+                  type="text"
+                  size="small"
+                  @click="showSshConfigDialog = true"
+                >
+                  Configure SSH
+                </el-button>
+              </div>
+
+              <!-- SSH Configuration Dialog -->
+              <el-dialog
+                v-model="showSshConfigDialog"
+                title="SSH Remote Node Configuration"
+                width="600px"
+                :close-on-click-modal="false"
+              >
+                <el-form
+                  :model="sshConfig"
+                  label-width="180px"
+                  label-position="left"
+                >
+                  <el-form-item label="Remote Host">
+                    <el-input
+                      v-model="sshConfig.host"
+                      placeholder="e.g., ubuntu.example.com or 192.168.1.100"
+                    />
+                  </el-form-item>
+                  <el-form-item label="SSH Port">
+                    <el-input-number
+                      v-model="sshConfig.port"
+                      :min="1"
+                      :max="65535"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                  <el-form-item label="Username">
+                    <el-input
+                      v-model="sshConfig.user"
+                      placeholder="e.g., ubuntu"
+                    />
+                  </el-form-item>
+                  <el-form-item label="Private Key Path">
+                    <el-input
+                      v-model="sshConfig.keyPath"
+                      placeholder="Leave empty to use ~/.ssh/id_rsa"
+                    />
+                  </el-form-item>
+                  <el-form-item label="Password (optional)">
+                    <el-input
+                      v-model="sshConfig.password"
+                      type="password"
+                      show-password
+                      placeholder="Only if not using key-based auth"
+                    />
+                  </el-form-item>
+                  <el-form-item label="Working Directory">
+                    <el-input
+                      v-model="sshConfig.workDir"
+                      placeholder="e.g., ~/mcp-servers"
+                    />
+                  </el-form-item>
+                  <el-form-item label="Command Prefix">
+                    <el-input
+                      v-model="sshConfig.cmdPrefix"
+                      placeholder="e.g., python3 -m or node"
+                    />
+                  </el-form-item>
+                  <el-form-item label="Connection Timeout (s)">
+                    <el-input-number
+                      v-model="sshConfig.timeout"
+                      :min="5"
+                      :max="300"
+                      style="width: 100%"
+                    />
+                  </el-form-item>
+                  <el-form-item label="Strict Host Key Check">
+                    <el-switch v-model="sshConfig.strictHostKeyCheck" />
+                  </el-form-item>
+                </el-form>
+                <template #footer>
+                  <el-button @click="showSshConfigDialog = false">Cancel</el-button>
+                  <el-button type="primary" @click="saveSshConfig">Save</el-button>
+                </template>
+              </el-dialog>
+
               <!-- Server Info -->
               <div class="server-details">
                 <h4>{{ selectedServer.name }}</h4>
@@ -130,6 +227,9 @@
                   </el-tag>
                   <el-tag v-if="selectedServer.repository?.source" size="small">
                     Source: {{ selectedServer.repository.source }}
+                  </el-tag>
+                  <el-tag v-if="connectionMode === 'ssh'" type="success" size="small">
+                    SSH: {{ sshConfig.host || 'Not configured' }}
                   </el-tag>
                 </div>
               </div>
@@ -311,6 +411,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useServersStore } from '../stores/servers'
 import { MCPClient, MockMCPClient } from '../services/mcpClient'
+import { SSHMCPClient } from '../services/sshMcpClient'
 import {
   Refresh,
   Search,
@@ -339,6 +440,21 @@ const selectedTool = ref(null)
 const toolArguments = ref({})
 const toolExecuting = ref(false)
 const logLevelFilter = ref('')
+const connectionMode = ref('local') // 'local' or 'ssh'
+const sshEnabled = ref(import.meta.env.VITE_ENABLE_SSH_REMOTE_NODE === 'true')
+const showSshConfigDialog = ref(false)
+const sshConfig = ref({
+  host: import.meta.env.VITE_SSH_REMOTE_HOST || '',
+  port: parseInt(import.meta.env.VITE_SSH_REMOTE_PORT || '22'),
+  user: import.meta.env.VITE_SSH_REMOTE_USER || '',
+  keyPath: import.meta.env.VITE_SSH_REMOTE_KEY_PATH || '',
+  password: import.meta.env.VITE_SSH_REMOTE_PASSWORD || '',
+  workDir: import.meta.env.VITE_SSH_REMOTE_WORK_DIR || '~/mcp-servers',
+  cmdPrefix: import.meta.env.VITE_SSH_REMOTE_CMD_PREFIX || '',
+  timeout: parseInt(import.meta.env.VITE_SSH_REMOTE_TIMEOUT || '30'),
+  strictHostKeyCheck: import.meta.env.VITE_SSH_REMOTE_STRICT_HOST_KEY_CHECK === 'true',
+  knownHostsPath: import.meta.env.VITE_SSH_REMOTE_KNOWN_HOSTS_PATH || ''
+})
 
 // Computed properties
 const servers = computed(() => serversStore.servers)
@@ -377,6 +493,10 @@ const selectServer = (server) => {
   if (isRunning.value) {
     stopServer()
   }
+  // Reset connection mode to local when selecting a new server
+  if (!sshEnabled.value) {
+    connectionMode.value = 'local'
+  }
 }
 
 const refreshServers = async () => {
@@ -399,8 +519,24 @@ const startServer = async () => {
   addLog('info', 'Starting server...')
 
   try {
-    // Create MCP client (using mock for demo)
-    mcpClient.value = new MockMCPClient()
+    // Create MCP client based on connection mode
+    if (connectionMode.value === 'ssh') {
+      // Validate SSH configuration
+      if (!sshConfig.value.host || !sshConfig.value.user) {
+        throw new Error('SSH configuration is incomplete. Please configure SSH settings.')
+      }
+
+      addLog('info', `Connecting to remote node via SSH: ${sshConfig.value.user}@${sshConfig.value.host}`)
+      mcpClient.value = new SSHMCPClient(sshConfig.value)
+
+      // Build server configuration from selected server
+      const serverConfig = buildServerConfig(selectedServer.value)
+      addLog('info', `Server command: ${serverConfig.command}`, serverConfig)
+    } else {
+      // Use mock client for local mode
+      addLog('info', 'Using local/mock MCP client')
+      mcpClient.value = new MockMCPClient()
+    }
 
     // Set up event listeners
     mcpClient.value.on('initialized', (sessionInfo) => {
@@ -429,20 +565,79 @@ const startServer = async () => {
       addLog('debug', `MCP Response received`, response)
     })
 
-    // Connect to server (mock connection)
-    await mcpClient.value.connect('ws://mock-server')
+    // Connect to server
+    if (connectionMode.value === 'ssh') {
+      const serverConfig = buildServerConfig(selectedServer.value)
+      await mcpClient.value.connect(serverConfig)
+    } else {
+      await mcpClient.value.connect('ws://mock-server')
+    }
 
     isRunning.value = true
     connectionStatus.value = 'connected'
-    addLog('success', `Server ${selectedServer.value.name} started successfully`)
+    addLog('success', `Server ${selectedServer.value.name} started successfully via ${connectionMode.value === 'ssh' ? 'SSH' : 'local/mock'}`)
 
     ElMessage.success('Server started successfully')
   } catch (error) {
-    addLog('error', `Failed to start server: ${error.message}`)
-    ElMessage.error('Failed to start server')
+    addLog('error', `Failed to start server: ${error.message}`, error)
+    ElMessage.error(`Failed to start server: ${error.message}`)
+    if (mcpClient.value) {
+      mcpClient.value = null
+    }
   } finally {
     isStarting.value = false
   }
+}
+
+// Build server configuration from selected server
+const buildServerConfig = (server) => {
+  // Extract command and args from server configuration
+  // This depends on how the server package is structured
+  const config = {
+    command: '',
+    args: [],
+    env: {}
+  }
+
+  // Try to extract from server.package or server.config
+  if (server.package?.command) {
+    if (Array.isArray(server.package.command)) {
+      config.command = server.package.command[0]
+      config.args = server.package.command.slice(1)
+    } else if (typeof server.package.command === 'string') {
+      const parts = server.package.command.split(' ')
+      config.command = parts[0]
+      config.args = parts.slice(1)
+    }
+  }
+
+  // Extract environment variables if available
+  if (server.package?.environmentVariables) {
+    server.package.environmentVariables.forEach(envVar => {
+      if (envVar.name && envVar.value) {
+        config.env[envVar.name] = envVar.value
+      }
+    })
+  }
+
+  return config
+}
+
+// Save SSH configuration
+const saveSshConfig = () => {
+  // Validate required fields
+  if (!sshConfig.value.host || !sshConfig.value.user) {
+    ElMessage.warning('Please fill in at least Host and Username')
+    return
+  }
+
+  showSshConfigDialog.value = false
+  ElMessage.success('SSH configuration saved')
+  addLog('info', 'SSH configuration updated', {
+    host: sshConfig.value.host,
+    user: sshConfig.value.user,
+    port: sshConfig.value.port
+  })
 }
 
 const stopServer = () => {
@@ -766,6 +961,23 @@ onUnmounted(() => {
   }
 
   // Compact upper sections
+  .connection-mode {
+    flex-shrink: 0;
+    padding: 0.5rem 0.75rem;
+    background: linear-gradient(135deg, #161b22 0%, #1f2937 100%);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    border: 1px solid #30363d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+
+    .el-radio-group {
+      flex: 1;
+    }
+  }
+
   .server-details {
     flex-shrink: 0;
     padding: 0.5rem 0.75rem;
