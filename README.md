@@ -57,10 +57,11 @@ npm install
 
 2. (Optional) **Configure environment:**
 ```bash
-cp .env.example .env
-# Note: The UI uses a fixed "/api" base path which is proxied to the backend's /v0 endpoints via nginx.
-# Most features work without changing .env. You can keep defaults or add feature flags if you wire them in.
+# Create .env file for API configuration
+echo "VITE_API_BASE_URL=http://localhost:8080" > .env
 ```
+
+**Note**: The `VITE_API_BASE_URL` environment variable configures the Vite proxy target. The UI uses a fixed "/api" base path which is proxied to the backend's /v0 endpoints. Set `VITE_API_BASE_URL` to point to your mcpx backend server.
 
 3. **Start development server:**
 ```bash
@@ -116,6 +117,10 @@ You can optionally provide a `.env` file for future feature flags. By default, t
 
 Example (optional):
 ```bash
+# API Base URL (required for remote backends)
+# This configures the Vite proxy to forward /api requests to your backend
+VITE_API_BASE_URL=http://localhost:8080
+
 # Authentication (optional; backend-dependent)
 VITE_GITHUB_CLIENT_ID=
 VITE_AUTH_REDIRECT_URI=http://localhost:5173/auth/callback
