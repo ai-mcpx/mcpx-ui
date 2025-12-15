@@ -45,6 +45,18 @@ apiClient.interceptors.response.use((response) => {
   if (response.data && Array.isArray(response.data.servers)) {
     console.log('Transforming servers list response')
     response.data.servers = response.data.servers.map(transformServerResponse)
+  } else if (response.data && Array.isArray(response.data)) {
+    // Handle direct array response (list of servers)
+    console.log('Transforming direct array response')
+    response.data = response.data.map(transformServerResponse)
+  } else if (response.data && response.data.body && Array.isArray(response.data.body.servers)) {
+    // Handle Huma API wrapped response
+    console.log('Transforming Huma API wrapped servers list response')
+    response.data.body.servers = response.data.body.servers.map(transformServerResponse)
+  } else if (response.data && response.data.body && Array.isArray(response.data.body)) {
+    // Handle Huma API wrapped direct array
+    console.log('Transforming Huma API wrapped direct array response')
+    response.data.body = response.data.body.map(transformServerResponse)
   } else if (response.data && response.data.server) {
     console.log('Transforming single server response')
     response.data = transformServerResponse(response.data)

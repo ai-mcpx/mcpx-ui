@@ -38,8 +38,9 @@ export const useServersStore = defineStore('servers', {
         console.log('Response data:', response.data)
 
         // Handle different response formats
+        // Note: Response interceptor may have already transformed the data
         if (Array.isArray(response.data)) {
-          // Direct array response
+          // Direct array response (after interceptor transformation)
           console.log('Handling direct array response')
           this.servers = response.data
           this.totalCount = response.data.length
@@ -53,6 +54,27 @@ export const useServersStore = defineStore('servers', {
           console.log('Handling Huma API wrapped response')
           this.servers = response.data.body.servers
           this.totalCount = response.data.body.metadata?.count || response.data.body.servers.length
+        } else if (response.data && response.data.body && Array.isArray(response.data.body)) {
+          // Huma API wrapped direct array
+          console.log('Handling Huma API wrapped direct array response')
+          this.servers = response.data.body
+          this.totalCount = response.data.body.metadata?.count || response.data.body.length
+        } else if (response.data && response.data.server && response.data._meta) {
+          // Single server response in new format - already transformed by interceptor
+          console.log('Handling single server response, wrapping in array')
+          // The interceptor should have already transformed this, so use it directly
+          const transformedServer = response.data.name ? response.data : {
+            id: response.data.server?.name || 'unknown',
+            name: response.data.server?.name || 'Unknown',
+            description: response.data.server?.description || '',
+            version: response.data.server?.version || '1.0.0',
+            repository: response.data.server?.repository || {},
+            packages: response.data.server?.packages || [],
+            remotes: response.data.server?.remotes || [],
+            status: response.data._meta?.['io.modelcontextprotocol.registry/official']?.status || 'active'
+          }
+          this.servers = [transformedServer]
+          this.totalCount = 1
         } else {
           // Fallback - try to extract servers from any other format
           console.log('Using fallback - unexpected response format')
