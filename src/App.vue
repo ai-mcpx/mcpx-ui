@@ -22,7 +22,6 @@
         <nav class="main-nav">
           <router-link to="/">首页</router-link>
           <router-link to="/docs">文档</router-link>
-          <router-link to="/playground">Playground</router-link>
           <a href="https://github.com/ai-mcpx" target="_blank">GitHub</a>
           <AuthPanel />
         </nav>

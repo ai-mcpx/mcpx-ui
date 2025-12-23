@@ -58,7 +58,7 @@ export class MCPClient {
             prompts: {}
           },
           clientInfo: {
-            name: 'mcpx-ui-playground',
+            name: 'mcpx-ui',
             version: '1.0.0'
           }
         }

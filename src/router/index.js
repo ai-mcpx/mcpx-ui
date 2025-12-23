@@ -24,11 +24,6 @@ const routes = [
     component: () => import('../views/Docs.vue')
   },
   {
-    path: '/playground',
-    name: 'Playground',
-    component: () => import('../views/Playground.vue')
-  },
-  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../views/NotFound.vue')

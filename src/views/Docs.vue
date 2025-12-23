@@ -10,7 +10,6 @@
             @select="scrollToSection"
           >
             <el-menu-item index="overview">概述</el-menu-item>
-            <el-menu-item index="playground">Playground</el-menu-item>
             <el-menu-item index="api">API 参考</el-menu-item>
             <el-menu-item index="server-json">服务器 JSON 格式</el-menu-item>
             <el-menu-item index="cli">CLI 工具</el-menu-item>
@@ -74,7 +73,6 @@
               <li><strong>传输类型</strong>：支持 stdio、SSE 和 streamable-http 传输类型</li>
               <li><strong>Vue 3 前端</strong>：现代响应式用户界面</li>
               <li><strong>CLI 工具</strong>：功能强大的命令行工具 (mcpx-cli)</li>
-              <li><strong>交互式 Playground</strong>：实时测试和运行 MCP 服务器</li>
               <li><strong>交互式发布</strong>：支持多种模板的交互式服务器发布</li>
             </ul>
 
@@ -83,139 +81,6 @@
               <li><strong>Adam Jones</strong> (Anthropic) - <a href="https://github.com/domdomegg" target="_blank">@domdomegg</a></li>
               <li><strong>Toby Padilla</strong> (GitHub) - <a href="https://github.com/toby" target="_blank">@toby</a></li>
             </ul>
-          </section>
-
-          <section id="playground" class="docs-section">
-            <h2>🎮 Playground</h2>
-            <p>MCP Registry Playground 是一个交互式工具，允许您直接在浏览器中测试和运行 MCP 服务器。它提供了实时连接、工具执行和调试功能。</p>
-
-            <h3>主要功能</h3>
-            <ul>
-              <li><strong>服务器选择</strong>：从注册表浏览和搜索可用的 MCP 服务器</li>
-              <li><strong>实时连接</strong>：启动/停止服务器连接，带有状态指示器</li>
-              <li><strong>工具发现</strong>：自动发现和列出可用工具，包括工具描述和输入模式</li>
-              <li><strong>动态执行</strong>：使用自定义参数执行工具，支持多种数据类型</li>
-              <li><strong>交互式日志</strong>：实时查看服务器输出和调试信息</li>
-              <li><strong>模拟服务器支持</strong>：内置模拟服务器用于演示和测试</li>
-              <li><strong>基于模式的表单</strong>：根据工具输入模式动态生成表单</li>
-              <li><strong>参数验证</strong>：工具参数的类型安全输入验证</li>
-            </ul>
-
-            <h3>如何使用 Playground</h3>
-            <ol>
-              <li><strong>选择服务器</strong>：从左侧面板浏览并选择要测试的 MCP 服务器</li>
-              <li><strong>启动连接</strong>：点击"Start Server"按钮建立与服务器的连接</li>
-              <li><strong>查看工具</strong>：连接成功后，查看可用的 MCP 工具列表</li>
-              <li><strong>执行工具</strong>：点击工具旁边的"Execute"按钮，填写参数并执行</li>
-              <li><strong>查看结果</strong>：在日志面板中查看工具执行结果和服务器输出</li>
-              <li><strong>停止服务器</strong>：测试完成后，点击"Stop Server"断开连接</li>
-            </ol>
-
-            <h3>Playground 界面</h3>
-            <div class="feature-grid">
-              <div class="feature-card">
-                <h4>🔍 服务器选择面板</h4>
-                <p>左侧面板显示所有可用的 MCP 服务器，支持搜索和过滤功能</p>
-              </div>
-              <div class="feature-card">
-                <h4>🔗 连接控制</h4>
-                <p>启动/停止服务器连接，带有状态指示器和连接状态显示</p>
-              </div>
-              <div class="feature-card">
-                <h4>🛠 工具列表</h4>
-                <p>显示可用工具及其描述，支持点击执行</p>
-              </div>
-              <div class="feature-card">
-                <h4>⚡ 参数输入</h4>
-                <p>动态生成表单，支持字符串、数字、布尔值等多种数据类型</p>
-              </div>
-              <div class="feature-card">
-                <h4>📊 实时日志</h4>
-                <p>显示服务器输出、工具执行结果和调试信息</p>
-              </div>
-              <div class="feature-card">
-                <h4>❌ 错误处理</h4>
-                <p>全面的错误报告和调试信息，帮助快速定位问题</p>
-              </div>
-            </div>
-
-            <h3>支持的协议</h3>
-            <p>Playground 支持标准的 MCP 协议功能：</p>
-            <ul>
-              <li><strong>工具调用</strong>：执行 MCP 工具并获取结果</li>
-              <li><strong>资源访问</strong>：读取和操作 MCP 资源</li>
-              <li><strong>提示获取</strong>：获取和使用 MCP 提示</li>
-              <li><strong>会话管理</strong>：初始化和管理 MCP 会话</li>
-            </ul>
-
-            <h3>技术实现</h3>
-            <p>Playground 使用以下技术实现：</p>
-            <ul>
-              <li><strong>Vue 3 组件</strong>：现代化的响应式用户界面</li>
-              <li><strong>Element Plus</strong>：丰富的 UI 组件库</li>
-              <li><strong>Pinia 状态管理</strong>：服务器状态和用户交互管理</li>
-              <li><strong>模拟 MCP 客户端</strong>：用于演示和测试的内置模拟实现</li>
-              <li><strong>动态表单生成</strong>：基于工具输入模式自动生成用户界面</li>
-            </ul>
-
-            <h3>代码示例</h3>
-            <p>以下是如何在 Playground 中执行 MCP 工具的示例：</p>
-
-            <h4>1. 文件系统工具</h4>
-            <pre><code>// 工具名称: filesystem_read
-// 参数: { "path": "/tmp/example.txt" }
-// 结果: 文件内容或错误信息</code></pre>
-
-            <h4>2. 网络搜索工具</h4>
-            <pre><code>// 工具名称: web_search
-// 参数: { "query": "Model Context Protocol" }
-// 结果: 搜索结果列表</code></pre>
-
-            <h4>3. 数据库工具</h4>
-            <pre><code>// 工具名称: database_query
-// 参数: { "sql": "SELECT * FROM users LIMIT 10" }
-// 结果: 查询结果集</code></pre>
-
-            <h3>高级功能</h3>
-            <div class="feature-grid">
-              <div class="feature-card">
-                <h4>🔄 实时连接</h4>
-                <p>支持实时连接状态监控和自动重连机制</p>
-              </div>
-              <div class="feature-card">
-                <h4>📝 动态表单</h4>
-                <p>根据工具输入模式自动生成表单，支持字符串、数字、布尔值等类型</p>
-              </div>
-              <div class="feature-card">
-                <h4>🔍 智能验证</h4>
-                <p>基于 JSON Schema 的参数验证，确保输入数据的正确性</p>
-              </div>
-              <div class="feature-card">
-                <h4>📊 性能监控</h4>
-                <p>实时监控工具执行时间和服务器响应性能</p>
-              </div>
-            </div>
-
-            <h3>故障排除</h3>
-            <div class="troubleshooting">
-              <h4>常见问题</h4>
-              <ul>
-                <li><strong>连接失败</strong>：检查服务器是否正在运行，网络连接是否正常</li>
-                <li><strong>工具执行错误</strong>：验证参数格式和类型是否正确</li>
-                <li><strong>权限问题</strong>：确保有足够的权限执行特定工具</li>
-                <li><strong>超时错误</strong>：检查服务器响应时间，考虑增加超时设置</li>
-              </ul>
-            </div>
-
-            <div class="info-box">
-              <h4>💡 提示</h4>
-              <p>Playground 目前使用模拟服务器进行演示。在实际使用中，您需要配置真实的 MCP 服务器端点。模拟服务器提供了完整的 MCP 协议实现，包括工具发现、参数验证和结果返回。</p>
-            </div>
-
-            <div class="warning-box">
-              <h4>⚠️ 注意事项</h4>
-              <p>Playground 仅用于测试和演示目的。在生产环境中使用 MCP 服务器时，请确保遵循安全最佳实践，包括适当的身份验证、授权和输入验证。</p>
-            </div>
           </section>
 
           <section id="api" class="docs-section">
@@ -1301,25 +1166,11 @@ mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
                 <p>这种设计允许更精细的版本管理，支持回滚和版本清理操作。</p>
               </el-collapse-item>
 
-              <el-collapse-item title="如何使用 Playground？" name="9">
-                <p>MCP Registry Playground 是一个交互式工具，允许您在浏览器中测试 MCP 服务器：</p>
-                <ul>
-                  <li>从左侧面板选择要测试的服务器</li>
-                  <li>点击"Start Server"建立连接</li>
-                  <li>查看可用的工具列表</li>
-                  <li>点击"Execute"按钮执行工具</li>
-                  <li>在日志面板查看结果</li>
-                  <li>点击"Stop Server"断开连接</li>
-                </ul>
-                <p>目前 Playground 使用模拟服务器进行演示，提供完整的 MCP 协议实现。</p>
-              </el-collapse-item>
-
               <el-collapse-item title="如何快速开始？" name="10">
                 <p>要快速开始使用 MCP Registry：</p>
                 <ol>
                   <li>访问 <a href="https://registry.modelcontextprotocol.io" target="_blank">registry.modelcontextprotocol.io</a></li>
                   <li>浏览可用的 MCP 服务器</li>
-                  <li>使用 Playground 测试服务器</li>
                   <li>安装 mcpx-cli 工具</li>
                   <li>使用交互式模式发布您的服务器</li>
                 </ol>
@@ -1337,7 +1188,7 @@ mcpx-cli servers  # 查看服务器列表获取版本 ID</code></pre>
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const activeSection = ref('overview')
-const sections = ['overview', 'playground', 'api', 'server-json', 'cli', 'publishing', 'faq']
+const sections = ['overview', 'api', 'server-json', 'cli', 'publishing', 'faq']
 
 const listServersParams = [
   {
